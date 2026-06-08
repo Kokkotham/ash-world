@@ -847,6 +847,7 @@
 
     const trailPoints = [];
     const MAX_TRAIL = 90;
+    let lastMouseX = -1000, lastMouseY = -1000;
     const mouseWorldPos = new THREE.Vector3(0, 0, 0);
     const mouseNDC = new THREE.Vector2();
     const trailRaycaster = new THREE.Raycaster();
@@ -880,6 +881,9 @@
         mouseActive = true;
         mouseInactiveTimer = 0;
         updateMouseWorld(e.clientX, e.clientY);
+
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
 
         // 每次移动生成 2~4 个带随机偏移的粒子，模拟星尘散落
         const spawnCount = Math.floor(Math.random() * 3) + 2;
@@ -1177,17 +1181,23 @@
 
         // 灰烬粒子更新 — 向左上飘 + 鼠标气流扰动
         ashUniforms.uTime.value = time * 0.001;
+        ashUniforms.uMousePos.value.copy(mouseWorldPos);
+        ashUniforms.uMouseActive.value = mouseActive ? 1.0 : 0.0;
         const ashPos = ashGeo.attributes.position.array;
 
-        // 鼠标气流参数
-        const influenceRadius = 9.0;
-        const maxForce = 18.0;
-        const swirlStrength = 10.0;
-        const recoverRate = 2.0;
+        // 鼠标气流参数（增强版，确保肉眼可见）
+        const influenceRadius = 22.0;   // 更大影响范围
+        const maxForce = 300.0;         // 大幅增强排斥力
+        const swirlStrength = 150.0;    // 大幅增强涡旋力
+        const recoverRate = 0.6;        // 更慢的衰减，效果持续更久
+        const mouseGlowRadius = 18.0;   // 粒子高亮范围
 
         // 鼠标静止时逐渐停止影响
         mouseInactiveTimer += dt;
-        if (mouseInactiveTimer > 0.3) mouseActive = false;
+        if (mouseInactiveTimer > 0.4) mouseActive = false;
+
+        // 统计受影响的粒子数（用于 shader 高亮）
+        let affectedCount = 0;
 
         for (let i = 0; i < ASH_COUNT; i++) {
             const px = ashPos[i * 3];
@@ -1204,7 +1214,9 @@
                 if (distSq < influenceRadius * influenceRadius && distSq > 0.01) {
                     const dist = Math.sqrt(distSq);
                     const falloff = 1 - dist / influenceRadius;
-                    const force = falloff * maxForce;
+                    // 使用平滑衰减曲线，近处更强
+                    const smoothFalloff = falloff * falloff * (3 - 2 * falloff);
+                    const force = smoothFalloff * maxForce;
 
                     // 排斥方向
                     const nx = dx / dist;
@@ -1216,10 +1228,12 @@
                     const ty = nx;
                     const tz = 0;
 
-                    // 应用力到额外速度
-                    ashVel[i * 3]     += (nx * force * 0.7 + tx * swirlStrength * falloff) * dt;
-                    ashVel[i * 3 + 1] += (ny * force * 0.7 + ty * swirlStrength * falloff) * dt;
-                    ashVel[i * 3 + 2] += (nz * force * 0.5) * dt;
+                    // 直接叠加较大脉冲（确保肉眼可见的位移）
+                    ashVel[i * 3]     += (nx * force * 0.6 + tx * swirlStrength * smoothFalloff) * dt;
+                    ashVel[i * 3 + 1] += (ny * force * 0.6 + ty * swirlStrength * smoothFalloff) * dt;
+                    ashVel[i * 3 + 2] += (nz * force * 0.4) * dt;
+
+                    affectedCount++;
                 }
             }
 
@@ -1247,8 +1261,38 @@
         debrisGroup.rotation.y += 0.0002;
         debrisGroup.rotation.x += 0.00008;
 
-        // --- 绘制鼠标银白荧光粒子拖尾 ---
+        // --- 绘制鼠标光影跟踪（环境光晕）---
         trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        if (mouseActive && lastMouseX > -100) {
+            // 大范围柔和光晕 — 类似月光/手电筒照亮黑暗
+            const lightGrad = trailCtx.createRadialGradient(
+                lastMouseX, lastMouseY, 0,
+                lastMouseX, lastMouseY, 220
+            );
+            lightGrad.addColorStop(0, 'rgba(230, 240, 255, 0.06)');
+            lightGrad.addColorStop(0.2, 'rgba(210, 225, 255, 0.04)');
+            lightGrad.addColorStop(0.5, 'rgba(180, 200, 240, 0.015)');
+            lightGrad.addColorStop(1, 'rgba(180, 200, 240, 0)');
+            trailCtx.fillStyle = lightGrad;
+            trailCtx.beginPath();
+            trailCtx.arc(lastMouseX, lastMouseY, 220, 0, Math.PI * 2);
+            trailCtx.fill();
+
+            // 核心聚焦光斑
+            const coreGrad = trailCtx.createRadialGradient(
+                lastMouseX, lastMouseY, 0,
+                lastMouseX, lastMouseY, 60
+            );
+            coreGrad.addColorStop(0, 'rgba(245, 250, 255, 0.10)');
+            coreGrad.addColorStop(0.4, 'rgba(230, 240, 255, 0.05)');
+            coreGrad.addColorStop(1, 'rgba(230, 240, 255, 0)');
+            trailCtx.fillStyle = coreGrad;
+            trailCtx.beginPath();
+            trailCtx.arc(lastMouseX, lastMouseY, 60, 0, Math.PI * 2);
+            trailCtx.fill();
+        }
+
+        // --- 绘制鼠标银白荧光粒子拖尾 ---
         if (trailPoints.length > 0) {
             trailCtx.globalCompositeOperation = 'lighter';
             for (let i = trailPoints.length - 1; i >= 0; i--) {
@@ -1322,7 +1366,7 @@
     ashGeo.setAttribute('color', new THREE.BufferAttribute(ashColors, 3));
     ashGeo.setAttribute('size', new THREE.BufferAttribute(ashSizes, 1));
 
-    // 自定义 shader 粒子 — 支持闪烁和大小变化
+    // 自定义 shader 粒子 — 支持闪烁、大小变化、鼠标高亮
     const ashVert = `
         attribute float size;
         attribute vec3 color;
@@ -1330,13 +1374,28 @@
         varying float vAlpha;
         uniform float uTime;
         uniform float uFlashStrength;
+        uniform vec3 uMousePos;
+        uniform float uMouseActive;
         void main() {
-            vColor = color;
+            vec3 c = color;
+            float a = 1.0;
+            // 鼠标附近粒子高亮（银白发光）
+            if (uMouseActive > 0.5) {
+                float d = length(position - uMousePos);
+                float glowRadius = 16.0;
+                if (d < glowRadius) {
+                    float glow = 1.0 - d / glowRadius;
+                    glow = glow * glow * (3.0 - 2.0 * glow); // 平滑曲线
+                    c = mix(c, vec3(0.85, 0.90, 0.95), glow * 0.85);
+                    a = 1.0 + glow * 1.5;
+                }
+            }
+            vColor = c;
             vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
             // 闪烁：基于时间和位置的周期性亮度变化
             float flash = sin(uTime * 2.0 + position.x * 3.0 + position.y * 2.0) * 0.5 + 0.5;
             flash = pow(flash, 3.0); // 尖锐的闪烁
-            vAlpha = 0.25 + flash * uFlashStrength * 0.7;
+            vAlpha = (0.25 + flash * uFlashStrength * 0.7) * a;
             gl_PointSize = size * (300.0 / -mvPosition.z);
             gl_Position = projectionMatrix * mvPosition;
         }
@@ -1354,7 +1413,9 @@
     `;
     const ashUniforms = {
         uTime: { value: 0 },
-        uFlashStrength: { value: 0.6 }
+        uFlashStrength: { value: 0.6 },
+        uMousePos: { value: new THREE.Vector3(0, 0, 0) },
+        uMouseActive: { value: 0.0 }
     };
     const ashMat = new THREE.ShaderMaterial({
         vertexShader: ashVert, fragmentShader: ashFrag,
