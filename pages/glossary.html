@@ -6,25 +6,175 @@
     <title>规则术语表 — 灰烬世界</title>
     <link rel="stylesheet" href="common.css">
     <style>
-        .glossary-term {
-            margin-bottom: 28px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+        /* 搜索框 */
+        .search-box {
+            max-width: 480px;
+            margin: 0 auto 32px;
+            position: relative;
         }
-        .glossary-term h3 {
+        .search-box input {
+            width: 100%;
+            padding: 12px 18px 12px 44px;
+            background: var(--ash-gray);
+            border: 1px solid var(--ash-light);
+            border-radius: 4px;
+            color: var(--ash-text);
+            font-size: 0.95rem;
+            font-family: 'Noto Serif SC', serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-box input::placeholder { color: #6a6050; }
+        .search-box input:focus { border-color: var(--ash-gold-dim); }
+        .search-box .search-icon {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: #6a6050;
+            font-size: 1rem;
+        }
+
+        /* 分类导航 */
+        .cat-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 36px;
+        }
+        .cat-btn {
+            padding: 6px 16px;
+            background: var(--ash-gray);
+            border: 1px solid var(--ash-light);
+            border-radius: 3px;
+            color: var(--ash-text);
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Noto Serif SC', serif;
+            letter-spacing: 0.03em;
+        }
+        .cat-btn:hover, .cat-btn.active {
+            color: var(--ash-gold);
+            border-color: var(--ash-gold-dim);
+            background: rgba(201,168,76,0.08);
+        }
+
+        /* 分类区块 */
+        .cat-section {
+            margin-bottom: 48px;
+        }
+        .cat-section.hidden { display: none; }
+        .cat-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.1rem; color: var(--ash-gold);
-            margin-bottom: 8px; letter-spacing: 0.05em;
+            font-size: 1.15rem;
+            color: var(--ash-gold);
+            letter-spacing: 0.08em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(201,168,76,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .glossary-term .term-en {
-            font-size: 0.8rem; color: var(--ash-light);
-            opacity: 0.6; margin-bottom: 10px;
+        .cat-title .cat-icon { font-size: 1.2rem; }
+        .cat-title .cat-count {
+            font-size: 0.72rem;
+            color: var(--ash-light);
+            font-family: 'Noto Serif SC', serif;
+            margin-left: 6px;
+        }
+
+        /* 术语卡片 */
+        .term-card {
+            background: var(--ash-gray);
+            border: 1px solid var(--ash-light);
+            border-radius: 4px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .term-card:hover {
+            border-color: var(--ash-gold-dim);
+            box-shadow: 0 0 12px rgba(201,168,76,0.06);
+        }
+        .term-card.hidden { display: none; }
+        .term-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        .term-name {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1rem;
+            color: var(--ash-gold);
+            font-weight: 600;
+        }
+        .term-abbr {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            color: var(--ash-ember);
+            background: rgba(201,138,76,0.1);
+            padding: 2px 8px;
+            border-radius: 3px;
+            letter-spacing: 0.05em;
+        }
+        .term-ref {
+            font-size: 0.72rem;
+            color: #6a6050;
             font-style: italic;
         }
-        .glossary-term p {
-            font-size: 0.9rem; color: var(--ash-text);
-            line-height: 1.8;
+        .term-desc {
+            font-size: 0.88rem;
+            color: var(--ash-text);
+            line-height: 1.75;
+            margin-top: 4px;
         }
+        .term-desc strong { color: var(--ash-gold); }
+
+        /* 快速参考标签 */
+        .term-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .term-tag {
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: 2px;
+            letter-spacing: 0.03em;
+        }
+        .tag-action { background: rgba(107,170,107,0.12); color: #6baa6b; border: 1px solid rgba(107,170,107,0.2); }
+        .tag-attack { background: rgba(186,107,107,0.12); color: #ba6b6b; border: 1px solid rgba(186,107,107,0.2); }
+        .tag-defend { background: rgba(107,139,186,0.12); color: #6b8bba; border: 1px solid rgba(107,139,186,0.2); }
+        .tag-protect { background: rgba(160,130,186,0.12); color: #a082ba; border: 1px solid rgba(160,130,186,0.2); }
+        .tag-weapon { background: rgba(186,160,107,0.12); color: #baa06b; border: 1px solid rgba(186,160,107,0.2); }
+        .tag-special { background: rgba(201,168,76,0.12); color: #c9a84c; border: 1px solid rgba(201,168,76,0.2); }
+        .tag-life { background: rgba(107,186,170,0.12); color: #6baa9a; border: 1px solid rgba(107,186,170,0.2); }
+        .tag-manage { background: rgba(140,160,186,0.12); color: #8ca0ba; border: 1px solid rgba(140,160,186,0.2); }
+        .tag-world { background: rgba(186,140,107,0.12); color: #ba8c6b; border: 1px solid rgba(186,140,107,0.2); }
+
+        /* 无结果提示 */
+        .no-result {
+            text-align: center;
+            color: var(--ash-light);
+            padding: 48px 20px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .no-result.show { display: block; }
+
+        /* 统计栏 */
+        .stats-bar {
+            text-align: center;
+            margin-bottom: 28px;
+            font-size: 0.82rem;
+            color: var(--ash-light);
+        }
+        .stats-bar strong { color: var(--ash-gold); }
     </style>
 </head>
 <body>
@@ -41,7 +191,7 @@
                 </div>
             </div>
             <div class="nav-item">
-                <span>规则&模组</span>
+                <span>规则&amp;模组</span>
                 <div class="nav-dropdown">
                     <a href="rules.html">规则书</a>
                     <a href="character-sheet.html">角色卡</a>
@@ -63,56 +213,1136 @@
 
     <header class="page-header">
         <h1>规则术语表</h1>
-        <p class="subtitle">GLOSSARY</p>
+        <p class="subtitle">RULES GLOSSARY — QUICK INDEX</p>
         <div class="divider"></div>
     </header>
 
     <main class="content">
-        <div class="glossary-term">
-            <h3>灰烬（Ash）</h3>
-            <div class="term-en">The Ash</div>
-            <p>宇宙的本源，万事万物的最初形态与最终归宿。不可视觉化、不可触摸、不可测量。守恒，总量固定，不增不减，只是在世间以不同的面貌流转轮回。</p>
+
+        <!-- 搜索框 -->
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="搜索术语名称、缩写或关键词…">
         </div>
-        <div class="glossary-term">
-            <h3>空洞浩劫（Hollow Cataclysm）</h3>
-            <div class="term-en">AH 0 — The Ash Day</div>
-            <p>天空崩裂出无法修补的伤口，金属粉尘与天体碎片倾泻而下。后世称之为「灰烬之日」，标志着万神纪的终结和空洞浩劫时代的开始。</p>
+
+        <!-- 统计 -->
+        <div class="stats-bar">共 <strong id="totalCount">0</strong> 条术语 · <strong>9</strong> 个分类</div>
+
+        <!-- 分类导航 -->
+        <div class="cat-nav">
+            <div class="cat-btn active" data-cat="all">全部</div>
+            <div class="cat-btn" data-cat="action">⚔ 行动</div>
+            <div class="cat-btn" data-cat="attack">🗡 攻击</div>
+            <div class="cat-btn" data-cat="defend">🛡 防御</div>
+            <div class="cat-btn" data-cat="protect">💫 防护体系</div>
+            <div class="cat-btn" data-cat="weapon">⚒ 武器与词条</div>
+            <div class="cat-btn" data-cat="special">🔥 特殊战斗</div>
+            <div class="cat-btn" data-cat="life">🏕 交流与生活</div>
+            <div class="cat-btn" data-cat="manage">🏛 经营与管理</div>
+            <div class="cat-btn" data-cat="world">🌌 世界观</div>
         </div>
-        <div class="glossary-term">
-            <h3>灰烬结晶（Ash Crystals）</h3>
-            <div class="term-en">Ash Crystals</div>
-            <p>高浓度的灰烬凝结物，从天空裂口中倾泻而下的金属粉尘。它们改变了星球的大气成分，扭曲了地壳中的能量脉络，永久性地重塑了这个世界对魔法的感知方式。</p>
+
+        <!-- 无结果 -->
+        <div class="no-result" id="noResult">未找到匹配的术语，请尝试其他关键词。</div>
+
+        <!-- ==================== 行动与资源 ==================== -->
+        <div class="cat-section" data-category="action">
+            <h2 class="cat-title"><span class="cat-icon">⚔</span>行动与资源 <span class="cat-count" id="count-action"></span></h2>
+
+            <div class="term-card" data-keywords="耐力行动 EB 耐力 Endurance">
+                <div class="term-header">
+                    <span class="term-name">耐力行动</span>
+                    <span class="term-abbr">EB</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 行动类型</span>
+                </div>
+                <div class="term-desc">角色默认拥有<strong>两次耐力行动</strong>，可执行各类消耗 EP 点数的行为。角色核心属性会改动基础行动配额。部分无固定 EP 消耗但需占用耐力行动额度的行为，统一定义为<strong>即兴行动</strong>。</div>
+                <div class="term-tags"><span class="term-tag tag-action">行动</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="施法行动 MB 施法 Magic">
+                <div class="term-header">
+                    <span class="term-name">施法行动</span>
+                    <span class="term-abbr">MB</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 行动类型</span>
+                </div>
+                <div class="term-desc">角色默认拥有<strong>一次施法行动</strong>，可执行各类法术释放行为。部分施法可能具有 EP 消耗，或额外的耐力行动损耗。未使用施法行动时，可用于触发<strong>法术拦截</strong>或<strong>规避类法术</strong>防御。</div>
+                <div class="term-tags"><span class="term-tag tag-action">行动</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="EP 耐力点数 Endurance Points">
+                <div class="term-header">
+                    <span class="term-name">耐力点数</span>
+                    <span class="term-abbr">EP</span>
+                    <span class="term-ref">规则书 · 战斗与挑战</span>
+                </div>
+                <div class="term-desc">驱动耐力行动和施法行动的核心资源。基础攻击、防御应答、武器调置、药剂服用等行为均需消耗对应 EP 点数。</div>
+                <div class="term-tags"><span class="term-tag tag-action">行动</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="即兴行动 Improv">
+                <div class="term-header">
+                    <span class="term-name">即兴行动</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 耐力行动</span>
+                </div>
+                <div class="term-desc">部分行为无固定 EP 消耗，但经 GM 判定需占用耐力行动额度的，统一定义为即兴行动。实际 EP 损耗与耐力行动占用规格由 GM 根据场景裁定。</div>
+                <div class="term-tags"><span class="term-tag tag-action">行动</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="预备行动 Ready 准备">
+                <div class="term-header">
+                    <span class="term-name">预备行动</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 特殊战斗规则</span>
+                </div>
+                <div class="term-desc">角色可在自身回合内，将一至两个耐力行动设为预备攻击。需清晰描述触发条件与对应动作，预备效果仅持续至下一名角色回合开始前。所有预备行动均可获得 GM 裁定的检定加值。</div>
+                <div class="term-tags"><span class="term-tag tag-action">行动</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="反击行动 Counter 反击">
+                <div class="term-header">
+                    <span class="term-name">反击行动</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 近战反击</span>
+                </div>
+                <div class="term-desc">角色每完成一次近战攻击防御应答后，无论防御成功或失败，均可消耗本轮一次反击行动回击一次近战基础攻击。反击攻击<strong>无法被二次反击</strong>，不存在连锁反击效应。</div>
+                <div class="term-tags"><span class="term-tag tag-action">行动</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="行动顺位 先攻 Initiative">
+                <div class="term-header">
+                    <span class="term-name">行动顺位</span>
+                    <span class="term-abbr">Initiative</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 战斗准则</span>
+                </div>
+                <div class="term-desc">战斗开启后，所有参战单位投掷 <strong>3d8</strong> 检定骰，结果叠加自身速度属性，按合计数值从高至低排布行动先后。</div>
+                <div class="term-tags"><span class="term-tag tag-action">行动</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="自由移动 移动距离 速度">
+                <div class="term-header">
+                    <span class="term-name">自由移动</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 战斗准则</span>
+                </div>
+                <div class="term-desc">角色在自身回合内拥有等同于自身<strong>速度数值</strong>的自由移动距离（单位：米），不消耗耐力行动或施法行动。战场单格间距等于 1 米。</div>
+                <div class="term-tags"><span class="term-tag tag-action">行动</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="轮次制 回合 Round">
+                <div class="term-header">
+                    <span class="term-name">轮次制</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 战斗准则</span>
+                </div>
+                <div class="term-desc">EW 采用轮次制结算整场战斗。一轮为全部参战单位依次走完个人行动回合，单轮战斗统一折算现实时长约<strong>十秒</strong>。</div>
+                <div class="term-tags"><span class="term-tag tag-action">行动</span></div>
+            </div>
         </div>
-        <div class="glossary-term">
-            <h3>奥术（Arcane）</h3>
-            <div class="term-en">Arcane Magic</div>
-            <p>灰烬本源能量的一种变体，是生物大脑的计算能力与想象力的结合产物。掌握奥术没有捷径，只能通过精密演算、逻辑推导与深度研究。</p>
+
+        <!-- ==================== 攻击类型 ==================== -->
+        <div class="cat-section" data-category="attack">
+            <h2 class="cat-title"><span class="cat-icon">🗡</span>攻击 <span class="cat-count" id="count-attack"></span></h2>
+
+            <div class="term-card" data-keywords="A类专修 攻击专修 Type A">
+                <div class="term-header">
+                    <span class="term-name">（A）类专修</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 基础攻击</span>
+                </div>
+                <div class="term-desc">标注（A）类的专修负责攻击判定生效。单次耐力行动期间，角色仅能施展<strong>单一专修类型</strong>的基础攻击。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="近战攻击 Melee 肢体 近身">
+                <div class="term-header">
+                    <span class="term-name">近战攻击</span>
+                    <span class="term-abbr">Melee</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 六大攻击形式</span>
+                </div>
+                <div class="term-desc">以肢体、近战武器为载体发起的近身接触式攻击，少数可触发范围效应。✔ 可用防御：闪避、翻滚、武器招架、盾牌格挡、规避类法术。✘ 不可用：法术拦截。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="远程攻击 Ranged 弓 铳 射击">
+                <div class="term-header">
+                    <span class="term-name">远程攻击</span>
+                    <span class="term-abbr">Ranged</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 六大攻击形式</span>
+                </div>
+                <div class="term-desc">依托远程武器、法术射击等方式发起的远距离攻击，少数可触发范围效应。✔ 可用防御：闪避、翻滚、盾牌格挡、法术拦截、规避类法术。✘ 不可用：武器招架。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="环境攻击 Environmental 地形 机制">
+                <div class="term-header">
+                    <span class="term-name">环境攻击</span>
+                    <span class="term-abbr">Environmental</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 六大攻击形式</span>
+                </div>
+                <div class="term-desc">由特殊地形、环境机制或专属攻击技能触发的范围类伤害，可生效单体与范围效应。✔ 可用：翻滚、规避类法术。◈ 特殊可用：盾牌格挡、法术拦截（特定场景）。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="扩散攻击 Spread 爆发 AOE">
+                <div class="term-header">
+                    <span class="term-name">扩散攻击</span>
+                    <span class="term-abbr">Spread</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 六大攻击形式</span>
+                </div>
+                <div class="term-desc">爆发式扩散伤害，<strong>仅拥有范围效应</strong>，无单体攻击形态。✔ 可用：翻滚、盾牌格挡、规避类法术。◈ 特殊可用：法术拦截（特定场景）。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="念重攻击 Psychic 意念 冲击 无视护甲">
+                <div class="term-header">
+                    <span class="term-name">念重攻击</span>
+                    <span class="term-abbr">Psychic Impact</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 六大攻击形式</span>
+                </div>
+                <div class="term-desc">依托灰烬灵力凝聚意念发起的外力冲击攻击，无范围效应，可<strong>完全无视目标穿戴护甲</strong>，直接施加负面状态与伤害。✔ 仅可用：用力。◈ 特殊可用：法术拦截（特定场景）。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="精神攻击 Mental 精神层面 负面效果">
+                <div class="term-header">
+                    <span class="term-name">精神攻击</span>
+                    <span class="term-abbr">Mental</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 六大攻击形式</span>
+                </div>
+                <div class="term-desc">直接针对目标精神层面发起的攻击，无范围效应，可<strong>无视护甲与肉身防御</strong>，强行触发精神负面效果。✔ 仅可用：理智。◈ 特殊可用：法术拦截（特定场景）。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="单体效应 Single Target 单体">
+                <div class="term-header">
+                    <span class="term-name">单体效应</span>
+                    <span class="term-abbr">Single Target</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 攻击形式</span>
+                </div>
+                <div class="term-desc">攻击形态的基础效应之一，针对<strong>单一目标</strong>生效。所有攻击形态均包含单体效应与范围效应两种基础效应。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="范围效应 AOE Area 全体">
+                <div class="term-header">
+                    <span class="term-name">范围效应</span>
+                    <span class="term-abbr">Area Effect</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 攻击形式</span>
+                </div>
+                <div class="term-desc">攻击形态的基础效应之一，覆盖<strong>指定区域全体目标</strong>。扩散攻击仅拥有范围效应，念重攻击和精神攻击无范围效应。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="暴击 Critical 暴击鉴定 倍率">
+                <div class="term-header">
+                    <span class="term-name">暴击</span>
+                    <span class="term-abbr">Critical Hit</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 近战暴击</span>
+                </div>
+                <div class="term-desc">近战攻击命中后投掷 <strong>1d100</strong> 暴击鉴定骰判定暴击层级。一级暴击叠加专修暴击伤害 + 武器暴击增值；二级倍率翻倍；三级三倍，依次递增。<strong>奥法与神术攻击无法暴击。</strong></div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="穿甲伤害 Armor Piercing 穿甲 穿透一层">
+                <div class="term-header">
+                    <span class="term-name">穿甲伤害</span>
+                    <span class="term-abbr">Armor Piercing</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 穿甲伤害与穿透效应</span>
+                </div>
+                <div class="term-desc">特殊伤害类型。命中目标时依照 AP→PA→HP 的优先级<strong>穿透一层防护</strong>，造成固定伤害。默认无法作用于法罩与圣佑。溢出伤害按 5:1 比例继续穿透下一层。本体承受穿甲伤害无视体韧，并转化为对应等级流血状态。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="穿透效应 Penetration 无视护甲 神圣 诅咒 疾病 音波">
+                <div class="term-header">
+                    <span class="term-name">穿透效应</span>
+                    <span class="term-abbr">Penetration</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 穿甲伤害与穿透效应</span>
+                </div>
+                <div class="term-desc">专属伤害特性，可直接<strong>无视 AP 与 PA</strong>，作用于目标本体，但无法穿透法罩 MS 与圣佑 DS。默认自带穿透效应的伤害：神圣伤害、诅咒伤害、疾病伤害、音波伤害。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="破甲 Armor Break 护甲倍率 粉碎">
+                <div class="term-header">
+                    <span class="term-name">破甲</span>
+                    <span class="term-abbr">Armor Break</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 破甲与跃盾</span>
+                </div>
+                <div class="term-desc">对护甲层级造成倍率增幅伤害，常规破甲不损毁护甲耐久。本体承受破甲攻击且伤害高于驱魄属性时，转化为对应层数的<strong>粉碎负面状态</strong>。默认无法作用于法罩与圣佑。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="跃盾 Shield Leap 盾牌无效">
+                <div class="term-header">
+                    <span class="term-name">跃盾</span>
+                    <span class="term-abbr">Shield Leap</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 破甲与跃盾</span>
+                </div>
+                <div class="term-desc">直接无效化目标当前持有的<strong>盾牌掩护效果</strong>。对持盾目标发起近战武器攻击时，额外获得 3 颗重铸骰，大幅提升突破盾牌防御的命中概率。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="拆毁攻击 Demolish 障碍 构筑物 耐久">
+                <div class="term-header">
+                    <span class="term-name">拆毁攻击</span>
+                    <span class="term-abbr">Demolish</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 拆毁攻击与路径冲击</span>
+                </div>
+                <div class="term-desc">仅携带拆毁属性的伤害能对障碍物、构筑物、载具发起破坏判定。被拆毁后引发的环境变动可直接改变战场格局。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="路径冲击 Path Impact 沿途 负面状态">
+                <div class="term-header">
+                    <span class="term-name">路径冲击</span>
+                    <span class="term-abbr">Path Impact</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 拆毁攻击与路径冲击</span>
+                </div>
+                <div class="term-desc">攻击沿行进路线对途经全部障碍物、建筑及范围内单位触发环境攻击，受击单位有概率附加各类负面状态。击穿掩体直击后方目标时收效突出。</div>
+                <div class="term-tags"><span class="term-tag tag-attack">攻击</span></div>
+            </div>
         </div>
-        <div class="glossary-term">
-            <h3>神术（Divine）</h3>
-            <div class="term-en">Divine Magic</div>
-            <p>灰烬本源能量的另一种体现。神明体内的灰烬能量经过二次变更后，以神术的形式传播给信徒。比奥术更强大、更容易掌握，但受教条与戒律的严格约束。</p>
+
+        <!-- ==================== 防御形式 ==================== -->
+        <div class="cat-section" data-category="defend">
+            <h2 class="cat-title"><span class="cat-icon">🛡</span>防御 <span class="cat-count" id="count-defend"></span></h2>
+
+            <div class="term-card" data-keywords="B类专修 防御专修 Type B">
+                <div class="term-header">
+                    <span class="term-name">（B）类专修</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 基础防御</span>
+                </div>
+                <div class="term-desc">标注（B）类的专修负责防御判定生效。角色应答防御<strong>无需消耗耐力行动</strong>，但每次需支付对应 EP 消耗并投掷防御专修检定，与攻击检定进行对抗。防御 ≥ 攻击 = 完全豁免伤害。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="闪避 Dodge 躲避">
+                <div class="term-header">
+                    <span class="term-name">闪避</span>
+                    <span class="term-abbr">Dodge</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 防御形式</span>
+                </div>
+                <div class="term-desc">常规防御形式。可用于近战攻击与远程攻击的防御应答；<strong>不可用于</strong>环境攻击、扩散攻击、念重攻击、精神攻击。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="武器招架 Parry 格挡 招架">
+                <div class="term-header">
+                    <span class="term-name">武器招架</span>
+                    <span class="term-abbr">Parry</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 防御形式</span>
+                </div>
+                <div class="term-desc">常规防御形式。仅可用于<strong>近战攻击</strong>的防御应答；不可用于远程、环境、扩散、念重、精神攻击。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="盾牌格挡 Shield Block 盾牌">
+                <div class="term-header">
+                    <span class="term-name">盾牌格挡</span>
+                    <span class="term-abbr">Shield Block</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 防御形式</span>
+                </div>
+                <div class="term-desc">常规防御形式。可用于近战、远程攻击；特定场景可用于环境攻击与扩散攻击。带跃盾效果的攻击可直接无效化盾牌掩护。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="翻滚 Tumble 滚">
+                <div class="term-header">
+                    <span class="term-name">翻滚</span>
+                    <span class="term-abbr">Tumble</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 防御形式</span>
+                </div>
+                <div class="term-desc">常规防御形式。可用于近战、远程、环境、扩散攻击；不可用于念重攻击、精神攻击。面对多投武器时，攻击方获得等同于实际投掷数量的重铸骰。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="法术拦截 Spell Intercept 拦截 消耗施法行动">
+                <div class="term-header">
+                    <span class="term-name">法术拦截</span>
+                    <span class="term-abbr">Spell Intercept</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 防御形式</span>
+                </div>
+                <div class="term-desc">若角色本轮未使用施法行动，可消耗施法行动以防御形式释放拦截法术，施法范围必须能覆盖本次攻击。持续性维持类法术在维持生效阶段也可触发拦截效果。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="规避类法术 Evasive Spell 规避 法罩阻隔 形变">
+                <div class="term-header">
+                    <span class="term-name">规避类法术</span>
+                    <span class="term-abbr">Evasive Spell</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 防御形式</span>
+                </div>
+                <div class="term-desc">若角色本轮未使用施法行动，可消耗施法行动释放带（B）防御效果的法术进行规避防御。并非百分百全额防御，可实现<strong>法罩阻隔、瞬时形变</strong>等差异化防御效果。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="用力 Force 念重 防御 特殊防御">
+                <div class="term-header">
+                    <span class="term-name">用力</span>
+                    <span class="term-abbr">Force</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 防御形式</span>
+                </div>
+                <div class="term-desc"><strong>特殊防御形式</strong>，仅用于对抗念重攻击。被攀附方也可使用用力检定发起挣脱，攀附者须以攀爬检定与之对抗。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="理智 Sanity 精神 防御 特殊防御">
+                <div class="term-header">
+                    <span class="term-name">理智</span>
+                    <span class="term-abbr">Sanity</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 防御形式</span>
+                </div>
+                <div class="term-desc"><strong>特殊防御形式</strong>，仅用于对抗精神攻击。精神攻击无视护甲与肉身防御，理智是唯一的常规防御手段。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="掩体 Cover 障碍 躲藏 遮蔽">
+                <div class="term-header">
+                    <span class="term-name">掩体</span>
+                    <span class="term-abbr">Cover</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 掩体障碍防护与掩护</span>
+                </div>
+                <div class="term-desc">身处掩体一米范围内，通过 RP 描述完成躲藏动作后生效，由 GM 裁定防御额外加值。速射词条攻击下，GM 可设定 10～20 固定命中阈值限制。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="掩护 Shielding 掩护数值 防御加值">
+                <div class="term-header">
+                    <span class="term-name">掩护</span>
+                    <span class="term-abbr">Shielding</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 掩体障碍防护与掩护</span>
+                </div>
+                <div class="term-desc">独立特殊防护，掩体标注固定掩护数值，处于掩护体 1 米范围内的受击单位，防御检定直接获得等同于掩护数值的<strong>常驻防御加值</strong>。</div>
+                <div class="term-tags"><span class="term-tag tag-defend">防御</span></div>
+            </div>
         </div>
-        <div class="glossary-term">
-            <h3>余烬纪元（After-Hollow Era）</h3>
-            <div class="term-en">A.H. — After Hollow</div>
-            <p>空洞浩劫之后的纪年方式。本游戏的主线故事开始于 AH 8，即浩劫之后的第八年。</p>
+
+        <!-- ==================== 防护体系 ==================== -->
+        <div class="cat-section" data-category="protect">
+            <h2 class="cat-title"><span class="cat-icon">💫</span>防护体系 <span class="cat-count" id="count-protect"></span></h2>
+
+            <div class="term-card" data-keywords="HP 生命值 Health">
+                <div class="term-header">
+                    <span class="term-name">生命值</span>
+                    <span class="term-abbr">HP</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 生命护甲与法罩与抗性</span>
+                </div>
+                <div class="term-desc">所有单位的基础生命值。伤害扣除遵循固定顺序：<strong>圣佑 DS → 法罩 MS → 穿戴护甲 AP → 肉体护甲 PA → 生命值 HP</strong>，由前至后逐层抵扣。单次武器伤害高于躯魄属性时，叠加流血效果。</div>
+                <div class="term-tags"><span class="term-tag tag-protect">防护</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="AP 穿戴护甲 Worn Armor 护甲">
+                <div class="term-header">
+                    <span class="term-name">穿戴护甲</span>
+                    <span class="term-abbr">AP</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 生命护甲与法罩与抗性</span>
+                </div>
+                <div class="term-desc">全身各部位护甲数值累加，伤害优先消耗 AP。可被穿甲伤害穿透、被破甲效果倍率增幅、被穿透效应无视。</div>
+                <div class="term-tags"><span class="term-tag tag-protect">防护</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="PA 肉体护甲 Natural Armor 体韧">
+                <div class="term-header">
+                    <span class="term-name">肉体护甲</span>
+                    <span class="term-abbr">PA</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 生命护甲与法罩与抗性</span>
+                </div>
+                <div class="term-desc">角色自身的天然防护层，位于穿戴护甲 AP 之后扣减。抗性仅在伤害作用于生命值 HP 和肉体护甲 PA 时生效。</div>
+                <div class="term-tags"><span class="term-tag tag-protect">防护</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="MS 法罩 Magic Shield 奥法 魔法盾">
+                <div class="term-header">
+                    <span class="term-name">法罩</span>
+                    <span class="term-abbr">MS</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 法罩</span>
+                </div>
+                <div class="term-desc"><strong>奥法专属</strong>特殊防护，结算优先级：圣佑 ＞ 法罩 ＞ 穿戴护甲。可豁免大量类型伤害，免疫穿透类精神负面效果；不享受抗性减免，防护值仅能<strong>刷新续存</strong>，无法多层叠加累计。</div>
+                <div class="term-tags"><span class="term-tag tag-protect">防护</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="DS 圣佑 Divine Shield 神术">
+                <div class="term-header">
+                    <span class="term-name">圣佑</span>
+                    <span class="term-abbr">DS</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 圣佑</span>
+                </div>
+                <div class="term-desc"><strong>神术专属</strong>特殊防护，伤害扣除结算中拥有<strong>最高优先级</strong>。抵御各类直接穿透型精神负面效果；常规不享受抗性加成，防护数值仅可刷新存续、不能多层叠加累积。</div>
+                <div class="term-tags"><span class="term-tag tag-protect">防护</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="抗性 Resistance 减免 抵扣">
+                <div class="term-header">
+                    <span class="term-name">抗性</span>
+                    <span class="term-abbr">Resistance</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 生命护甲与法罩与抗性</span>
+                </div>
+                <div class="term-desc">持有对应伤害类型抗性时，受到该类伤害可抵扣等额抗性数值，减免后伤害最低归零。抗性仅在伤害作用于<strong>生命值 HP 和肉体护甲 PA</strong> 时生效，无法抵扣其余防护损耗。</div>
+                <div class="term-tags"><span class="term-tag tag-protect">防护</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="流血 Bleed 出血">
+                <div class="term-header">
+                    <span class="term-name">流血</span>
+                    <span class="term-abbr">Bleed</span>
+                    <span class="term-ref">规则书 · 战斗与挑战</span>
+                </div>
+                <div class="term-desc">负面状态。单次武器伤害高于躯魄属性并造成生命损耗时叠加 1 级流血；本体承受穿甲伤害时依据数值转化为对应等级流血；躯干部位被击破时附加 4 级流血。</div>
+                <div class="term-tags"><span class="term-tag tag-protect">防护</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="粉碎 Crush 破甲 负面状态">
+                <div class="term-header">
+                    <span class="term-name">粉碎</span>
+                    <span class="term-abbr">Crush</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 破甲与跃盾</span>
+                </div>
+                <div class="term-desc">负面状态。本体直接承受破甲攻击且伤害高于驱魄属性时，破甲效果转化为对应伤害数值层数的粉碎负面状态，对本体造成持续负面影响。</div>
+                <div class="term-tags"><span class="term-tag tag-protect">防护</span></div>
+            </div>
         </div>
-        <div class="glossary-term">
-            <h3>3d6 规则系统</h3>
-            <div class="term-en">3d6 System</div>
-            <p>灰烬世界采用的掷骰系统。玩家投掷三颗六面骰（3d6），加上对应属性修正，与目标难度值（DC）进行比较。相比 d20 系统，3d6 的结果更集中在平均值附近，减少极端运气因素。</p>
+
+        <!-- ==================== 武器与词条 ==================== -->
+        <div class="cat-section" data-category="weapon">
+            <h2 class="cat-title"><span class="cat-icon">⚒</span>武器与词条 <span class="cat-count" id="count-weapon"></span></h2>
+
+            <div class="term-card" data-keywords="速率词条 Rate 连击 多次攻击">
+                <div class="term-header">
+                    <span class="term-name">速率词条</span>
+                    <span class="term-abbr">Rate</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 基础攻击</span>
+                </div>
+                <div class="term-desc">数值代表该次耐力行动内此基础攻击的<strong>最大可释放次数</strong>。每一次攻击均需单独命中检定并支付 EP 消耗。袭击战首轮禁用速率词条。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="迟缓词条 Slow 两点耐力">
+                <div class="term-header">
+                    <span class="term-name">迟缓词条</span>
+                    <span class="term-abbr">Slow</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 基础攻击</span>
+                </div>
+                <div class="term-desc">附带迟缓词条的攻击<strong>无法以单次耐力行动发动</strong>，必须消耗两点耐力行动方可完成一次攻击释放。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="速射 Rapid Fire 无视防御 掩体">
+                <div class="term-header">
+                    <span class="term-name">速射词条</span>
+                    <span class="term-abbr">Rapid Fire</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 稳定射程，投射与速射</span>
+                </div>
+                <div class="term-desc">被攻击方<strong>常规防御手段全部失效</strong>，仅可依托场地掩体享受固定命中阈值防护。若速射弹药附带穿甲伤害且穿甲数值高于掩体耐久，掩体防护加值直接作废。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="多投 Multi-throw 多投掷">
+                <div class="term-header">
+                    <span class="term-name">多投词条</span>
+                    <span class="term-abbr">Multi-throw</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 多投与弹射</span>
+                </div>
+                <div class="term-desc">单次投掷动作可依据武器速率同步投出至多等同于多投标注数量的同类型武器。若受击方选用闪避、翻滚防御，攻击方获得等同于实际投掷数量的重铸骰。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="弹射 Bounce Ricochet 反弹">
+                <div class="term-header">
+                    <span class="term-name">弹射词条</span>
+                    <span class="term-abbr">Bounce</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 多投与弹射</span>
+                </div>
+                <div class="term-desc">初次攻击命中后生效，未命中则弹射失效。可将弹射伤害转移至被击中目标半径 3 米内另一单位，沿用原本检定结果。标注弹射额外目标数时，可依次弹射对应数量的不同目标。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="堆叠词条 Stack 叠放">
+                <div class="term-header">
+                    <span class="term-name">堆叠词条</span>
+                    <span class="term-abbr">Stack</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 物品大小占格</span>
+                </div>
+                <div class="term-desc">满足堆叠条件时，可将 N 件同类物品合并收纳，整组仅占用 1 格储物空间。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="调置武器 Adjustable 调整 变形">
+                <div class="term-header">
+                    <span class="term-name">调置武器</span>
+                    <span class="term-abbr">Adjustable</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 调置武器</span>
+                </div>
+                <div class="term-desc">拥有调置效果的物品，每次触发需消耗对应耐力行动。调置词缀标注所需耐力行动数量。任意单位均可消耗自身耐力行动协助完成调置，以此加速进度。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="投掷武器 Thrown 投掷专修">
+                <div class="term-header">
+                    <span class="term-name">投掷武器</span>
+                    <span class="term-abbr">Thrown Weapon</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 近战投掷与射击换弹</span>
+                </div>
+                <div class="term-desc">攻击检定统一依据投掷专修判定。无专修强行投掷附加 3 枚惩罚骰。暴击 = 对应投掷专修暴击伤害 + 武器暴击增值。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">武器</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="远程武器 Ranged 弓 铳 换弹 弹药">
+                <div class="term-header">
+                    <span class="term-name">远程武器</span>
+                    <span class="term-abbr">Ranged Weapon</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 近战投掷与射击换弹</span>
+                </div>
+                <div class="term-desc">攻击检定依据对应远程武器专修判定。基础伤害以弹药数值为准。每完成一次攻击消耗弹药，必须执行<strong>换弹</strong>（固定占用 1 次耐力行动，无 EP 消耗，换弹次数上限 = 武器速率）。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">武器</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="多持武器 Multi-wield 双持 副手">
+                <div class="term-header">
+                    <span class="term-name">多持武器</span>
+                    <span class="term-abbr">Multi-wield</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 多持武器</span>
+                </div>
+                <div class="term-desc">需拥有副手空位。基础耐力消耗以主手为准，每新增一个武器部位额外消耗 1 EP。仅判定一次攻击检定，整合所有副手武器伤害与特效统一结算。对抗闪避、武器招架时额外获得<strong>1 颗重铸骰</strong>。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">武器</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="临时武器 Improvised 就地拾取 杂物">
+                <div class="term-header">
+                    <span class="term-name">临时武器</span>
+                    <span class="term-abbr">Improvised</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 临时武器伤害</span>
+                </div>
+                <div class="term-desc">角色就地拾取杂物、物件用于进攻时，若无既定武器词条与属性，统一归类为临时武器。基础伤害与附加特效全部由 GM 结合物品材质、体型现场裁定。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">武器</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="重铸骰 Reroll 重掷">
+                <div class="term-header">
+                    <span class="term-name">重铸骰</span>
+                    <span class="term-abbr">Reroll Die</span>
+                    <span class="term-ref">规则书 · 战斗与挑战</span>
+                </div>
+                <div class="term-desc">额外掷骰机会，可大幅提升检定优势。获取途径：多持武器对抗闪避/招架时 +1；多投武器被翻滚/闪避防御时 +N；跃盾攻击持盾目标时 +3。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="惩罚骰 Penalty 附加骰">
+                <div class="term-header">
+                    <span class="term-name">惩罚骰</span>
+                    <span class="term-abbr">Penalty Die</span>
+                    <span class="term-ref">规则书 · 战斗与挑战</span>
+                </div>
+                <div class="term-desc">检定劣势标记。无对应专修强行使用武器时附加 <strong>3 枚惩罚骰</strong>。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="稳定射程 投射 Stable Range 射程惩罚">
+                <div class="term-header">
+                    <span class="term-name">稳定射程 / 投射</span>
+                    <span class="term-abbr">Stable Range</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 稳定射程，投射与速射</span>
+                </div>
+                <div class="term-desc">标注区间内射击/投掷不因距离产生命中惩罚；超出稳定射程后，每超出 1 米，受击目标获得 1 点防御检定加值。</div>
+                <div class="term-tags"><span class="term-tag tag-weapon">词条</span></div>
+            </div>
         </div>
-        <div class="glossary-term">
-            <h3>灰烬感应度（Ash Sensitivity）</h3>
-            <div class="term-en">Ash Sensitivity</div>
-            <p>角色对周围灰烬能量浓度的感知能力。感应度高的角色可以察觉附近的魔法波动、隐藏的灰烬结晶，甚至预测某些天灾的发生。</p>
+
+        <!-- ==================== 特殊战斗 ==================== -->
+        <div class="cat-section" data-category="special">
+            <h2 class="cat-title"><span class="cat-icon">🔥</span>特殊战斗 <span class="cat-count" id="count-special"></span></h2>
+
+            <div class="term-card" data-keywords="遭遇战 Encounter 遭遇 同步">
+                <div class="term-header">
+                    <span class="term-name">遭遇战</span>
+                    <span class="term-abbr">Encounter</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 战斗准则</span>
+                </div>
+                <div class="term-desc">开局类型之一。交战双方同步进入战斗轮，全员统一投掷行动顺位，按检定结果排序回合先后。</div>
+                <div class="term-tags"><span class="term-tag tag-special">特殊</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="袭击战 Ambush 偷袭 先攻">
+                <div class="term-header">
+                    <span class="term-name">袭击战</span>
+                    <span class="term-abbr">Ambush</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 战斗准则</span>
+                </div>
+                <div class="term-desc">开局类型之一。偷袭方可抢先执行一次无前置轮次的任意攻击（禁用速率词条）；首轮行动阶段被袭击方优先顺位，可自主调整行动排序。</div>
+                <div class="term-tags"><span class="term-tag tag-special">特殊</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="骑乘战斗 Mounted 骑乘 坐骑">
+                <div class="term-header">
+                    <span class="term-name">骑乘战斗</span>
+                    <span class="term-abbr">Mounted Combat</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 骑乘战斗</span>
+                </div>
+                <div class="term-desc">上马/下马消耗 1 次耐力行动。骑手与坐骑共用一个行动回合（取先攻检定更高者），骑手丧失自身基础移动能力，坐骑常驻损耗 1 次耐力行动额度。强制移动效果会立刻解除骑乘。</div>
+                <div class="term-tags"><span class="term-tag tag-special">特殊</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="水下战斗 Underwater 水下 减半">
+                <div class="term-header">
+                    <span class="term-name">水下战斗</span>
+                    <span class="term-abbr">Underwater Combat</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 水下战斗与射击</span>
+                </div>
+                <div class="term-desc">无水下适配特性时，每回合仅可动用 1 次耐力行动，速率类效果全数失效。射击/投掷丧失稳定射程与投射词条，攻击最终伤害<strong>折算减半</strong>。</div>
+                <div class="term-tags"><span class="term-tag tag-special">特殊</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="飞行作战 Flying 飞行 坠落 缓落">
+                <div class="term-header">
+                    <span class="term-name">飞行作战</span>
+                    <span class="term-abbr">Flying Combat</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 飞行作战</span>
+                </div>
+                <div class="term-desc">维持飞行每回合消耗对应飞行耐力。受指定负面效果影响时立即终止并进入坠落状态；飞行耐力不足时强制转为<strong>缓落状态</strong>。</div>
+                <div class="term-tags"><span class="term-tag tag-special">特殊</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="攀爬作战 Climbing 攀附 挣脱 大型生物">
+                <div class="term-header">
+                    <span class="term-name">攀爬作战</span>
+                    <span class="term-abbr">Climbing Combat</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 攀爬作战</span>
+                </div>
+                <div class="term-desc">可攀附大体型生物进行近身作战。维持攀附每回合消耗 1 次耐力行动 + 专属攀爬耐力。被攀附方挣脱用力检定时，攀附者须以攀爬检定对抗，检定失利则攀附解除。</div>
+                <div class="term-tags"><span class="term-tag tag-special">特殊</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="躯干攻击 Torso 要害 肢体 部位">
+                <div class="term-header">
+                    <span class="term-name">躯干攻击</span>
+                    <span class="term-abbr">Torso Attack</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 躯干攻击</span>
+                </div>
+                <div class="term-desc">对阵大型生物时，通过 RP 描述精准攻击指定躯干部位。部位独立血量 = 生物总生命 ÷ 肢体总数。单一部位被击破后附加 <strong>4 级流血</strong>负面效果。</div>
+                <div class="term-tags"><span class="term-tag tag-special">特殊</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="子弹时间 Bullet Time RP演绎 演绎">
+                <div class="term-header">
+                    <span class="term-name">子弹时间</span>
+                    <span class="term-abbr">Bullet Time</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 演绎描述近战</span>
+                </div>
+                <div class="term-desc">GM 开启的沉浸式 RP 战斗动画演绎模式。高质量、逻辑合理的战斗演绎可获得 <strong>1~6 点额外检定加值</strong>。法术释放和远程攻击无法通过 RP 演绎获取加值。</div>
+                <div class="term-tags"><span class="term-tag tag-special">特殊</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="障碍地形 Terrain 障碍 陷阱 高低差">
+                <div class="term-header">
+                    <span class="term-name">障碍地形</span>
+                    <span class="term-abbr">Terrain</span>
+                    <span class="term-ref">规则书 · 战斗与挑战 · 障碍地形</span>
+                </div>
+                <div class="term-desc">天然地貌（积水、沼泽）与人工布设（陷阱、墙体、高低落差）均属于战场障碍范畴，会持续干涉攻防行动。玩家可依托地形进行战术 RP 演绎创造优势。</div>
+                <div class="term-tags"><span class="term-tag tag-special">特殊</span></div>
+            </div>
         </div>
-        <div class="glossary-term">
-            <h3>十二圣工（The Twelve Labors）</h3>
-            <div class="term-en">The Twelve Labors</div>
-            <p>万神纪末期的十二位半神/英雄，在空洞浩劫中发挥了关键作用。后世以他们的名字命名了十二种核心职业。</p>
+
+        <!-- ==================== 交流与生活 ==================== -->
+        <div class="cat-section" data-category="life">
+            <h2 class="cat-title"><span class="cat-icon">🏕</span>交流与生活 <span class="cat-count" id="count-life"></span></h2>
+
+            <div class="term-card" data-keywords="好感度 Affinity 好感 NPC 关系">
+                <div class="term-header">
+                    <span class="term-name">好感度</span>
+                    <span class="term-abbr">Affinity</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 角色好感</span>
+                </div>
+                <div class="term-desc">所有 NPC 均设好感数值体系，取值区间 <strong>0～100</strong>，由 GM 统一记录、动态调整。好感度提升后可递进人际关系，达成缔结婚约、组建家庭等深度羁绊。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="血脉点数 Bloodline 繁育 子嗣 血脉">
+                <div class="term-header">
+                    <span class="term-name">血脉点数</span>
+                    <span class="term-abbr">Bloodline Points</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 诞生血脉</span>
+                </div>
+                <div class="term-desc">单次繁育成功诞下的子嗣自带 1 点血脉点数。后代成年后每 1 点血脉可兑换 <strong>3 点自由主属性点数</strong>，并额外解锁一个主职业专修选项。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="生育率 Fertility 繁育 受孕">
+                <div class="term-header">
+                    <span class="term-name">生育率</span>
+                    <span class="term-abbr">Fertility</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 诞生血脉</span>
+                </div>
+                <div class="term-desc">角色创建时投 1d100 + 种族生育率 = 基础生育率上限。繁育时双方各投一次生育率检定，均低于自身生育率才算受孕成功。成功后双方生育率各永久扣除 20 点。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="进餐 Dining 食物 营养">
+                <div class="term-header">
+                    <span class="term-name">进餐</span>
+                    <span class="term-abbr">Dining</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 进餐</span>
+                </div>
+                <div class="term-desc">仅能在<strong>脱离战斗</strong>的状态下食用方可触发食物增益效果、恢复营养值。药剂不计入进餐。长期断餐大幅损耗营养值（特殊种族受限规则由 GM 裁定）。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="营养值 Nutrition 断餐 流失">
+                <div class="term-header">
+                    <span class="term-name">营养值</span>
+                    <span class="term-abbr">Nutrition</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 进餐 / 环境与生存</span>
+                </div>
+                <div class="term-desc">角色的生存指标，通过进餐恢复。长期断餐或身处严寒/酷热环境会加速营养损耗，严重时触发各类恶性负面状态。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="华丽值 Splendor 魅力 外貌 气质">
+                <div class="term-header">
+                    <span class="term-name">华丽值</span>
+                    <span class="term-abbr">Splendor</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 华丽值的交流</span>
+                </div>
+                <div class="term-desc">综合代表人物整体吸引力（样貌、才学、气质等），常人基准为 <strong>10</strong>。穿戴服饰可额外加成。数值高于 10 可简化 NPC 交涉难度，有机会解锁专属隐藏剧情；低于 10 给人落魄粗鄙观感。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="学习检定 Learning Check 研习 习得">
+                <div class="term-header">
+                    <span class="term-name">学习检定</span>
+                    <span class="term-abbr">Learning Check</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 学习与规划</span>
+                </div>
+                <div class="term-desc">角色未曾掌握的专修、语种、法术、武技均通过学习检定完成习得。基准难度为 <strong>5</strong>，GM 视条件上下调整。单次成功后录入研习清单，每日一次学习检定，累计达标即可正式习得。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="研习清单 Study List 研习周期 进修值">
+                <div class="term-header">
+                    <span class="term-name">研习清单</span>
+                    <span class="term-abbr">Study List</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 学习与规划</span>
+                </div>
+                <div class="term-desc">学习检定成功后的待完成技能队列，由 GM 设定研习周期与通关难度。可消耗 <strong>1 点成长点数</strong>直接速成。同时承载项目上限由自身<strong>进修值</strong>决定。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="成长点数 Growth 速成">
+                <div class="term-header">
+                    <span class="term-name">成长点数</span>
+                    <span class="term-abbr">Growth Points</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 学习与规划</span>
+                </div>
+                <div class="term-desc">消耗 1 点成长点数可直接速成研习清单内任意一项技能，无需等待研习周期完成。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="散热 Heat Dissipation 高温 火焰抗性 熔岩">
+                <div class="term-header">
+                    <span class="term-name">散热</span>
+                    <span class="term-abbr">Heat Dissipation</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 环境与生存</span>
+                </div>
+                <div class="term-desc">削减高温环境造成的营养流失，依据散热等级<strong>逐级折半</strong>，最低归零。每 1 点火焰/熔岩抗性等效增加 1 点散热属性。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="御寒 Cold Resistance 严寒 冰霜抗性">
+                <div class="term-header">
+                    <span class="term-name">御寒</span>
+                    <span class="term-abbr">Cold Resistance</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 环境与生存</span>
+                </div>
+                <div class="term-desc">削减严寒环境造成的营养流失，依据御寒等级<strong>逐级折半</strong>，最低归零。每 1 点冰霜抗性等效增加 1 点御寒属性。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="储格 Storage Slot 背包 容量">
+                <div class="term-header">
+                    <span class="term-name">储格</span>
+                    <span class="term-abbr">Storage Slot</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 储格与特殊储物</span>
+                </div>
+                <div class="term-desc">角色标配容量计量单位。标注储格属性的容器仅可收纳占用格数不超限的物件；不能装入体型超出容积的生物。体型 1 级生物在容器未达对等规格时收纳不计储格消耗。标注可存气态/液态的容器才可存放液体与气体。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="药剂 Potion 药水 药丸">
+                <div class="term-header">
+                    <span class="term-name">药剂</span>
+                    <span class="term-abbr">Potion</span>
+                    <span class="term-ref">规则书 · 交流与生活 · 药剂服用</span>
+                </div>
+                <div class="term-desc">药剂、药水、药丸增益效果突出，<strong>战斗阶段亦可服用</strong>，单次服用消耗 1 次耐力行动。不计入进餐范畴。</div>
+                <div class="term-tags"><span class="term-tag tag-life">生活</span></div>
+            </div>
         </div>
+
+        <!-- ==================== 经营与管理 ==================== -->
+        <div class="cat-section" data-category="manage">
+            <h2 class="cat-title"><span class="cat-icon">🏛</span>经营与管理 <span class="cat-count" id="count-manage"></span></h2>
+
+            <div class="term-card" data-keywords="短期推进 Short-term 一日 上午 下午 傍晚">
+                <div class="term-header">
+                    <span class="term-name">短期推进</span>
+                    <span class="term-abbr">Short-term</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 时间快速推进</span>
+                </div>
+                <div class="term-desc">以<strong>一日</strong>为一轮，划分为上午、下午、傍晚 3 个回合。每进行一个回合均触发随机遭遇。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="中期推进 Mid-term 一周 4回合">
+                <div class="term-header">
+                    <span class="term-name">中期推进</span>
+                    <span class="term-abbr">Mid-term</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 时间快速推进</span>
+                </div>
+                <div class="term-desc">以<strong>一周</strong>为一轮，共计 4 个回合。每进行一个回合均触发随机遭遇。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="长期推进 Long-term 一月 每周">
+                <div class="term-header">
+                    <span class="term-name">长期推进</span>
+                    <span class="term-abbr">Long-term</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 时间快速推进</span>
+                </div>
+                <div class="term-desc">以<strong>一月</strong>为一轮，每周计为 1 个回合。每进行一个回合均触发随机遭遇。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="随机遭遇 Random Encounter 厄数 圣数 随机事件">
+                <div class="term-header">
+                    <span class="term-name">随机遭遇</span>
+                    <span class="term-abbr">Random Encounter</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 制定计划</span>
+                </div>
+                <div class="term-desc">时间快进期间每回合触发，GM 结合<strong>厄数、圣数</strong>判定随机短剧情，包含突发事件、遭遇战斗、经营收益增减等，均对后续冒险与发展产生影响。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="学习计划 Learning Plan 训练 专修等级">
+                <div class="term-header">
+                    <span class="term-name">学习计划</span>
+                    <span class="term-abbr">Learning Plan</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 制定计划</span>
+                </div>
+                <div class="term-desc">专项学习计划，通过针对性训练加快研习进度或提升指定专修等级。GM 设定目标与截止时限，完成日常行动或随机遭遇后领取对应奖励。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="专业制作 Crafting 制作 锻造 成品">
+                <div class="term-header">
+                    <span class="term-name">专业制作</span>
+                    <span class="term-abbr">Crafting</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 制定计划</span>
+                </div>
+                <div class="term-desc">专项制作项目，逐步推进制作进度获得对应成品。玩家确立制作目标，GM 划定完成条件与时限。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="生活工作 Daily Work 酒馆 营业 日常">
+                <div class="term-header">
+                    <span class="term-name">生活工作</span>
+                    <span class="term-abbr">Daily Work</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 制定计划</span>
+                </div>
+                <div class="term-desc">日常生活与工作规划，不设置固定最终时限。执行期间的随机事件会影响角色与 NPC 关系、产业经营收益等。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="威望 Prestige 声望 好感度 效率">
+                <div class="term-header">
+                    <span class="term-name">威望</span>
+                    <span class="term-abbr">Prestige</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 威望</span>
+                </div>
+                <div class="term-desc">体现角色与村镇、城邦的人际及势力关系。每 1 点威望提升参与本地剧情、开展城镇管理的效率，数值越高声望与好感度越好。统一由 GM 记录。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="城镇管理 Town Management 城邦 募兵 委派">
+                <div class="term-header">
+                    <span class="term-name">城镇管理</span>
+                    <span class="term-abbr">Town Management</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 城镇管理</span>
+                </div>
+                <div class="term-desc">角色身份地位提升后可开启，合理统筹收获威望、经济收益、兵力等回报。可委派 NPC 代为打理（结果仍由角色承担）。过程中随机事件可能导致任务失败或延后进度。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="生活资源 Living Resources 宅邸 产业 家具 奢侈品">
+                <div class="term-header">
+                    <span class="term-name">生活资源</span>
+                    <span class="term-abbr">Living Resources</span>
+                    <span class="term-ref">规则书 · 经营与管理 · 生活资源</span>
+                </div>
+                <div class="term-desc">角色拥有的宅邸、产业、家具、奢侈品等私人财物。具备实际价值也是沉浸式 RP 的重要内容。资产体量较大时 GM 可酌情简化明细记录。</div>
+                <div class="term-tags"><span class="term-tag tag-manage">经营</span></div>
+            </div>
+        </div>
+
+        <!-- ==================== 世界观 ==================== -->
+        <div class="cat-section" data-category="world">
+            <h2 class="cat-title"><span class="cat-icon">🌌</span>世界观 <span class="cat-count" id="count-world"></span></h2>
+
+            <div class="term-card" data-keywords="灰烬 Ash 本源 守恒">
+                <div class="term-header">
+                    <span class="term-name">灰烬</span>
+                    <span class="term-abbr">The Ash</span>
+                    <span class="term-ref">世界观</span>
+                </div>
+                <div class="term-desc">宇宙的本源，万事万物的最初形态与最终归宿。不可视觉化、不可触摸、不可测量。守恒，总量固定，不增不减，只是在世间以不同的面貌流转轮回。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="空洞浩劫 Hollow Cataclysm 灰烬之日">
+                <div class="term-header">
+                    <span class="term-name">空洞浩劫</span>
+                    <span class="term-abbr">AH 0 — The Ash Day</span>
+                    <span class="term-ref">世界观</span>
+                </div>
+                <div class="term-desc">天空崩裂出无法修补的伤口，金属粉尘与天体碎片倾泻而下。后世称之为「灰烬之日」，标志着万神纪的终结和空洞浩劫时代的开始。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="灰烬结晶 Ash Crystals 结晶 金属粉尘">
+                <div class="term-header">
+                    <span class="term-name">灰烬结晶</span>
+                    <span class="term-abbr">Ash Crystals</span>
+                    <span class="term-ref">世界观</span>
+                </div>
+                <div class="term-desc">高浓度灰烬凝结物，从天空裂口中倾泻而下的金属粉尘。改变了星球大气成分，扭曲了地壳能量脉络，永久性重塑了世界对魔法的感知方式。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="奥术 Arcane 演算 推导 研究">
+                <div class="term-header">
+                    <span class="term-name">奥术</span>
+                    <span class="term-abbr">Arcane Magic</span>
+                    <span class="term-ref">世界观</span>
+                </div>
+                <div class="term-desc">灰烬本源能量的变体，是生物大脑的计算能力与想象力的结合产物。掌握奥术只能通过精密演算、逻辑推导与深度研究。奥术攻击无法暴击。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="神术 Divine 信仰 戒律">
+                <div class="term-header">
+                    <span class="term-name">神术</span>
+                    <span class="term-abbr">Divine Magic</span>
+                    <span class="term-ref">世界观</span>
+                </div>
+                <div class="term-desc">灰烬本源能量的另一种体现。神明体内的灰烬能量经二次变更后以神术传播给信徒。比奥术更强大更易掌握，但受教条与戒律严格约束。神术攻击无法暴击。可触发圣佑防护。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="余烬纪元 After-Hollow AH 纪年">
+                <div class="term-header">
+                    <span class="term-name">余烬纪元</span>
+                    <span class="term-abbr">A.H. — After Hollow</span>
+                    <span class="term-ref">世界观</span>
+                </div>
+                <div class="term-desc">空洞浩劫之后的纪年方式。本游戏主线故事开始于 AH 8，即浩劫之后的第八年。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="灰烬感应度 Ash Sensitivity 感知 波动">
+                <div class="term-header">
+                    <span class="term-name">灰烬感应度</span>
+                    <span class="term-abbr">Ash Sensitivity</span>
+                    <span class="term-ref">世界观</span>
+                </div>
+                <div class="term-desc">角色对周围灰烬能量浓度的感知能力。感应度高的角色可以察觉附近的魔法波动、隐藏的灰烬结晶，甚至预测某些天灾的发生。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="十二圣工 Twelve Labors 半神 英雄 职业">
+                <div class="term-header">
+                    <span class="term-name">十二圣工</span>
+                    <span class="term-abbr">The Twelve Labors</span>
+                    <span class="term-ref">世界观</span>
+                </div>
+                <div class="term-desc">万神纪末期的十二位半神/英雄，在空洞浩劫中发挥了关键作用。后世以他们的名字命名了十二种核心职业。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="灵涅 Soul Nirvana 特殊存在 灰烬 灵能">
+                <div class="term-header">
+                    <span class="term-name">灵涅</span>
+                    <span class="term-abbr">Soul Nirvana</span>
+                    <span class="term-ref">世界观 · 灰烬世界</span>
+                </div>
+                <div class="term-desc">通过<strong>烬量子</strong>进行<strong>魂转</strong>，从地球意识转移而来的特殊存在。穿梭过程中失去地球记忆，在神明退变中化为灰烬飘散于各智慧星球。获得灰烬灵能的新生儿即被称为灵涅。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="烬量子 Ember Quantum 意识转移 魂转 物质">
+                <div class="term-header">
+                    <span class="term-name">烬量子</span>
+                    <span class="term-abbr">Ember Quantum</span>
+                    <span class="term-ref">世界观 · 灰烬世界</span>
+                </div>
+                <div class="term-desc">2030 年地球科学家为应对<strong>蜕化病毒</strong>危机而提炼出的特殊物质。能够执行<strong>魂转</strong>——将人体意识从地球转移至<strong>灰烬宇宙</strong>，但转移过程不可逆且无法保留原有记忆。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="蜕化病毒 Devolution Virus 2030 地球 危机">
+                <div class="term-header">
+                    <span class="term-name">蜕化病毒</span>
+                    <span class="term-abbr">Devolution Virus</span>
+                    <span class="term-ref">世界观 · 灰烬世界</span>
+                </div>
+                <div class="term-desc">2030 年在现实地球爆发的空前危机，使全球生物处于不断蜕化的威胁中。联合国委派科学家研制解药未果，最终催生了<strong>烬量子</strong>与<strong>魂转</strong>计划。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="魂转 Soul Transfer 意识转移 休眠仓">
+                <div class="term-header">
+                    <span class="term-name">魂转</span>
+                    <span class="term-abbr">Soul Transfer</span>
+                    <span class="term-ref">世界观 · 灰烬世界</span>
+                </div>
+                <div class="term-desc">通过<strong>烬量子</strong>将人体意识从地球转移至<strong>灰烬宇宙</strong>的过程。参与者将躯体留存在地球休眠仓中，意识则化为新生灵魂飘散于各智慧星球。魂转不保留地球记忆。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="灰烬宇宙 Ash Universe 新宇宙 意识转移">
+                <div class="term-header">
+                    <span class="term-name">灰烬宇宙</span>
+                    <span class="term-abbr">Ash Universe</span>
+                    <span class="term-ref">世界观 · 灰烬世界</span>
+                </div>
+                <div class="term-desc">与地球截然不同的全新宇宙，是<strong>魂转</strong>后意识的归宿。包含<strong>特达卡西亚</strong>在内的无数智慧星球。灰烬能量在此以奥术、神术等形式流转。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="灵能 Psychic Energy 灰烬 灵力 意念">
+                <div class="term-header">
+                    <span class="term-name">灵能</span>
+                    <span class="term-abbr">Psychic Energy</span>
+                    <span class="term-ref">世界观 · 灰烬世界</span>
+                </div>
+                <div class="term-desc">灰烬能量的一种表现形式，充斥于从空中飘散的每一粒灰烬之中。灵涅因获得灵能而具备特殊性，是念重攻击、精神攻击等能力的能量来源。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="特达卡西亚 Tedacia 星球 格维恩 四天一周">
+                <div class="term-header">
+                    <span class="term-name">特达卡西亚</span>
+                    <span class="term-abbr">Tedacia</span>
+                    <span class="term-ref">世界观</span>
+                </div>
+                <div class="term-desc">灰烬世界首个官方展示行星，表面 32.3% 为陆地，66.7% 为海洋。拥有与地球截然不同的天体运行规律：太阳与月亮大小相等、一年 461 日、一月 34–36 日、一周四天、五季轮回。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+
+            <div class="term-card" data-keywords="四重环盘 The Four Rings 环首日 环心日 环躯日 环尾日">
+                <div class="term-header">
+                    <span class="term-name">四重环盘</span>
+                    <span class="term-abbr">The Four Rings</span>
+                    <span class="term-ref">世界观 · 特达卡西亚</span>
+                </div>
+                <div class="term-desc">特达卡西亚天体系统中无法直接观测的四重特殊环盘。太阳透过环盘四处不同位置照耀地表，由此将一周划分为<strong>环首日、环心日、环躯日、环尾日</strong>四天。</div>
+                <div class="term-tags"><span class="term-tag tag-world">世界观</span></div>
+            </div>
+        </div>
+
     </main>
 
     <nav class="bottom-nav">
@@ -120,14 +1350,91 @@
         <a href="worldview.html">世界观</a>
         <a href="map.html">地图</a>
         <a href="races.html">种族</a>
-        <a href="rules.html">规则</a>
+        <a href="rules.html">游戏规则</a>
         <a href="modules.html">模组</a>
-        <a href="works.html">衍生</a>
-        <a href="merch.html">商店</a>
+        <a href="works.html">衍生作品</a>
+        <a href="merch.html">周边产品</a>
     </nav>
 
     <footer class="footer">
         <p>灰烬世界 Ash World &copy; 2026 桌游工作室</p>
     </footer>
+
+    <script>
+        // 统计术语数量
+        const allCards = document.querySelectorAll('.term-card');
+        document.getElementById('totalCount').textContent = allCards.length;
+
+        // 各分类计数
+        document.querySelectorAll('.cat-section').forEach(sec => {
+            const cat = sec.dataset.category;
+            const count = sec.querySelectorAll('.term-card').length;
+            const el = document.getElementById('count-' + cat);
+            if (el) el.textContent = count + ' 条';
+        });
+
+        // 分类筛选
+        const catBtns = document.querySelectorAll('.cat-btn');
+        const catSections = document.querySelectorAll('.cat-section');
+
+        catBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                catBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const cat = btn.dataset.cat;
+
+                catSections.forEach(sec => {
+                    if (cat === 'all') {
+                        sec.classList.remove('hidden');
+                    } else {
+                        sec.classList.toggle('hidden', sec.dataset.category !== cat);
+                    }
+                });
+
+                // 重新应用搜索
+                applySearch();
+            });
+        });
+
+        // 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        const noResult = document.getElementById('noResult');
+
+        searchInput.addEventListener('input', applySearch);
+
+        function applySearch() {
+            const query = searchInput.value.trim().toLowerCase();
+            const activeCat = document.querySelector('.cat-btn.active').dataset.cat;
+            let visibleCount = 0;
+
+            allCards.forEach(card => {
+                const section = card.closest('.cat-section');
+                const sectionHidden = section.classList.contains('hidden');
+
+                if (sectionHidden) {
+                    card.classList.add('hidden');
+                    return;
+                }
+
+                if (!query) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
+                    return;
+                }
+
+                const keywords = (card.dataset.keywords || '').toLowerCase();
+                const name = card.querySelector('.term-name')?.textContent.toLowerCase() || '';
+                const abbr = card.querySelector('.term-abbr')?.textContent.toLowerCase() || '';
+                const desc = card.querySelector('.term-desc')?.textContent.toLowerCase() || '';
+                const ref = card.querySelector('.term-ref')?.textContent.toLowerCase() || '';
+
+                const match = keywords.includes(query) || name.includes(query) || abbr.includes(query) || desc.includes(query) || ref.includes(query);
+                card.classList.toggle('hidden', !match);
+                if (match) visibleCount++;
+            });
+
+            noResult.classList.toggle('show', visibleCount === 0 && query !== '');
+        }
+    </script>
 </body>
 </html>

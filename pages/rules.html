@@ -5,9 +5,158 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>游戏规则 — 灰烬世界</title>
     <link rel="stylesheet" href="common.css">
+    <style>
+        /* 章节标签页 */
+        .chapter-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--ash-gold-dim);
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+        }
+        .chapter-tab {
+            padding: 10px 28px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            color: var(--ash-text);
+            background: var(--ash-gray);
+            border: 1px solid var(--ash-light);
+            border-bottom: none;
+            transition: all 0.2s;
+            position: relative;
+            top: 2px;
+        }
+        .chapter-tab:hover { color: var(--ash-gold); background: var(--ash-medium); }
+        .chapter-tab.active {
+            color: var(--ash-gold);
+            background: var(--ash-medium);
+            border-color: var(--ash-gold-dim);
+            border-bottom: 2px solid var(--ash-medium);
+        }
+        .chapter-panel { display: none; }
+        .chapter-panel.active { display: block; }
+
+        /* 规则条目卡片 */
+        .rule-section {
+            margin-bottom: 40px;
+        }
+        .rule-subsection {
+            background: var(--ash-gray);
+            border-left: 3px solid var(--ash-gold-dim);
+            padding: 18px 22px;
+            margin: 16px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .rule-subsection h3 {
+            color: var(--ash-gold);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.05rem;
+            margin-bottom: 10px;
+        }
+        .rule-subsection p {
+            color: var(--ash-text);
+            line-height: 1.85;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+        .rule-subsection p:last-child { margin-bottom: 0; }
+
+        /* 攻击类型表格 */
+        .attack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .attack-card {
+            background: var(--ash-gray);
+            border: 1px solid var(--ash-light);
+            border-top: 3px solid var(--ash-red);
+            padding: 16px 18px;
+            border-radius: 0 0 4px 4px;
+        }
+        .attack-card h4 {
+            color: var(--ash-ember);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        .attack-card p {
+            color: var(--ash-text);
+            font-size: 0.88rem;
+            line-height: 1.7;
+            margin-bottom: 6px;
+        }
+        .attack-card .tag-row {
+            margin-top: 8px;
+        }
+        .tag-avail { color: #6bba6b; font-size: 0.82rem; }
+        .tag-unavail { color: #ba6b6b; font-size: 0.82rem; }
+        .tag-special { color: #c9a84c; font-size: 0.82rem; }
+
+        /* 章节引言 */
+        .chapter-intro {
+            background: linear-gradient(135deg, var(--ash-darker), var(--ash-gray));
+            border: 1px solid var(--ash-gold-dim);
+            border-radius: 4px;
+            padding: 20px 28px;
+            margin-bottom: 36px;
+            font-style: italic;
+            color: var(--ash-gold-dim);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1rem;
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        /* 快速参考框 */
+        .quick-ref {
+            background: var(--ash-darker);
+            border: 1px dashed var(--ash-gold-dim);
+            border-radius: 4px;
+            padding: 16px 20px;
+            margin: 16px 0;
+            font-size: 0.88rem;
+            color: var(--ash-text);
+            line-height: 1.8;
+        }
+        .quick-ref strong { color: var(--ash-gold); }
+
+        /* 示例引用块 */
+        .example-block {
+            background: rgba(201, 168, 76, 0.05);
+            border-left: 2px solid var(--ash-gold-dim);
+            padding: 12px 18px;
+            margin: 10px 0;
+            font-size: 0.88rem;
+            color: #9a9080;
+            font-style: italic;
+        }
+        .example-block strong { color: var(--ash-gold-dim); font-style: normal; }
+
+        /* 时间推进档位 */
+        .time-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 16px 0;
+        }
+        @media(max-width:700px){ .time-cards { grid-template-columns: 1fr; } }
+        .time-card {
+            background: var(--ash-gray);
+            border: 1px solid var(--ash-light);
+            border-top: 3px solid var(--ash-blue);
+            padding: 14px 16px;
+            border-radius: 0 0 4px 4px;
+        }
+        .time-card h4 { color: #6baabb; font-size: 0.95rem; margin-bottom: 8px; }
+        .time-card p { color: var(--ash-text); font-size: 0.88rem; line-height: 1.7; }
+    </style>
 </head>
 <body>
-        <nav class="top-nav">
+    <nav class="top-nav">
         <a href="../index.html" class="nav-brand"><span>灰烬世界</span></a>
         <div class="nav-links">
             <div class="nav-item"><a href="news.html">最新资讯</a></div>
@@ -20,7 +169,7 @@
                 </div>
             </div>
             <div class="nav-item">
-                <span>规则&模组</span>
+                <span>规则&amp;模组</span>
                 <div class="nav-dropdown">
                     <a href="rules.html">规则书</a>
                     <a href="character-sheet.html">角色卡</a>
@@ -47,198 +196,434 @@
     </header>
 
     <main class="content">
-        <h2 class="section-title">核心机制概述</h2>
-        <div class="text-block">
-            《灰烬世界》采用<strong>3d6（三颗六面骰）</strong>作为核心判定系统。相比传统的 d20 系统，3d6 呈现出更接近正态分布的概率曲线，让角色的属性与技能训练真正有意义——高手不会频繁失手，新手也不会侥幸常胜。
-        </div>
-        <div class="text-block">
-            判定流程：掷 3d6 + 属性修正 + 技能等级 + 情境修正，对比目标难度值（TN）。等于或超过 TN 即为成功，超出越多效果越好。
-        </div>
-        <div class="text-block">
-            <strong>灰烬骰（Ash Dice）</strong>：当剧情进入关键时刻，主持人可宣告启用灰烬骰。此时玩家额外掷一颗特殊的灰烬色 d6，其结果可替代三颗普通骰中最低的一颗，象征着灰烬之力对命运的干预。
+
+        <!-- 章节标签页 -->
+        <div class="chapter-tabs">
+            <div class="chapter-tab active" data-panel="combat">⚔ 战斗与挑战</div>
+            <div class="chapter-tab" data-panel="life">🗣 交流与生活</div>
+            <div class="chapter-tab" data-panel="manage">🏛 经营与管理</div>
         </div>
 
-        <h2 class="section-title">父神体系</h2>
-        <div class="text-block">
-            父神体系以<strong>德米乌尔格斯</strong>（匠神之父）为至高神，主管锻造、工艺、建筑与雕塑。父神信徒崇尚创造与秩序，认为世间万物皆可被塑造、被理解、被改造。
-        </div>
-        <table class="data-table">
-            <thead>
-                <tr><th>神祇</th><th>身份</th><th>神职</th><th>象征</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>德米乌尔格斯</td><td>父神、造物主</td><td>锻造、工艺、建筑、雕塑</td><td>天球仪、双头锤、铁砧与火、槲寄生</td></tr>
-                <tr><td>尤里昂</td><td>长子</td><td>引导、排列组合、命运塑造</td><td>指模、水晶簇、竖琴、三根羽毛、金雀花</td></tr>
-                <tr><td>兹尔戈斯</td><td>长女（尤里昂之妹）</td><td>守序、划界、惩戒</td><td>织布、蜂巢、日晷、蜘蛛网、纺锤</td></tr>
-                <tr><td>生命熔炉</td><td>尤里昂的弟弟</td><td>生命起源、演化、轮回</td><td>火山、熔炉、鲑鱼、橡树果</td></tr>
-                <tr><td>亚弗拉克斯</td><td>父神的仆从</td><td>筛选、淘汰、引导亡魂</td><td>回廊、渡鸦、荆棘、银色镰刀</td></tr>
-            </tbody>
-        </table>
+        <!-- ===================== 第一章：战斗与挑战 ===================== -->
+        <div class="chapter-panel active" id="panel-combat">
 
-        <h2 class="section-title">母神体系</h2>
-        <div class="text-block">
-            母神体系以<strong>时序海妖（Chronoscylla）</strong>为至高神，主管时间管理、秩序起源与最终命运。母神信徒相信万物皆有其时，强行逆天而行者终将遭到时间的反噬。
-        </div>
-        <table class="data-table">
-            <thead>
-                <tr><th>神祇</th><th>身份</th><th>神职</th><th>象征</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>时序海妖</td><td>母神、秩序之母</td><td>时间管理、秩序起源、最终命运</td><td>星盘、螺旋贝壳、钟摆</td></tr>
-                <tr><td>艾奥尼亚</td><td>长女</td><td>观察过去、记忆、见证历史</td><td>琥珀、梦境、古橡树、溪流</td></tr>
-                <tr><td>帕诺普塔</td><td>二女儿</td><td>洞察现在、记录当下</td><td>鹰、平静湖面、白色三叶草</td></tr>
-                <tr><td>卡珊德拉</td><td>三女儿</td><td>预警、告诫</td><td>迷雾岔路口、双刃剑、水晶球、染血的羽毛</td></tr>
-                <tr><td>虚无冠冕</td><td>母神的奴仆</td><td>回归虚无、循环更替</td><td>日蚀、寂静墓地、新月、黑土、冬眠种子</td></tr>
-            </tbody>
-        </table>
+            <div class="chapter-intro">
+                执兵在握、引法于身，兵刃与法术相辅相成，以兵器之姿承载灰烬威能，<br>
+                于交手间挥出兼具武技与法术的独斗章法。
+            </div>
 
-        <h2 class="section-title">深渊之神体系</h2>
-        <div class="text-block">
-            深渊之神是<strong>虚无冠冕的阴影</strong>，代表着与母神秩序完全相反的力量——遗忘、瓦解、终结。深渊之神并非邪恶，而是宇宙循环中不可或缺的另一半。
-        </div>
-        <table class="data-table">
-            <thead>
-                <tr><th>神祇</th><th>身份</th><th>神职</th><th>象征</th></tr>
-            </thead>
-            <tbody>
-                <tr><td>遗忘深渊</td><td>虚无冠冕的阴影、冥界</td><td>遗忘、虚无、抹除痕迹</td><td>黑曜石镜面、熄灭星辰、螺旋迷宫、深井、褪色壁画</td></tr>
-                <tr><td>涅斯托斯</td><td>母神的私生子，深渊义肢</td><td>瓦解、消融僵化结构</td><td>锈迹、腐烂水果、落叶、朽木、蛇蜕</td></tr>
-                <tr><td>莱忒</td><td>涅斯托斯的哥哥，深渊义肢</td><td>抹除存在、剥夺意义</td><td>无回声山谷、消散足迹、空无渡口</td></tr>
-                <tr><td>阿那库隆</td><td>涅斯托斯的姐姐，深渊义肢</td><td>终结循环、归还自身</td><td>衔尾蛇、闭合圆环、空旷王座、静止沙漏、坍塌洞穴</td></tr>
-                <tr><td>阿拉温</td><td>虚无冠冕的半神化身</td><td>死亡、亡灵、轮回、审判</td><td>天平</td></tr>
-            </tbody>
-        </table>
+            <!-- 战斗准则 -->
+            <div class="rule-section">
+                <h2 class="section-title">战斗准则</h2>
+                <div class="text-block">
+                    在 EW 世界中，冲突引发的战斗无可避免。所有参战单位遵循统一基础行动框架：角色默认拥有<strong>两次耐力行动（EB）</strong>与<strong>一次施法行动（MB）</strong>；角色的核心属性将改动上述基础行动配额，细则详见角色创建·属性条目。
+                </div>
+                <div class="text-block">
+                    EW 采用<strong>轮次制</strong>结算整场战斗。战斗开启后，所有参战单位需进行<strong>行动顺位判定</strong>：投掷 3 枚基础 d8 检定骰，结果叠加自身速度属性，依照最终合计数值从高至低排布行动先后。一轮完整流程为全部参战单位依次走完个人行动回合，单轮战斗统一折算现实时长约十秒。
+                </div>
+                <div class="text-block">
+                    角色在自身回合内，除固有耐力行动（EB）、施法行动（MB）之外，拥有等同于自身<strong>速度数值的自由移动距离</strong>，计量单位为米。战场优先采用多边形格位对局，单格间距等于 1 米；部分小规模场景可舍弃棋盘，以实时丈量米数判定距离。
+                </div>
 
-        <h2 class="section-title">小神与荒野神</h2>
-        <div class="card-grid">
-            <div class="card">
-                <h3>安温（丰饶女神）</h3>
-                <p>尤里昂和兹尔戈斯的女儿。神职：农业、丰收、牲畜。</p>
+                <div class="quick-ref">
+                    <strong>开局类型</strong><br>
+                    <strong>遭遇战：</strong>交战双方同步进入战斗轮，全员统一投掷行动顺位，按检定结果排序回合先后。<br>
+                    <strong>袭击战：</strong>偷袭方可抢先执行一次无前置轮次的任意攻击（禁用速率词条）；首轮行动阶段，被袭击方优先顺位，可自主调整己方与敌方的行动排序。
+                </div>
             </div>
-            <div class="card">
-                <h3>埃兰（治愈之神）</h3>
-                <p>安温的孪生兄弟。神职：大自然、生命、精神疗愈。</p>
-            </div>
-            <div class="card">
-                <h3>瑞安农（家庭与婚姻女神）</h3>
-                <p>安温和埃兰的女儿。神职：家庭、婚姻、生育、爱与失去。</p>
-            </div>
-            <div class="card">
-                <h3>塞恩（狩猎之神）</h3>
-                <p>生命熔炉的兄弟。神职：狩猎、森林、野物。</p>
-            </div>
-            <div class="card">
-                <h3>艾丽尔（水域女神）</h3>
-                <p>时序海妖的妹妹。神职：海洋、河流、渔业、航海、潮汐。</p>
-            </div>
-            <div class="card">
-                <h3>马布斯（贸易与旅行之神）</h3>
-                <p>艾丽尔的仆从。神职：贸易、旅行、道路、交流。</p>
-            </div>
-            <div class="card">
-                <h3>克莱德温（诗歌音乐艺术女神）</h3>
-                <p>艾奥尼亚和卡珊德拉的妹妹。神职：诗歌、音乐、艺术、灵感。</p>
-            </div>
-            <div class="card">
-                <h3>贝伦（战争与光辉之神）</h3>
-                <p>塞恩的私生子（半神）。神职：战争、勇气、胜利、荣誉、光明、正义。</p>
-            </div>
-        </div>
 
-        <h2 class="section-title">纳入荒野神的神兽</h2>
-        <div class="card-grid">
-            <div class="card">
-                <h3>赤蹄（卡莱顿）</h3>
-                <p>塞恩庇护的神兽。在雷火中诞生，拥有火焰治愈与火焰惩罚的双重能力，可号令动物。</p>
+            <!-- 行动类型 -->
+            <div class="rule-section">
+                <h2 class="section-title">行动类型</h2>
+                <div class="rule-subsection">
+                    <h3>耐力行动 (EB)</h3>
+                    <p>耐力行动可执行各类消耗 EP 点数的行为。部分行为无固定 EP 消耗，但经 GM 判定需占用耐力行动额度的，统一定义为<strong>即兴行动</strong>。即兴行动的实际 EP 损耗与耐力行动占用规格，最终由 GM 根据场景判定裁定。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>施法行动 (MB)</h3>
+                    <p>施法行动可执行各类法术释放的行为。部分施法可能具有 EP 消耗，或额外的耐力行动损耗。</p>
+                </div>
             </div>
-            <div class="card">
-                <h3>银爪（维亚斯）</h3>
-                <p>艾丽尔庇护的神兽。诞生于巨人洞穴，可控制气象与闪电。</p>
+
+            <!-- 攻击与防御 -->
+            <div class="rule-section">
+                <h2 class="section-title">基础攻击与防御</h2>
+                <div class="rule-subsection">
+                    <h3>基础攻击</h3>
+                    <p>所有基础攻击均由标注<strong>（A）类专修</strong>判定生效。单次耐力行动期间，角色仅能施展单一专修类型的基础攻击，以对应专修检定结果作为本次攻击的命中判定，攻击范围以自身可触及距离为准。</p>
+                    <p>攻击命中后，目标需做出对应防御应答并判定是否进行防御。若目标放弃防御或防御判定失败，将全额承受本次攻击造成的伤害。</p>
+                    <p>若基础攻击附带<strong>速率词条</strong>，词条后的数值代表该次耐力行动内此基础攻击的最大可释放次数。每一次攻击均需单独进行命中检定，并支付对应 EP 消耗。</p>
+                    <p>若基础攻击附带<strong>迟缓词条</strong>，则该攻击无法以单次耐力行动发动，必须消耗两点耐力行动方可完成一次攻击释放。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>基础防御</h3>
+                    <p>所有基础攻击的对抗判定，均由标注<strong>（B）类专修</strong>负责生效。角色应答防御无需消耗任何耐力行动，但每一次防御行为都需要支付对应防御专修的 EP 消耗，并投掷该防御专修检定，与攻击者的攻击专修检定结果进行对抗。</p>
+                    <p>若防御检定结果<strong>大于或等于</strong>攻击检定结果，视为防御成功，角色完全豁免本次攻击伤害；若防御检定结果<strong>低于</strong>攻击检定结果，则防御失败，角色承受本次攻击的全部伤害。</p>
+                </div>
             </div>
-            <div class="card">
-                <h3>黑牙（杜布）</h3>
-                <p>阿拉温庇护的神兽。由战死怨念与神力融合而成，可穿梭于生死之间，追捕逃亡的亡灵。</p>
+
+            <!-- 攻击形式 -->
+            <div class="rule-section">
+                <h2 class="section-title">六大攻击形式</h2>
+                <div class="text-block">
+                    游戏内所有攻击拥有专属攻击形态，不同攻击形态对应专属的防御应答方式，无法通用。所有攻击形态均包含两种基础效应：针对单一目标的<strong>单体效应</strong>、覆盖指定区域全体目标的<strong>范围效应</strong>。
+                </div>
+                <div class="attack-grid">
+                    <div class="attack-card">
+                        <h4>① 近战攻击</h4>
+                        <p>以肢体、近战武器为载体发起的近身接触式攻击，少数情况下可触发范围效应。</p>
+                        <div class="tag-row">
+                            <div class="tag-avail">✔ 可用：闪避、翻滚、武器招架、盾牌格挡、规避类法术</div>
+                            <div class="tag-unavail">✘ 不可用：法术拦截</div>
+                        </div>
+                    </div>
+                    <div class="attack-card">
+                        <h4>② 远程攻击</h4>
+                        <p>依托远程武器、法术射击等方式发起的远距离攻击，少数情况下可触发范围效应。</p>
+                        <div class="tag-row">
+                            <div class="tag-avail">✔ 可用：闪避、翻滚、盾牌格挡、法术拦截、规避类法术</div>
+                            <div class="tag-unavail">✘ 不可用：武器招架</div>
+                        </div>
+                    </div>
+                    <div class="attack-card">
+                        <h4>③ 环境攻击</h4>
+                        <p>由特殊地形、环境机制或专属攻击技能触发的范围类伤害，可生效单体效应与范围效应。</p>
+                        <div class="tag-row">
+                            <div class="tag-avail">✔ 可用：翻滚、规避类法术</div>
+                            <div class="tag-unavail">✘ 不可用：武器招架、闪避</div>
+                            <div class="tag-special">◈ 特殊可用：盾牌格挡、法术拦截（特定场景）</div>
+                        </div>
+                    </div>
+                    <div class="attack-card">
+                        <h4>④ 扩散攻击</h4>
+                        <p>爆发式扩散伤害，仅拥有范围效应，无单体攻击形态。</p>
+                        <div class="tag-row">
+                            <div class="tag-avail">✔ 可用：翻滚、盾牌格挡、规避类法术</div>
+                            <div class="tag-unavail">✘ 不可用：武器招架、闪避</div>
+                            <div class="tag-special">◈ 特殊可用：法术拦截（特定场景）</div>
+                        </div>
+                    </div>
+                    <div class="attack-card">
+                        <h4>⑤ 念重攻击</h4>
+                        <p>依托灰烬灵力凝聚意念发起的外力冲击攻击，无范围效应，可完全无视目标护甲，直接施加负面状态与伤害。</p>
+                        <div class="tag-row">
+                            <div class="tag-avail">✔ 可用：用力</div>
+                            <div class="tag-unavail">✘ 不可用：武器招架、闪避、盾牌格挡、翻滚、规避类法术</div>
+                            <div class="tag-special">◈ 特殊可用：法术拦截（特定场景）</div>
+                        </div>
+                    </div>
+                    <div class="attack-card">
+                        <h4>⑥ 精神攻击</h4>
+                        <p>借由灰烬灵力催动意念，直接针对目标精神层面发起的攻击，无范围效应，可无视护甲与肉身防御，强行触发精神负面效果与损伤。</p>
+                        <div class="tag-row">
+                            <div class="tag-avail">✔ 可用：理智</div>
+                            <div class="tag-unavail">✘ 不可用：武器招架、闪避、盾牌格挡、翻滚、规避类法术</div>
+                            <div class="tag-special">◈ 特殊可用：法术拦截（特定场景）</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card">
-                <h3>白鬃（菲翁-梅恩）</h3>
-                <p>瑞安农庇护的神兽。在春雪中诞生，拥有生机抚慰之力，可短暂打破时空界限。</p>
+
+            <!-- 防御形式 -->
+            <div class="rule-section">
+                <h2 class="section-title">防御形式</h2>
+                <div class="text-block">
+                    游戏内所有防御拥有专属防御形态，形式各不相同。一切具备防御效应的专修，均可用于触发对应防御行为。
+                </div>
+                <div class="quick-ref">
+                    <strong>常规防御形式：</strong>闪避、武器招架、盾牌格挡、翻滚、法术拦截、规避类法术<br>
+                    <strong>特殊防御形式：</strong>用力、理智<br>
+                    <strong>反击防御：</strong>角色在执行奔跑、跳跃、游泳等动作时，若途经或脱离一米范围内的目标，所发动的反击攻击，可视为合法的防御对抗手段。
+                </div>
+                <div class="rule-subsection">
+                    <h3>法术拦截</h3>
+                    <p>若角色本轮未使用施法行动，可消耗本轮施法行动，以防御形式释放具备法术拦截效果的法术进行防御，且法术施法范围必须能够覆盖、拦截本次攻击。</p>
+                    <p>持续性维持类法术仅在维持生效阶段可触发法术拦截效果，不同维持法术的拦截适配场景与判定标准由 GM 裁定。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>规避类法术</h3>
+                    <p>若角色本轮未使用施法行动，可消耗本轮施法行动，以防御形式释放带有（B）防御效果的法术进行规避防御。规避类法术并非百分百全额防御，可实现法罩阻隔、瞬时形变等差异化防御效果。</p>
+                </div>
             </div>
-        </div>
 
-        <h2 class="section-title">重要典籍与戒律</h2>
+            <!-- 暴击与武器规则 -->
+            <div class="rule-section">
+                <h2 class="section-title">暴击与武器规则</h2>
+                <div class="rule-subsection">
+                    <h3>近战暴击</h3>
+                    <p>任意近战攻击成功命中目标后，需额外投掷 <strong>1d100 暴击鉴定骰</strong>判定暴击层级。若暴击鉴定结果达到对应暴击区间，将触发递进式暴击增伤效果：</p>
+                    <p>一级暴击区间：本次攻击额外叠加对应专修暴击伤害与武器暴击增值；二级暴击区间：整体暴击伤害倍率翻倍；三级暴击区间：倍率为三倍，以此类推递增。</p>
+                    <p>所有的奥法与神术攻击均<strong>无法具有暴击效果</strong>。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>投掷武器规则</h3>
+                    <p>投掷武器的攻击检定统一依据<strong>投掷专修</strong>判定。角色若无对应投掷专修却强行发动投掷武器攻击，将附加 3 枚惩罚骰。</p>
+                    <p>投掷武器伤害以武器自身基础伤害为准；暴击伤害叠加规则为：对应投掷专修暴击伤害 + 武器暴击增值。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>远程武器规则</h3>
+                    <p>弓、铳等各类远程武器的攻击检定，需依据对应<strong>远程武器专修</strong>判定。角色若无对应武器专修却强行使用该类远程武器攻击，同样附加 3 枚惩罚骰。</p>
+                    <p>远程武器的基础伤害以当前使用的<strong>弹药伤害数值</strong>为准；每完成一次攻击都会消耗对应弹药，且必须执行换弹流程。换弹行为固定占用 1 次耐力行动，无任何 EP 消耗。</p>
+                </div>
+            </div>
 
-        <h3 style="color:var(--ash-gold);margin:20px 0 10px;font-size:1.05rem">《尤里昂圣典》</h3>
-        <div class="text-block">
-            <strong>教条：</strong>顺流、未塑、弦动、聆听。<br>
-            <strong>信徒：</strong>工匠、艺术家、导师。<br>
-            尤里昂的信徒相信命运如琴弦，既已被拨动，便只能随之共鸣。
-        </div>
+            <!-- 伤害与防护体系 -->
+            <div class="rule-section">
+                <h2 class="section-title">伤害与防护体系</h2>
+                <div class="text-block">
+                    伤害扣除遵循固定防护击破顺序：<strong>圣佑 DS → 法罩 MS → 穿戴护甲 AP → 肉体护甲 PA → 生命值 HP</strong>，由前至后逐层抵扣损耗。
+                </div>
+                <div class="rule-subsection">
+                    <h3>法罩 (MS)</h3>
+                    <p>法罩属于奥法专属的特殊防护体系，伤害结算优先级中：圣佑 ＞ 法罩 ＞ 穿戴护甲。法罩可豁免大量类型伤害，并且免疫穿透类精神负面效果；该防护不享受任意伤害抗性减免，防护值仅能通过刷新续存，无法多层叠加累计。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>圣佑 (DS)</h3>
+                    <p>圣佑为神术专属特殊防护，在伤害扣除结算中拥有最高优先级。圣佑能够豁免多类伤害，且抵御各类直接穿透型精神负面效果；常规状态下圣佑不享受任何伤害抗性加成，防护数值仅可刷新存续、不能多层叠加累积。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>穿甲伤害与穿透效应</h3>
+                    <p>穿甲伤害为特殊伤害类型。当穿甲伤害效果命中目标时，将依照<strong>穿戴护甲 AP → 肉体护甲 PA → 生命值 HP</strong>的优先级穿透一层防护，造成固定伤害。穿甲伤害默认无法作用于法罩与圣佑效果，特殊设定标注除外。</p>
+                    <p><strong>穿透效应</strong>为专属伤害特性，拥有该效应的伤害可直接无视目标的穿戴护甲 AP 与肉体护甲 PA，直接作用于目标本体。该效应无法穿透法罩 MS 与圣佑 DS 防护。</p>
+                    <p class="tag-avail">✔ 默认自带穿透效应：神圣伤害、诅咒伤害、疾病伤害、音波伤害</p>
+                </div>
+            </div>
 
-        <h3 style="color:var(--ash-gold);margin:20px 0 10px;font-size:1.05rem">《纺锤法典》（兹尔戈斯）</h3>
-        <div class="text-block">
-            <strong>教条：</strong>万物皆在网中；各司其位；界限神圣；混沌是瑕疵。<br>
-            <strong>惩戒：</strong>生活中的微小异变——羽毛笔分叉、锁卡住、茶水泼洒。<br>
-            兹尔戈斯的信徒相信秩序是宇宙的根本属性，任何越界行为都会遭到现实的反噬。
-        </div>
+            <!-- 特殊战斗规则 -->
+            <div class="rule-section">
+                <h2 class="section-title">特殊战斗规则</h2>
+                <div class="rule-subsection">
+                    <h3>近战反击</h3>
+                    <p>角色每完成一次近战攻击防御应答后，无论本次防御最终成功或失败，均可消耗本轮一次反击行动，对发起攻击的目标回击一次对应的近战基础攻击。</p>
+                    <p>反击攻击无法被二次反击，不存在连锁反击效应。若敌方本次攻击为连击武技且成功命中，角色必须等待敌方完整衔接完所有连击段数与武技效果后，方可执行本次反击行动。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>多持武器</h3>
+                    <p>角色发动多持武器攻击，必须拥有可额外握持武器的副手空位。多持攻击的基础耐力消耗以主手武器的耐力消耗标准为准；每新增一个武器部位同步参与多持攻击，本次攻击需额外消耗 1 点 EP。</p>
+                    <p>多持武器攻击仅判定一次攻击检定，同时整合所有参与本次攻击的副手武器伤害与附加特效，统一结算生效。该类攻击对抗敌方的闪避、武器招架防御时，可额外获得一颗重铸骰。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>演绎描述加值</h3>
+                    <p>在 EW 的战斗体系中，战斗动作的演绎至关重要。玩家可依托 GM 开启的子弹时间，对每一次攻击、防御应答进行沉浸式 RP 战斗动画演绎。</p>
+                    <p>高质量、细节饱满、逻辑合理的战斗演绎，可获得 <strong>1~6 点额外检定加值</strong>。法术释放、远程攻击无法通过 RP 演绎获取额外加值。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>骑乘战斗</h3>
+                    <p>角色上马进入骑乘、下马解除骑乘，单次操作消耗 1 点耐力行动。骑手与坐骑共用同一个行动回合，回合先后顺位取二者先攻检定数值更高者。骑手将丧失自身回合固有基础移动能力；坐骑常驻损耗 1 次耐力行动可用额度。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>水下战斗</h3>
+                    <p>角色转入水下作战后，若无水下适配类特性，每回合仅可动用 1 次耐力行动，所有速率类效果全数失效。在水下进行射击、投掷动作时，武器丧失稳定射程与投射相关词条效果，且该类攻击最终伤害<strong>折算减半</strong>。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>预备行动</h3>
+                    <p>角色可在自身回合内，将一至两个耐力行动设为预备攻击。玩家需清晰描述触发条件与对应动作，该预备效果仅持续至下一名角色回合开始前。所有预备行动均可获得 GM 裁定的检定加值；单个耐力行动仅能对应一项预备行为。</p>
+                </div>
+            </div>
 
-        <h3 style="color:var(--ash-gold);margin:20px 0 10px;font-size:1.05rem">《柯诺斯库拉教义》（时序海妖）</h3>
-        <div class="text-block">
-            <strong>教条：</strong>时间之河；万物皆有时节；未来乃过往之影；宏图的终点是和谐。<br>
-            <strong>惩戒：</strong>时间本身的扭曲——延迟、加速、永恒梦魇。<br>
-            母神信徒敬畏时间，相信每个行动都有其最合适的时机。
-        </div>
+        </div><!-- /panel-combat -->
 
-        <h3 style="color:var(--ash-gold);margin:20px 0 10px;font-size:1.05rem">《阿拉温的教义》</h3>
-        <div class="text-block">
-            <strong>教条：</strong>死亡是清算的起头；汝之一生皆为砝码；生者归于阳光，亡者安于冥土；所有债务终将偿还。<br>
-            <strong>惩戒：</strong>灵魂层面的公正处理（滞纳金、信用不良、销账）。<br>
-            阿拉温的信徒将死亡视为一种会计行为——生前的善恶最终都会在死亡的天平上得到清算。
-        </div>
 
-        <h2 class="section-title">关键历史战争</h2>
-        <table class="data-table">
-            <thead>
-                <tr><th>战争</th><th>时间</th><th>交战方</th><th>结果</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>贸易战争</td>
-                    <td>BHC 245</td>
-                    <td>父神教会 vs 母神教会</td>
-                    <td>贸易领域的长期对抗</td>
-                </tr>
-                <tr>
-                    <td>南方战争（南北战争）</td>
-                    <td>BHC 142–33</td>
-                    <td>奥弗丹 vs 安温提</td>
-                    <td>长期消耗战，最终签署《南北合约》</td>
-                </tr>
-                <tr>
-                    <td>艾比昂渡口之战</td>
-                    <td>BHC 142</td>
-                    <td>安温提 vs 奥弗丹</td>
-                    <td>安温提获胜</td>
-                </tr>
-                <tr>
-                    <td>法凯伦反围剿之战</td>
-                    <td>BHC 138–132</td>
-                    <td>安温提 vs 奥弗丹</td>
-                    <td>安温提惨胜</td>
-                </tr>
-                <tr>
-                    <td>三皇之乱</td>
-                    <td>AH 0–100</td>
-                    <td>瑞坦维亚 vs 奥弗丹 vs 安温提</td>
-                    <td>人类内战，因兽人入侵而中断</td>
-                </tr>
-                <tr>
-                    <td>兽人世界级大战</td>
-                    <td>AH 100–200</td>
-                    <td>兽人钢铁帝国 vs 格维恩各族</td>
-                    <td>阿西纳人与巴伦达人几乎覆灭；木林精与精灵联盟</td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- ===================== 第二章：交流与生活 ===================== -->
+        <div class="chapter-panel" id="panel-life">
+
+            <div class="chapter-intro">
+                构筑故事的核心，在于与整片世界产生联结与交互，<br>
+                化身专属角色，投身大千世界，亲历各式冒险际遇。
+            </div>
+
+            <!-- 交流准则 -->
+            <div class="rule-section">
+                <h2 class="section-title">交流准则</h2>
+                <div class="text-block">
+                    在 EW 世界观内，玩家可在 GM 搭建的完整世界中自由开展角色扮演互动，游玩内容不限于主线叙事冒险与委托任务。玩家拥有多元发展路径，能够还原角色日常：交易采买物资、和各式 NPC 缔结挚友乃至羁绊情缘，亦可营建私宅、组建宗族势力。每一次深度交互演绎，都将潜移默化改写后续冒险走向与故事结局。
+                </div>
+                <div class="text-block">
+                    进行各项属性检定环节时，玩家临场扮演演绎越详实丰满，GM 可酌情<strong>下调本次检定难度</strong>；部分独创性行动选择，同样能够变更原有检定条件与判定标准。
+                </div>
+            </div>
+
+            <!-- 招募角色 -->
+            <div class="rule-section">
+                <h2 class="section-title">招募角色</h2>
+                <div class="text-block">
+                    在 EW 世界观中，GM 可自定义原创 NPC 供玩家招募入队，招募名额根据参战玩家人数、副本冒险难度灵活配置：
+                </div>
+                <div class="quick-ref">
+                    <strong>双人组队冒险：</strong>最多开放 4 名招募同伴空位<br>
+                    <strong>三人组队冒险：</strong>最多开放 3 名招募同伴空位<br>
+                    <strong>四人组队冒险：</strong>最多开放 2 名招募同伴空位<br>
+                    <br>玩家需在冒险途中通过剧情偶遇，依托角色扮演完成合理交涉，方可将 NPC 招揽至队伍。
+                </div>
+            </div>
+
+            <!-- 角色好感 -->
+            <div class="rule-section">
+                <h2 class="section-title">角色好感</h2>
+                <div class="rule-subsection">
+                    <h3>好感数值</h3>
+                    <p>所有 NPC 均设有好感数值体系，基础取值区间为 <strong>0～100</strong>，好感数据由 GM 统一记录、根据交互表现动态调整。好感度逐步提升后，玩家可与 NPC 递进人际关系，达成缔结婚约、组建家庭等深度羁绊。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>诞生血脉</h3>
+                    <p>在 EW 世界观里，玩家能够缔结婚姻、组建家族、繁育子嗣。角色创建时，需投出 <strong>1d100</strong>，叠加对应种族生育率，核算为自身基础生育率上限。</p>
+                    <p>角色与伴侣尝试繁育时，双方各自进行一次生育率检定，两次投骰结果均低于自身生育率数值才算受孕成功；繁育成功后，二人生育率各自永久扣除 20 点。受孕方进入孕育周期，周期内遭遇高危事件时，由 GM 判定流产或衍生其他负面剧情。</p>
+                    <p>单次繁育成功诞下的子嗣自带 <strong>1 点血脉点数</strong>：后代成年之后，每 1 点血脉可兑换 3 点自由主属性点数，并额外解锁一个主职业专修选项。直系子嗣成年完毕，即可作为全新可用角色登场。</p>
+                </div>
+            </div>
+
+            <!-- 日常生存 -->
+            <div class="rule-section">
+                <h2 class="section-title">日常生存</h2>
+                <div class="rule-subsection">
+                    <h3>进餐</h3>
+                    <p>进餐属于角色日常生存行为，仅能在<strong>脱离战斗</strong>的状态下食用，方可触发食物增益效果、恢复营养值；药剂、药品的使用不计入进餐范畴。角色长期断餐会大幅损耗营养值（特殊种族不受营养扣除限制，但仍会触发对应的负面衍生效果，由 GM 裁定）。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>药剂服用</h3>
+                    <p>药剂、药水、药丸增益效果普遍突出、收效可观。战斗阶段亦可服用各类药剂制剂，单次服用消耗 <strong>1 次耐力行动</strong>。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>华丽值</h3>
+                    <p>角色在建卡时获得基础华丽值，该属性综合代表人物整体吸引力，来源可囊括出众样貌、渊博才学、谈吐气质等多重特质；穿戴服饰能够额外提供华丽值加成。</p>
+                    <p><strong>通用基准：</strong>常人基础华丽值为 10。数值低于 10，角色容易给人落魄粗鄙的观感；数值高于 10，则外在气场与人格魅力更为突出。高数值可简化部分 NPC 交涉难度，还有机会解锁专属隐藏剧情。</p>
+                </div>
+            </div>
+
+            <!-- 学习与成长 -->
+            <div class="rule-section">
+                <h2 class="section-title">学习与成长</h2>
+                <div class="text-block">
+                    在 EW 世界观中，角色未曾掌握的专修、语种、法术、武技，均可通过<strong>学习检定</strong>完成习得。GM 依据学习途径划定检定基础难度，基准难度为 5，再视条件上下调整；书本自学、名师授艺等不同学习模式，各自对应差异化的检定难度与研习推进效率。
+                </div>
+                <div class="quick-ref">
+                    <strong>学习流程：</strong><br>
+                    1. 单次学习检定成功后，将该项能力录入研习清单，GM 设定研习周期与通关难度<br>
+                    2. 角色每日可进行一次学习检定，累计在规定周期内达标，便能正式习得对应专修或能力<br>
+                    3. 玩家也可消耗 <strong>1 点成长点数</strong>，直接速成研习清单内任意一项技能<br>
+                    4. 角色可同时承载的研习项目上限，由自身<strong>进修值</strong>决定
+                </div>
+            </div>
+
+            <!-- 环境与生存 -->
+            <div class="rule-section">
+                <h2 class="section-title">环境与生存</h2>
+                <div class="text-block">
+                    角色身处特殊地貌区域时，GM 可依托环境特质设置生存险情：严寒、酷热地带会加速角色营养损耗，甚至触发各类恶性负面状态。
+                </div>
+                <div class="rule-subsection">
+                    <h3>高温 · 散热</h3>
+                    <p>散热效果可削减高温环境造成的营养流失，流失数值依据<strong>散热等级</strong>逐级折半，最低可将流失量归零；额外每拥有 1 点火焰抗性或熔岩抗性，等效增加 1 点散热属性。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>低温 · 御寒</h3>
+                    <p>御寒效果可削减严寒环境造成的营养流失，流失数值依据<strong>御寒等级</strong>逐级折半，最低可将流失量归零；额外每拥有 1 点冰霜抗性，等效增加 1 点御寒属性。</p>
+                </div>
+            </div>
+
+            <!-- 储格与物品 -->
+            <div class="rule-section">
+                <h2 class="section-title">储格与物品系统</h2>
+                <div class="rule-subsection">
+                    <h3>储格规则</h3>
+                    <p>储格为角色标配的容量计量单位，所有标注储格属性的容器，仅可收纳占用格数不超限的物件；储物容器不能装入体型超出容器容积的生物。</p>
+                    <p>特例：体型 1 级的生物，在容器容积未达到对等规格时，收纳后不计储格消耗。带有特殊储物词条的容器拥有额外存储空间加成；仅有标注可存气态、液态的特殊储物容器，才能够存放液体与气体类物资。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>物品大小占格</h3>
+                    <p>武器、护甲、服饰、饰品这类标注体型规格的物件，依据自身尺寸差异，占用背包储格数量各不相同，具体占格标准由 GM 自定义设定。部分物品附带<strong>堆叠词条</strong>，满足堆叠条件时，可将 N 件同类物品合并收纳，整组仅占用 1 格储物空间。</p>
+                </div>
+                <div class="rule-subsection">
+                    <h3>材料大小占格</h3>
+                    <p>各类原材料标注千克 (KG)、毫升 (ML) 等重量与容积单位；常规同种材料统一占用 1 格储格，单格可存放的堆叠数量由 GM 裁定。体积偏大的特殊材料，GM 可规定其占用多格储物空间；细碎微型材料，GM 也可酌情豁免储格消耗。</p>
+                </div>
+            </div>
+
+        </div><!-- /panel-life -->
+
+
+        <!-- ===================== 第三章：经营与管理 ===================== -->
+        <div class="chapter-panel" id="panel-manage">
+
+            <div class="chapter-intro">
+                潜心打理商铺营生，亦或是筑城立国、执掌一方疆土，<br>
+                随心开展经营、管理与人才培育事务。
+            </div>
+
+            <!-- 快速推进 -->
+            <div class="rule-section">
+                <h2 class="section-title">时间快速推进</h2>
+                <div class="text-block">
+                    在 EW 世界中，角色可选择快速流逝时间，分为<strong>短期、中期、长期</strong>三档，由 GM 判定档位并对应不同回合规则，每进行一个回合均会触发随机遭遇。
+                </div>
+                <div class="time-cards">
+                    <div class="time-card">
+                        <h4>⏱ 短期推进</h4>
+                        <p>以<strong>一日</strong>为一轮，划分为上午、下午、傍晚 3 个回合。</p>
+                    </div>
+                    <div class="time-card">
+                        <h4>📅 中期推进</h4>
+                        <p>以<strong>一周</strong>为一轮，共计 4 个回合。</p>
+                    </div>
+                    <div class="time-card">
+                        <h4>🗓 长期推进</h4>
+                        <p>以<strong>一月</strong>为一轮，每周计为 1 个回合。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 制定计划 -->
+            <div class="rule-section">
+                <h2 class="section-title">制定计划</h2>
+                <div class="text-block">
+                    开启时间快进前，每位角色需为每一轮选定对应行动计划。GM 结合厄数、圣数判定随机短剧情，内容包含突发事件、遭遇战斗、经营收益增减等，均会对后续冒险与发展产生影响。玩家可通过角色扮演、临场决策，应对并处理各类突发状况。
+                </div>
+                <div class="rule-subsection">
+                    <h3>学习计划</h3>
+                    <p>角色可开启专项学习计划，通过针对性训练加快研习项目进度，或是提升指定专修等级。由 GM 设定计划目标、完成要求与截止时限，参与者顺利完成每次计划对应的日常行动或随机遭遇后，即可领取对应奖励。</p>
+                    <div class="example-block"><strong>示例：</strong>角色希望提升奔跑专修，将每日上午安排为晨跑训练。GM 设定完成 4 次晨跑任务后，角色奔跑专修等级提升 1 级。</div>
+                </div>
+                <div class="rule-subsection">
+                    <h3>专业制作</h3>
+                    <p>可开启专项制作项目，逐步推进制作进度，最终获得对应成品。由玩家确立制作目标，GM 划定完成条件与时限。完成计划内日常行动或应对相关随机遭遇后，即可领取成品奖励。</p>
+                    <div class="example-block"><strong>示例：</strong>角色计划锻造一柄武器，将每日下午定为锻造工时。GM 规定完成 2 次锻造作业后，即可获得该武器。</div>
+                </div>
+                <div class="rule-subsection">
+                    <h3>生活工作</h3>
+                    <p>玩家可制定日常生活与工作规划，该类规划不设置固定最终时限。执行期间触发的各类随机事件，会影响角色与 NPC 的关系、产业经营收益等关键内容。</p>
+                    <div class="example-block"><strong>示例：</strong>角色经营酒馆，选择短期时间推进，规划每日上午进货开门、全天营业、傍晚打烊。GM 会在此过程中穿插各类支线剧情与探索事件。</div>
+                </div>
+            </div>
+
+            <!-- 城镇管理 -->
+            <div class="rule-section">
+                <h2 class="section-title">城镇管理</h2>
+                <div class="text-block">
+                    开启城镇管理，代表角色身份地位得到提升。合理统筹城镇事务，可收获<strong>威望、经济收益、兵力</strong>等回报。角色也可委派 NPC 代为打理城镇，相关结果仍由角色承担。
+                </div>
+                <div class="text-block">
+                    由玩家拟定管理计划，GM 设定执行要求与完成时限。完成各项管理事务、应对随机遭遇，即可推进计划。过程中的随机事件，可能导致任务失败或延后进度。
+                </div>
+                <div class="example-block"><strong>示例：</strong>角色计划一月内征召 200 名士兵，GM 判定需开启中期时间推进，并完成至少 3 轮募兵管理工作。期间触发的随机事件，有可能阻碍募兵进度。</div>
+
+                <div class="rule-subsection">
+                    <h3>威望</h3>
+                    <p>威望体现角色与村镇、城邦的人际及势力关系。每 1 点威望，都能提升角色参与本地剧情、开展城镇管理的效率，数值越高，当地声望与好感度越好。<strong>威望点数统一由 GM 进行记录。</strong></p>
+                </div>
+
+                <div class="rule-subsection">
+                    <h3>生活资源</h3>
+                    <p>角色可拥有宅邸、产业、家具、奢侈品等私人财物，这类资产不仅具备实际价值，也是沉浸式角色扮演的重要内容。若资产体量较大，GM 可酌情简化日常资源的明细记录。</p>
+                </div>
+
+                <div class="rule-subsection" style="border-left-color: var(--ash-gold-dim); opacity: 0.6;">
+                    <h3>城镇详细规则</h3>
+                    <p>🚧 &nbsp;内容持续更新中，敬请期待……</p>
+                </div>
+            </div>
+
+        </div><!-- /panel-manage -->
+
     </main>
 
     <nav class="bottom-nav">
@@ -255,5 +640,20 @@
     <footer class="footer">
         <p>灰烬世界 Ash World &copy; 2026 桌游工作室</p>
     </footer>
+
+    <script>
+        // 章节标签页切换
+        const tabs = document.querySelectorAll('.chapter-tab');
+        const panels = document.querySelectorAll('.chapter-panel');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.panel;
+                tabs.forEach(t => t.classList.remove('active'));
+                panels.forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('panel-' + target).classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
