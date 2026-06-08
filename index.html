@@ -287,6 +287,12 @@
             color: rgba(100, 100, 100, 0.5);
         }
 
+        /* 鼠标拖尾画布 */
+        #cursor-trail {
+            position: fixed; inset: 0; z-index: 4;
+            pointer-events: none;
+        }
+
         /* 全屏过渡层 — 纯黑，与背景完全融合，不制造任何中间可视画面 */
         .page-transition-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -322,6 +328,7 @@
     <div class="bg-particles" id="particles"></div>
     <div class="ember-glow"></div>
     <div class="noise-overlay"></div>
+    <canvas id="cursor-trail"></canvas>
     <div class="page-transition-overlay" id="transition-overlay">
         <div class="transition-text" id="transition-text">正在前往...</div>
     </div>
@@ -832,6 +839,35 @@
         return -1;
     }
 
+    // ==================== 鼠标拖尾 & 粒子气流系统 ====================
+    const trailCanvas = document.getElementById('cursor-trail');
+    const trailCtx = trailCanvas.getContext('2d');
+    trailCanvas.width = window.innerWidth;
+    trailCanvas.height = window.innerHeight;
+
+    const trailPoints = [];
+    const MAX_TRAIL = 35;
+    const mouseWorldPos = new THREE.Vector3(0, 0, 0);
+    const mouseNDC = new THREE.Vector2();
+    const trailRaycaster = new THREE.Raycaster();
+    const trailPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    let mouseActive = false;
+    let mouseInactiveTimer = 0;
+
+    function updateMouseWorld(clientX, clientY) {
+        mouseNDC.x = (clientX / window.innerWidth) * 2 - 1;
+        mouseNDC.y = -(clientY / window.innerHeight) * 2 + 1;
+        trailRaycaster.setFromCamera(mouseNDC, camera);
+        const intersect = new THREE.Vector3();
+        trailRaycaster.ray.intersectPlane(trailPlane, intersect);
+        if (intersect) mouseWorldPos.copy(intersect);
+    }
+
+    window.addEventListener('resize', () => {
+        trailCanvas.width = window.innerWidth;
+        trailCanvas.height = window.innerHeight;
+    });
+
     // ==================== 事件 — 两层碰撞判断 ====================
     // isOnDice:   鼠标在骰子本体上（raycaster 命中）→ 减速 0.5s 后静止
     // isDragging: 拖拽中 → 自由翻转
@@ -840,6 +876,14 @@
     let hoverOnDiceTimer = 0; // 鼠标在骰子上的累计时间
 
     window.addEventListener('mousemove', e => {
+        // --- 拖尾记录 ---
+        mouseActive = true;
+        mouseInactiveTimer = 0;
+        updateMouseWorld(e.clientX, e.clientY);
+        trailPoints.push({ x: e.clientX, y: e.clientY, life: 1.0, size: Math.random() * 2 + 1.5 });
+        if (trailPoints.length > MAX_TRAIL) trailPoints.shift();
+
+        // --- 骰子悬停 ---
         if (state !== STATE.IDLE || isDragging) return;
         const f = getHoveredFace(e.clientX, e.clientY);
         const wasOnDice = isOnDice;
@@ -1119,23 +1163,113 @@
             plane.visible = viewDir.dot(normal) > 0;
         });
 
-        // 灰烬粒子更新 — 向左上飘，偶尔闪烁
+        // 灰烬粒子更新 — 向左上飘 + 鼠标气流扰动
         ashUniforms.uTime.value = time * 0.001;
         const ashPos = ashGeo.attributes.position.array;
+
+        // 鼠标气流参数
+        const influenceRadius = 9.0;
+        const maxForce = 18.0;
+        const swirlStrength = 10.0;
+        const recoverRate = 2.0;
+
+        // 鼠标静止时逐渐停止影响
+        mouseInactiveTimer += dt;
+        if (mouseInactiveTimer > 0.3) mouseActive = false;
+
         for (let i = 0; i < ASH_COUNT; i++) {
-            ashPos[i * 3] += ashSpeed[i * 3] * dt;
-            ashPos[i * 3 + 1] += ashSpeed[i * 3 + 1] * dt;
-            ashPos[i * 3 + 2] += ashSpeed[i * 3 + 2] * dt;
-            // 出界重置 — 从右下方重新进入
-            if (ashPos[i * 3] < -18) ashPos[i * 3] = 18;
-            if (ashPos[i * 3 + 1] > 18) ashPos[i * 3 + 1] = -18;
-            if (ashPos[i * 3 + 2] > 12 || ashPos[i * 3 + 2] < -18) ashPos[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
+            const px = ashPos[i * 3];
+            const py = ashPos[i * 3 + 1];
+            const pz = ashPos[i * 3 + 2];
+
+            // --- 鼠标气流影响 ---
+            if (mouseActive) {
+                const dx = px - mouseWorldPos.x;
+                const dy = py - mouseWorldPos.y;
+                const dz = pz - mouseWorldPos.z;
+                const distSq = dx * dx + dy * dy + dz * dz;
+
+                if (distSq < influenceRadius * influenceRadius && distSq > 0.01) {
+                    const dist = Math.sqrt(distSq);
+                    const falloff = 1 - dist / influenceRadius;
+                    const force = falloff * maxForce;
+
+                    // 排斥方向
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+                    const nz = dz / dist;
+
+                    // 涡旋方向（切向）— 绕 Z 轴旋转 90°
+                    const tx = -ny;
+                    const ty = nx;
+                    const tz = 0;
+
+                    // 应用力到额外速度
+                    ashVel[i * 3]     += (nx * force * 0.7 + tx * swirlStrength * falloff) * dt;
+                    ashVel[i * 3 + 1] += (ny * force * 0.7 + ty * swirlStrength * falloff) * dt;
+                    ashVel[i * 3 + 2] += (nz * force * 0.5) * dt;
+                }
+            }
+
+            // 额外速度衰减回零
+            ashVel[i * 3]     *= (1 - recoverRate * dt);
+            ashVel[i * 3 + 1] *= (1 - recoverRate * dt);
+            ashVel[i * 3 + 2] *= (1 - recoverRate * dt);
+
+            // 更新位置（基础速度 + 额外速度）
+            ashPos[i * 3]     += (ashSpeed[i * 3]     + ashVel[i * 3])     * dt;
+            ashPos[i * 3 + 1] += (ashSpeed[i * 3 + 1] + ashVel[i * 3 + 1]) * dt;
+            ashPos[i * 3 + 2] += (ashSpeed[i * 3 + 2] + ashVel[i * 3 + 2]) * dt;
+
+            // 出界重置 — 从右下方重新进入，同时重置额外速度
+            if (ashPos[i * 3] < -18) { ashPos[i * 3] = 18; ashVel[i * 3] = 0; }
+            if (ashPos[i * 3 + 1] > 18) { ashPos[i * 3 + 1] = -18; ashVel[i * 3 + 1] = 0; }
+            if (ashPos[i * 3 + 2] > 12 || ashPos[i * 3 + 2] < -18) {
+                ashPos[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
+                ashVel[i * 3 + 2] = 0;
+            }
         }
         ashGeo.attributes.position.needsUpdate = true;
 
         // 远处碎片缓慢旋转 — 增加空间层次动感
         debrisGroup.rotation.y += 0.0002;
         debrisGroup.rotation.x += 0.00008;
+
+        // --- 绘制鼠标银白荧光拖尾 ---
+        trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        if (trailPoints.length > 1) {
+            for (let i = 0; i < trailPoints.length - 1; i++) {
+                const p = trailPoints[i];
+                const next = trailPoints[i + 1];
+                const progress = i / (trailPoints.length - 1);
+                const alpha = p.life * (0.2 + progress * 0.8);
+                const width = p.life * p.size * (0.3 + progress * 1.2);
+
+                // 发光线段
+                trailCtx.beginPath();
+                trailCtx.moveTo(p.x, p.y);
+                trailCtx.lineTo(next.x, next.y);
+                trailCtx.strokeStyle = `rgba(230, 240, 255, ${alpha * 0.5})`;
+                trailCtx.lineWidth = width;
+                trailCtx.lineCap = 'round';
+                trailCtx.shadowColor = `rgba(200, 220, 255, ${alpha * 0.9})`;
+                trailCtx.shadowBlur = 20 * p.life;
+                trailCtx.stroke();
+                trailCtx.shadowBlur = 0;
+
+                // 核心亮点
+                trailCtx.beginPath();
+                trailCtx.arc(p.x, p.y, width * 0.6, 0, Math.PI * 2);
+                trailCtx.fillStyle = `rgba(248, 252, 255, ${alpha * 0.95})`;
+                trailCtx.fill();
+            }
+
+            // 衰减 life
+            for (let i = trailPoints.length - 1; i >= 0; i--) {
+                trailPoints[i].life -= 0.025;
+                if (trailPoints[i].life <= 0) trailPoints.splice(i, 1);
+            }
+        }
 
         composer.render();
     }
@@ -1147,7 +1281,8 @@
     const ashColors = new Float32Array(ASH_COUNT * 3);
     const ashSizes = new Float32Array(ASH_COUNT);
     const ashPhase = new Float32Array(ASH_COUNT); // 每个粒子的闪烁相位
-    const ashSpeed = new Float32Array(ASH_COUNT * 3); // 每个粒子的速度
+    const ashSpeed = new Float32Array(ASH_COUNT * 3); // 每个粒子的基础速度
+    const ashVel = new Float32Array(ASH_COUNT * 3);   // 鼠标扰动产生的额外速度
 
     for (let i = 0; i < ASH_COUNT; i++) {
         // 随机分布在相机周围的大范围内
