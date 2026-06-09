@@ -437,7 +437,7 @@
 
     // ==================== 场景 ====================
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x030508);
+    scene.background = new THREE.Color(0x010101); // 极暗背景，像炭火余烬
 
     const W = window.innerWidth;
     const H = window.innerHeight;
@@ -467,10 +467,10 @@
     const BASE_BLOOM_STRENGTH = 0.38;
 
     // ==================== 光照 — 压低整体亮度，强化暗部神秘感 ====================
-    scene.add(new THREE.AmbientLight(0x120f0c, 0.06));
+    scene.add(new THREE.AmbientLight(0x1a0e05, 0.08)); // 暖暗环境光，余烬感
     const mainLight = new THREE.DirectionalLight(0xa8b8c0, 0.5);
     mainLight.position.set(3, 5, 5); scene.add(mainLight);
-    const fillLight = new THREE.DirectionalLight(0x2a2018, 0.15);
+    const fillLight = new THREE.DirectionalLight(0x3a1a08, 0.12); // 暖棕补光
     fillLight.position.set(-5, 1, -3); scene.add(fillLight);
     const rimLight = new THREE.DirectionalLight(0xb8923a, 0.18);
     rimLight.position.set(-2, -3, 4); scene.add(rimLight);
@@ -479,7 +479,7 @@
     const topLight = new THREE.PointLight(0x405060, 0.06, 20);
     topLight.position.set(0, 5, 0); scene.add(topLight);
     // 底部暗红余烬微光
-    const emberLight = new THREE.PointLight(0x5c1a1a, 0.15, 15);
+    const emberLight = new THREE.PointLight(0xcc5500, 0.25, 20); // 橙红余烬暖光
     emberLight.position.set(0, -6, 2); scene.add(emberLight);
 
     // ==================== 八面体 ====================
@@ -530,7 +530,15 @@
         return q;
     }
 
+    // 骰子回正角度与拖拽限制（钻石顶点朝上姿态）
+    const REST_ROT_X = 0.25;   // 初始 X：更正，下面的字能看清
+    const REST_ROT_Y = 0.30;
+    const MAX_TILT_X = 0.65;   // X 轴：纵向限制 ±0.65
+    const RETURN_SPEED = 0.12;  // 回正极慢，2~3 秒才完全归位，肉眼可见的缓慢飘落
+
     const diceGroup = new THREE.Group();
+    diceGroup.rotation.x = REST_ROT_X;
+    diceGroup.rotation.y = REST_ROT_Y;
     scene.add(diceGroup);
 
     // ==================== 文字纹理生成 — 截图同款暗金平面风格 ====================
@@ -717,7 +725,7 @@
     diceGroup.add(innerGlow);
 
     // ==================== 背景景深雾效 ====================
-    scene.fog = new THREE.FogExp2(0x030508, 0.04);
+    scene.fog = new THREE.FogExp2(0x080401, 0.035); // 暖褐烟雾，余烬氛围
 
     // 远处模糊几何碎片 — 增加空间层次感
     const debrisGroup = new THREE.Group();
@@ -748,7 +756,7 @@
     let transitionStartTime = 0;
     let preRotateTarget = null;
     let preRotateStartQ = null;
-    let autoRotate = true;
+    let autoRotate = false;
     let isDragging = false;
     let prevX = 0, prevY = 0;
     let dragStartPos = { x: 0, y: 0 };
@@ -757,8 +765,9 @@
     // 惯性系统
     let inertiaX = 0; // X轴角速度
     let inertiaY = 0; // Y轴角速度
-    const inertiaDamping = 0.92; // 衰减系数（每帧乘以0.92）
-    const inertiaThreshold = 0.0005; // 低于此值视为停止
+    const inertiaDamping = 0.955;  // 衰减适中，轻碰只转半圈到一圈
+    const inertiaThreshold = 0.00015; // 适中停止阈值
+    const IDLE_SPIN = 0.003;       // 空闲时的微自转速度（Y轴持续缓慢旋转）
 
     // BFS 流光顺序缓存
     const bfsOrders = FACES.map((_, i) => bfsOrder(i));
@@ -854,6 +863,8 @@
     const trailPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
     let mouseActive = false;
     let mouseInactiveTimer = 0;
+    let glowFade = 0;            // 光晕淡出系数 0~1
+    const GLOW_FADE_SPEED = 1.8; // 约 0.55s 消完
 
     function updateMouseWorld(clientX, clientY) {
         mouseNDC.x = (clientX / window.innerWidth) * 2 - 1;
@@ -880,6 +891,7 @@
         // --- 拖尾记录 — 散落粒子 ---
         mouseActive = true;
         mouseInactiveTimer = 0;
+        glowFade = 1.0; // 移动时立刻全亮
         updateMouseWorld(e.clientX, e.clientY);
 
         lastMouseX = e.clientX;
@@ -928,10 +940,12 @@
         if (!isDragging) return;
         const dx = e.clientX - prevX;
         const dy = e.clientY - prevY;
-        diceGroup.rotation.y += dx * 0.008;
-        diceGroup.rotation.x += dy * 0.008;
-        inertiaY = dx * 0.008;
-        inertiaX = dy * 0.008;
+        diceGroup.rotation.y += dx * 0.010;  // Y 轴：横向无限旋转，无限制
+        diceGroup.rotation.x += dy * 0.010;  // X 轴：纵向摆动
+        // X 轴硬边界（Y 轴无边界）
+        diceGroup.rotation.x = Math.max(REST_ROT_X - MAX_TILT_X, Math.min(REST_ROT_X + MAX_TILT_X, diceGroup.rotation.x));
+        inertiaY = dx * 0.010;
+        inertiaX = dy * 0.010;
         prevX = e.clientX;
         prevY = e.clientY;
     });
@@ -969,10 +983,12 @@
         e.preventDefault();
         const dx = e.touches[0].clientX - prevX;
         const dy = e.touches[0].clientY - prevY;
-        diceGroup.rotation.y += dx * 0.008;
-        diceGroup.rotation.x += dy * 0.008;
-        inertiaY = dx * 0.008;
-        inertiaX = dy * 0.008;
+        diceGroup.rotation.y += dx * 0.010;  // Y 轴：横向无限旋转
+        diceGroup.rotation.x += dy * 0.010;  // X 轴：纵向摆动
+        // X 轴硬边界（Y 轴无边界）
+        diceGroup.rotation.x = Math.max(REST_ROT_X - MAX_TILT_X, Math.min(REST_ROT_X + MAX_TILT_X, diceGroup.rotation.x));
+        inertiaY = dx * 0.010;
+        inertiaX = dy * 0.010;
         prevX = e.touches[0].clientX;
         prevY = e.touches[0].clientY;
     }, { passive: false });
@@ -1027,6 +1043,7 @@
 
     // ==================== 点击转场 ====================
     function startClickTransition(faceIdx) {
+        if (state === STATE.FLOW || state === STATE.FADE) return; // 防止重复启动
         state = STATE.FLOW;
         clickedFace = faceIdx;
         transitionStartTime = performance.now();
@@ -1066,41 +1083,22 @@
             // X轴轻微摇摆
             diceGroup.rotation.z = Math.sin(breathePhase + 1.0) * breatheAmpX * 0.5;
 
-            // 惯性衰减
+            // 惯性衰减（释放后自由旋转，Y轴无限，X轴有边界）
             if (!isDragging && (Math.abs(inertiaX) > inertiaThreshold || Math.abs(inertiaY) > inertiaThreshold)) {
                 diceGroup.rotation.x += inertiaX;
-                diceGroup.rotation.y += inertiaY;
+                diceGroup.rotation.y += inertiaY;  // Y 轴自由旋转，无边界
                 inertiaX *= inertiaDamping;
                 inertiaY *= inertiaDamping;
+
+                // X 轴硬边界（Y 轴无边界）
+                diceGroup.rotation.x = Math.max(REST_ROT_X - MAX_TILT_X, Math.min(REST_ROT_X + MAX_TILT_X, diceGroup.rotation.x));
             }
 
-            // 速度控制
-            let currentSpeed = autoSpeed;
-            if (isDragging) {
-                currentSpeed = 0;
-            } else if (isOnDice) {
-                hoverOnDiceTimer += dt;
-                if (hoverOnDiceTimer < 0.5) {
-                    currentSpeed = autoSpeed * 0.3;
-                } else {
-                    currentSpeed = 0;
-                }
-            }
-
-            // 惯性存在时不叠加自动旋转
-            if (currentSpeed > 0 && Math.abs(inertiaY) <= inertiaThreshold && Math.abs(inertiaX) <= inertiaThreshold) {
-                diceGroup.rotation.y -= currentSpeed;
-                if (time - lastFaceCheck > 2500) {
-                    lastFaceCheck = time;
-                    updateFaceInfo(getFacingFace());
-                }
-            }
-
-            // 不倒翁回正
-            if (!isDragging && !isOnDice && Math.abs(inertiaX) <= inertiaThreshold && Math.abs(inertiaY) <= inertiaThreshold && currentSpeed === 0) {
-                const facing = getFacingFace();
-                const restQ = getRestQuaternion(facing);
-                diceGroup.quaternion.slerp(restQ, 0.035);
+            // 惯性衰减完后：X 轴缓慢回正，Y 轴保持微自转
+            if (!isDragging && Math.abs(inertiaX) <= inertiaThreshold && Math.abs(inertiaY) <= inertiaThreshold) {
+                const dt_clamped = Math.min(dt, 0.05);
+                diceGroup.rotation.x += (REST_ROT_X - diceGroup.rotation.x) * RETURN_SPEED * dt_clamped;
+                diceGroup.rotation.y += IDLE_SPIN; // Y 轴持续微自转
             }
 
             if (hoverFace !== -1) {
@@ -1166,6 +1164,7 @@
 
             // 8. 镜头推进到最后 10% 时直接跳转 — 不进入任何中间画面
             if (t >= 1.0) {
+                state = STATE.FADE; // 互锁：防止 requestAnimationFrame 下一帧重复跳转
                 window.location.href = FACES[clickedFace].href;
                 return;
             }
@@ -1179,65 +1178,76 @@
             plane.visible = viewDir.dot(normal) > 0;
         });
 
-        // 灰烬粒子更新 — 向左上飘 + 鼠标气流扰动
+        // 灰烬粒子更新 — 火星快速飞舞 + 重力/湍流 + 鼠标热源 + 骰子碰撞
         ashUniforms.uTime.value = time * 0.001;
         ashUniforms.uMousePos.value.copy(mouseWorldPos);
         ashUniforms.uMouseActive.value = mouseActive ? 1.0 : 0.0;
         const ashPos = ashGeo.attributes.position.array;
 
-        // 鼠标气流参数（增强版，确保肉眼可见）
-        const influenceRadius = 22.0;   // 更大影响范围
-        const maxForce = 300.0;         // 大幅增强排斥力
-        const swirlStrength = 150.0;    // 大幅增强涡旋力
-        const recoverRate = 0.6;        // 更慢的衰减，效果持续更久
-        const mouseGlowRadius = 18.0;   // 粒子高亮范围
+        const influenceRadius = MOUSE_INF_R;
+        const maxForce = MOUSE_FORCE;
+        const recoverRate = VEL_DECAY;
+        const G = GRAVITY;
+        const T = TURBULENCE;
 
-        // 鼠标静止时逐渐停止影响
+        // 鼠标静止时逐渐停止影响，光晕缓慢淡出
         mouseInactiveTimer += dt;
-        if (mouseInactiveTimer > 0.4) mouseActive = false;
-
-        // 统计受影响的粒子数（用于 shader 高亮）
-        let affectedCount = 0;
+        if (mouseInactiveTimer > 0.4) {
+            mouseActive = false;
+            glowFade = Math.max(0, glowFade - GLOW_FADE_SPEED * dt);
+        }
 
         for (let i = 0; i < ASH_COUNT; i++) {
             const px = ashPos[i * 3];
             const py = ashPos[i * 3 + 1];
             const pz = ashPos[i * 3 + 2];
 
-            // --- 鼠标气流影响 ---
+            // --- 重力 + 湍流（每帧加速度）---
+            ashVel[i * 3]     += (Math.random() - 0.5) * T * dt;
+            ashVel[i * 3 + 1] += G * dt + (Math.random() - 0.5) * T * dt;
+            ashVel[i * 3 + 2] += (Math.random() - 0.5) * T * 0.4 * dt;
+
+            // --- 鼠标热源影响（纯排斥吹开，穿透骰子）---
             if (mouseActive) {
                 const dx = px - mouseWorldPos.x;
                 const dy = py - mouseWorldPos.y;
-                const dz = pz - mouseWorldPos.z;
-                const distSq = dx * dx + dy * dy + dz * dz;
-
+                const distSq = dx * dx + dy * dy;
                 if (distSq < influenceRadius * influenceRadius && distSq > 0.01) {
                     const dist = Math.sqrt(distSq);
                     const falloff = 1 - dist / influenceRadius;
-                    // 使用平滑衰减曲线，近处更强
                     const smoothFalloff = falloff * falloff * (3 - 2 * falloff);
                     const force = smoothFalloff * maxForce;
-
-                    // 排斥方向
                     const nx = dx / dist;
                     const ny = dy / dist;
-                    const nz = dz / dist;
-
-                    // 涡旋方向（切向）— 绕 Z 轴旋转 90°
-                    const tx = -ny;
-                    const ty = nx;
-                    const tz = 0;
-
-                    // 直接叠加较大脉冲（确保肉眼可见的位移）
-                    ashVel[i * 3]     += (nx * force * 0.6 + tx * swirlStrength * smoothFalloff) * dt;
-                    ashVel[i * 3 + 1] += (ny * force * 0.6 + ty * swirlStrength * smoothFalloff) * dt;
-                    ashVel[i * 3 + 2] += (nz * force * 0.4) * dt;
-
-                    affectedCount++;
+                    ashVel[i * 3]     += nx * force * dt;
+                    ashVel[i * 3 + 1] += ny * force * dt;
+                    ashVel[i * 3 + 2] += (Math.random() - 0.5) * force * 0.4 * dt;
                 }
             }
 
-            // 额外速度衰减回零
+            // --- 骰子碰撞 — 粒子不能穿过骰子（球体近似 R=2.9）---
+            const diceY = diceGroup.position.y;
+            const ddx = px;
+            const ddy = py - diceY;
+            const ddz = pz;
+            const distDiceSq = ddx*ddx + ddy*ddy + ddz*ddz;
+            if (distDiceSq < DICE_COLLISION_R * DICE_COLLISION_R) {
+                const distDice = Math.sqrt(distDiceSq) + 0.001;
+                const ndx = ddx / distDice;
+                const ndy = ddy / distDice;
+                const ndz = ddz / distDice;
+                // 直接推出骰子（位置修正）
+                const overlap = DICE_COLLISION_R - distDice + 0.015;
+                ashPos[i * 3]     += ndx * overlap;
+                ashPos[i * 3 + 1] += ndy * overlap;
+                ashPos[i * 3 + 2] += ndz * overlap;
+                // 反弹速度
+                ashVel[i * 3]     += ndx * 10.0;
+                ashVel[i * 3 + 1] += ndy * 10.0;
+                ashVel[i * 3 + 2] += ndz * 10.0;
+            }
+
+            // 额外速度衰减（空气阻力）
             ashVel[i * 3]     *= (1 - recoverRate * dt);
             ashVel[i * 3 + 1] *= (1 - recoverRate * dt);
             ashVel[i * 3 + 2] *= (1 - recoverRate * dt);
@@ -1247,12 +1257,12 @@
             ashPos[i * 3 + 1] += (ashSpeed[i * 3 + 1] + ashVel[i * 3 + 1]) * dt;
             ashPos[i * 3 + 2] += (ashSpeed[i * 3 + 2] + ashVel[i * 3 + 2]) * dt;
 
-            // 出界重置 — 从右下方重新进入，同时重置额外速度
-            if (ashPos[i * 3] < -18) { ashPos[i * 3] = 18; ashVel[i * 3] = 0; }
-            if (ashPos[i * 3 + 1] > 18) { ashPos[i * 3 + 1] = -18; ashVel[i * 3 + 1] = 0; }
-            if (ashPos[i * 3 + 2] > 12 || ashPos[i * 3 + 2] < -18) {
-                ashPos[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
-                ashVel[i * 3 + 2] = 0;
+            // 出界重置 — 从右下方重新进入，重置额外速度
+            if (ashPos[i * 3] < -24) { ashPos[i * 3] = 24; ashVel[i*3]=0; ashVel[i*3+1]=0; ashVel[i*3+2]=0; }
+            if (ashPos[i * 3 + 1] > 24) { ashPos[i * 3 + 1] = -24; ashVel[i*3]=0; ashVel[i*3+1]=0; ashVel[i*3+2]=0; }
+            if (ashPos[i * 3 + 2] > ZRNG[1] || ashPos[i * 3 + 2] < ZRNG[0]) {
+                ashPos[i * 3 + 2] = Math.random() * (ZRNG[1] - ZRNG[0]) + ZRNG[0];
+                ashVel[i*3]=0; ashVel[i*3+1]=0; ashVel[i*3+2]=0;
             }
         }
         ashGeo.attributes.position.needsUpdate = true;
@@ -1261,38 +1271,39 @@
         debrisGroup.rotation.y += 0.0002;
         debrisGroup.rotation.x += 0.00008;
 
-        // --- 绘制鼠标光影跟踪（环境光晕）---
+        // --- 绘制鼠标光影跟踪（环境光晕，glowFade 淡出）---
         trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
-        if (mouseActive && lastMouseX > -100) {
-            // 大范围柔和光晕 — 类似月光/手电筒照亮黑暗
+        if (glowFade > 0.01 && lastMouseX > -100) {
+            const f = glowFade;
+            // 大范围热源光晕 — 暖橙琥珀色，像火焰/余烬的热量扩散
             const lightGrad = trailCtx.createRadialGradient(
                 lastMouseX, lastMouseY, 0,
                 lastMouseX, lastMouseY, 220
             );
-            lightGrad.addColorStop(0, 'rgba(230, 240, 255, 0.06)');
-            lightGrad.addColorStop(0.2, 'rgba(210, 225, 255, 0.04)');
-            lightGrad.addColorStop(0.5, 'rgba(180, 200, 240, 0.015)');
-            lightGrad.addColorStop(1, 'rgba(180, 200, 240, 0)');
+            lightGrad.addColorStop(0, 'rgba(255, 180, 80, ' + (0.07 * f) + ')');
+            lightGrad.addColorStop(0.2, 'rgba(255, 160, 60, ' + (0.045 * f) + ')');
+            lightGrad.addColorStop(0.5, 'rgba(240, 130, 40, ' + (0.018 * f) + ')');
+            lightGrad.addColorStop(1, 'rgba(220, 100, 20, 0)');
             trailCtx.fillStyle = lightGrad;
             trailCtx.beginPath();
             trailCtx.arc(lastMouseX, lastMouseY, 220, 0, Math.PI * 2);
             trailCtx.fill();
 
-            // 核心聚焦光斑
+            // 核心聚焦热源
             const coreGrad = trailCtx.createRadialGradient(
                 lastMouseX, lastMouseY, 0,
                 lastMouseX, lastMouseY, 60
             );
-            coreGrad.addColorStop(0, 'rgba(245, 250, 255, 0.10)');
-            coreGrad.addColorStop(0.4, 'rgba(230, 240, 255, 0.05)');
-            coreGrad.addColorStop(1, 'rgba(230, 240, 255, 0)');
+            coreGrad.addColorStop(0, 'rgba(255, 230, 180, ' + (0.12 * f) + ')');
+            coreGrad.addColorStop(0.4, 'rgba(255, 200, 120, ' + (0.06 * f) + ')');
+            coreGrad.addColorStop(1, 'rgba(255, 170, 80, 0)');
             trailCtx.fillStyle = coreGrad;
             trailCtx.beginPath();
             trailCtx.arc(lastMouseX, lastMouseY, 60, 0, Math.PI * 2);
             trailCtx.fill();
         }
 
-        // --- 绘制鼠标银白荧光粒子拖尾 ---
+        // --- 绘制鼠标热源粒子拖尾 — 暖金橙 ---
         if (trailPoints.length > 0) {
             trailCtx.globalCompositeOperation = 'lighter';
             for (let i = trailPoints.length - 1; i >= 0; i--) {
@@ -1301,21 +1312,21 @@
                 const alpha = p.life * (0.15 + progress * 0.85);
                 const r = p.size * p.life * (0.4 + progress * 0.6);
 
-                // 外发光（柔和光晕）
+                // 外发光（暖橙光晕）
                 const g1 = trailCtx.createRadialGradient(
                     p.x, p.y, 0,
                     p.x, p.y, r * 4
                 );
-                g1.addColorStop(0, `rgba(230, 240, 255, ${alpha * 0.6})`);
-                g1.addColorStop(0.3, `rgba(200, 220, 255, ${alpha * 0.3})`);
-                g1.addColorStop(1, `rgba(200, 220, 255, 0)`);
+                g1.addColorStop(0, `rgba(255, 180, 60, ${alpha * 0.6})`);
+                g1.addColorStop(0.3, `rgba(255, 150, 40, ${alpha * 0.3})`);
+                g1.addColorStop(1, `rgba(255, 120, 20, 0)`);
                 trailCtx.fillStyle = g1;
                 trailCtx.beginPath();
                 trailCtx.arc(p.x, p.y, r * 4, 0, Math.PI * 2);
                 trailCtx.fill();
 
-                // 核心亮点
-                trailCtx.fillStyle = `rgba(248, 252, 255, ${alpha})`;
+                // 核心亮点（暖白）
+                trailCtx.fillStyle = `rgba(255, 245, 220, ${alpha})`;
                 trailCtx.beginPath();
                 trailCtx.arc(p.x, p.y, r, 0, Math.PI * 2);
                 trailCtx.fill();
@@ -1332,44 +1343,91 @@
         composer.render();
     }
 
-    // ==================== Three.js 灰烬粒子系统 ====================
-    const ASH_COUNT = 350;
+    // === particle params (edit here, tell AI to change) ===
+    const ASH_COUNT = 5000;         // 更多粒子，更密集
+    const MOUSE_INF_R = 1.8;        // 鼠标热源影响半径（小，精确）
+    const MOUSE_FORCE = 500.0;      // 热风吹开力
+    const GRAVITY = -3.5;           // 微重力，火星缓慢飘升
+    const TURBULENCE = 10.0;        // 轻柔湍流
+    const VEL_DECAY = 2.2;          // 额外速度衰减率
+    const GLOW_R = 2.0;
+    const SZ_FAR = [0.04, 0.10];    // 更小粒子
+    const SZ_MID = [0.08, 0.18];
+    const SZ_NEAR = [0.12, 0.28];
+    const ZRNG = [-22, -2];
+    const DICE_COLLISION_R = 2.9;  // 骰子碰撞半径
+    // ============================================
     const ashGeo = new THREE.BufferGeometry();
     const ashPositions = new Float32Array(ASH_COUNT * 3);
-    const ashColors = new Float32Array(ASH_COUNT * 3);
-    const ashSizes = new Float32Array(ASH_COUNT);
-    const ashPhase = new Float32Array(ASH_COUNT); // 每个粒子的闪烁相位
-    const ashSpeed = new Float32Array(ASH_COUNT * 3); // 每个粒子的基础速度
-    const ashVel = new Float32Array(ASH_COUNT * 3);   // 鼠标扰动产生的额外速度
+    const ashColors   = new Float32Array(ASH_COUNT * 3);
+    const ashSizes    = new Float32Array(ASH_COUNT);
+    const ashPhase    = new Float32Array(ASH_COUNT); // 各粒子独立闪烁相位
+    const ashFreq     = new Float32Array(ASH_COUNT); // 各粒子独立闪烁频率
+    const ashSpeed    = new Float32Array(ASH_COUNT * 3); // 基础速度
+    const ashVel      = new Float32Array(ASH_COUNT * 3); // 鼠标扰动速度
+    const ashDrift    = new Float32Array(ASH_COUNT * 2); // 漂移噪声参数 [phaseX, phaseY]
 
     for (let i = 0; i < ASH_COUNT; i++) {
-        // 随机分布在相机周围的大范围内
-        ashPositions[i * 3] = (Math.random() - 0.5) * 30;
+        // 分布范围：X(-20~20), Y(-15~15), Z(-16~-4) — 全部在骰子(Z≈0)后面
+        ashPositions[i * 3]     = (Math.random() - 0.5) * 40;
         ashPositions[i * 3 + 1] = (Math.random() - 0.5) * 30;
-        ashPositions[i * 3 + 2] = (Math.random() - 0.5) * 20 - 5;
+        ashPositions[i * 3 + 2] = Math.random() * (ZRNG[1] - ZRNG[0]) + ZRNG[0];
 
-        // 暗红余烬到暗古铜金 — 低沉压抑的色调
-        const t = Math.random();
-        ashColors[i * 3] = 0.35 + t * 0.35;     // R: 暗红基
-        ashColors[i * 3 + 1] = 0.22 + t * 0.25; // G: 低饱和
-        ashColors[i * 3 + 2] = 0.08 + t * 0.12; // B: 近黑
+        const z = ashPositions[i * 3 + 2];
+        let r, g, b, size;
 
-        ashSizes[i] = Math.random() * 0.6 + 0.15;
+        if (z < -8) {
+            // 远景 — 深暗橙/暗红，融入黑背景
+            const t = Math.random();
+            r = 0.35 + t * 0.25;     // 0.35~0.60 暗橙
+            g = 0.10 + t * 0.12;     // 0.10~0.22 低绿
+            b = 0.02 + t * 0.06;     // 0.02~0.08 微蓝
+            size = SZ_FAR[0] + Math.random() * (SZ_FAR[1] - SZ_FAR[0]);
+        } else if (z <= -2) {
+            // 中景 — 主体橙金火星
+            const t = Math.random();
+            r = 0.65 + t * 0.30;     // 0.65~0.95 橙红
+            g = 0.25 + t * 0.35;     // 0.25~0.60 金黄
+            b = 0.04 + t * 0.10;     // 0.04~0.14 暖底
+            size = SZ_MID[0] + Math.random() * (SZ_MID[1] - SZ_MID[0]);
+        } else {
+            // 近景 — 亮黄白火星，像真火
+            r = 0.95 + Math.random() * 0.05;
+            g = 0.55 + Math.random() * 0.35;
+            b = 0.10 + Math.random() * 0.20;
+            size = SZ_NEAR[0] + Math.random() * (SZ_NEAR[1] - SZ_NEAR[0]);
+        }
+
+        ashColors[i * 3]     = r;
+        ashColors[i * 3 + 1] = g;
+        ashColors[i * 3 + 2] = b;
+        ashSizes[i] = size;
         ashPhase[i] = Math.random() * Math.PI * 2;
+        ashFreq[i]  = 1.0 + Math.random() * 2.5; // 闪烁频率 1~3.5
+        ashDrift[i * 2]     = Math.random() * Math.PI * 2; // drift phase X
+        ashDrift[i * 2 + 1] = Math.random() * Math.PI * 2; // drift phase Y
 
-        // 缓慢飘动的灰烬 — 沉重而压抑
-        ashSpeed[i * 3] = -(Math.random() * 2.0 + 0.8);     // X: 向左
-        ashSpeed[i * 3 + 1] = Math.random() * 1.2 + 0.4;    // Y: 向上
-        ashSpeed[i * 3 + 2] = (Math.random() - 0.5) * 0.4;  // Z: 轻微前后
+        // 基础速度 — 火星轻柔飘动，偏向上方
+        const speedMag = 3.0 + Math.random() * 7.0; // 3~10
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI * 0.45; // 0~81°，偏向上
+        ashSpeed[i * 3]     = Math.sin(phi) * Math.cos(theta) * speedMag;
+        ashSpeed[i * 3 + 1] = Math.cos(phi) * speedMag;
+        ashSpeed[i * 3 + 2] = Math.sin(phi) * Math.sin(theta) * speedMag;
     }
-    ashGeo.setAttribute('position', new THREE.BufferAttribute(ashPositions, 3));
-    ashGeo.setAttribute('color', new THREE.BufferAttribute(ashColors, 3));
-    ashGeo.setAttribute('size', new THREE.BufferAttribute(ashSizes, 1));
 
-    // 自定义 shader 粒子 — 支持闪烁、大小变化、鼠标高亮
+    ashGeo.setAttribute('position', new THREE.Float32BufferAttribute(ashPositions, 3));
+    ashGeo.setAttribute('color',    new THREE.Float32BufferAttribute(ashColors, 3));
+    ashGeo.setAttribute('size',     new THREE.Float32BufferAttribute(ashSizes, 1));
+    ashGeo.setAttribute('phase',    new THREE.Float32BufferAttribute(ashPhase, 1));
+    ashGeo.setAttribute('freq',     new THREE.Float32BufferAttribute(ashFreq, 1));
+
+    // 顶点着色器 — 闪烁、鼠标高亮、大小衰减
     const ashVert = `
         attribute float size;
         attribute vec3 color;
+        attribute float phase;
+        attribute float freq;
         varying vec3 vColor;
         varying float vAlpha;
         uniform float uTime;
@@ -1379,24 +1437,41 @@
         void main() {
             vec3 c = color;
             float a = 1.0;
-            // 鼠标附近粒子高亮（银白发光）
+
+            // 鼠标附近粒子高亮 — 暖金色光辉（穿透所有Z）
             if (uMouseActive > 0.5) {
-                float d = length(position - uMousePos);
-                float glowRadius = 16.0;
+                float d = length(position.xy - uMousePos.xy);
+                float glowRadius = 2.0;
                 if (d < glowRadius) {
                     float glow = 1.0 - d / glowRadius;
-                    glow = glow * glow * (3.0 - 2.0 * glow); // 平滑曲线
-                    c = mix(c, vec3(0.85, 0.90, 0.95), glow * 0.85);
-                    a = 1.0 + glow * 1.5;
+                    glow = glow * glow * (3.0 - 2.0 * glow);
+                    // 暖金高亮 vec3(1.0, 0.78, 0.45)
+                    c = mix(c, vec3(1.0, 0.78, 0.45), glow * 0.80);
+                    a = 1.0 + glow * 1.2;
                 }
             }
+
             vColor = c;
+
             vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-            // 闪烁：基于时间和位置的周期性亮度变化
-            float flash = sin(uTime * 2.0 + position.x * 3.0 + position.y * 2.0) * 0.5 + 0.5;
-            flash = pow(flash, 3.0); // 尖锐的闪烁
-            vAlpha = (0.25 + flash * uFlashStrength * 0.7) * a;
-            gl_PointSize = size * (300.0 / -mvPosition.z);
+
+            // 闪烁：基于时间和粒子独立频率/相位，各粒子异步闪烁
+            float flash = sin(uTime * freq + phase) * 0.5 + 0.5;
+            flash = pow(flash, 2.2); // 柔和闪烁曲线
+            vAlpha = (0.30 + flash * uFlashStrength * 0.45) * a;
+
+            // 鼠标高亮粒子稍微变大（穿透所有Z）
+            float sizeMult = 1.0;
+            if (uMouseActive > 0.5) {
+                float d = length(position.xy - uMousePos.xy);
+                float glowRadius = 2.0;
+                if (d < glowRadius) {
+                    float glow = 1.0 - d / glowRadius;
+                    glow = glow * glow * (3.0 - 2.0 * glow);
+                    sizeMult = 1.0 + glow * 0.5;
+                }
+            }
+            gl_PointSize = size * sizeMult * (450.0 / -mvPosition.z);
             gl_Position = projectionMatrix * mvPosition;
         }
     `;
@@ -1404,23 +1479,25 @@
         varying vec3 vColor;
         varying float vAlpha;
         void main() {
-            // 圆形软点
             float d = length(gl_PointCoord - vec2(0.5));
             if (d > 0.5) discard;
-            float alpha = smoothstep(0.5, 0.1, d) * vAlpha;
+            float alpha = smoothstep(0.5, 0.12, d) * vAlpha;
             gl_FragColor = vec4(vColor, alpha);
         }
     `;
     const ashUniforms = {
-        uTime: { value: 0 },
-        uFlashStrength: { value: 0.6 },
-        uMousePos: { value: new THREE.Vector3(0, 0, 0) },
-        uMouseActive: { value: 0.0 }
+        uTime:          { value: 0 },
+        uFlashStrength: { value: 0.55 },
+        uMousePos:      { value: new THREE.Vector3(0, 0, 0) },
+        uMouseActive:   { value: 0.0 }
     };
     const ashMat = new THREE.ShaderMaterial({
-        vertexShader: ashVert, fragmentShader: ashFrag,
-        uniforms: ashUniforms, transparent: true, depthWrite: false,
-        blending: THREE.AdditiveBlending
+        vertexShader:   ashVert,
+        fragmentShader: ashFrag,
+        uniforms:       ashUniforms,
+        transparent:    true,
+        depthWrite:     false,
+        blending:       THREE.AdditiveBlending
     });
     const ashParticles = new THREE.Points(ashGeo, ashMat);
     scene.add(ashParticles);
