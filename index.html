@@ -1165,7 +1165,7 @@
             // 8. 镜头推进到最后 10% 时直接跳转 — 不进入任何中间画面
             if (t >= 1.0) {
                 state = STATE.FADE; // 互锁：防止 requestAnimationFrame 下一帧重复跳转
-                window.location.href = FACES[clickedFace].href;
+                ashTransition.out(FACES[clickedFace].href);
                 return;
             }
         }
@@ -1525,5 +1525,6 @@
     updateFaceInfo(0);
     animate(performance.now());
     </script>
+    <script src="transition.js"></script>
 </body>
 </html>

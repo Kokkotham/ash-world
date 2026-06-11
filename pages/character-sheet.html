@@ -6,31 +6,105 @@
     <title>角色卡 — 灰烬世界</title>
     <link rel="stylesheet" href="common.css">
     <style>
-        .sheet-placeholder {
-            max-width: 700px; margin: 30px auto; padding: 60px 40px;
-            background: var(--ash-gray);
-            border: 2px dashed rgba(201, 168, 76, 0.25);
-            text-align: center;
-        }
-        .sheet-placeholder h3 {
-            font-family: 'Cinzel', serif; color: var(--ash-gold);
-            margin-bottom: 16px; letter-spacing: 0.1em;
-        }
-        .sheet-placeholder p { color: var(--ash-light); margin-bottom: 8px; }
         .attr-grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
-            max-width: 600px; margin: 30px auto;
+            max-width: 660px; margin: 30px auto;
         }
         .attr-box {
-            background: var(--ash-gray); border: 1px solid rgba(201, 168, 76, 0.15);
-            padding: 20px; text-align: center;
+            background: var(--ash-gray);
+            border: 1px solid rgba(201, 168, 76, 0.15);
+            padding: 18px 16px 14px; text-align: center;
+            cursor: pointer; transition: all 0.3s;
+            position: relative; user-select: none;
+        }
+        .attr-box:hover {
+            border-color: rgba(201, 168, 76, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        .attr-box.rolling {
+            pointer-events: none; opacity: 0.6;
         }
         .attr-box .attr-name {
-            font-family: 'Cinzel', serif; font-size: 0.8rem;
-            color: var(--ash-gold-dim); letter-spacing: 0.1em; margin-bottom: 8px;
+            font-family: 'Cinzel', serif; font-size: 0.75rem;
+            color: var(--ash-gold-dim); letter-spacing: 0.12em;
+            margin-bottom: 6px;
         }
         .attr-box .attr-value {
-            font-size: 2rem; color: var(--ash-gold); font-weight: 700;
+            font-size: 2.4rem; color: var(--ash-gold); font-weight: 700;
+            transition: color 0.3s, text-shadow 0.3s;
+            line-height: 1.1;
+        }
+        .attr-box.rolled .attr-value {
+            text-shadow: 0 0 18px rgba(201,168,76,0.3);
+        }
+        .attr-box .attr-detail {
+            font-size: 0.7rem; color: var(--ash-light);
+            opacity: 0.5; margin-top: 2px;
+            transition: opacity 0.3s;
+        }
+        .attr-box.rolled .attr-detail { opacity: 0.85; }
+        .attr-box .attr-hint {
+            position: absolute; bottom: 4px; right: 8px;
+            font-size: 0.55rem; color: var(--ash-gold-dim);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .attr-box:hover .attr-hint { opacity: 0.5; }
+
+        /* Roll All button */
+        .roll-all-wrap {
+            text-align: center; margin: 8px 0 20px;
+        }
+        .roll-all-btn {
+            display: inline-block; padding: 12px 40px;
+            background: rgba(184,146,58,0.06);
+            border: 1px solid rgba(184,146,58,0.35);
+            color: var(--ash-gold); font-family: 'Cinzel', serif;
+            font-size: 0.95rem; letter-spacing: 0.18em;
+            cursor: pointer; transition: all 0.35s;
+            position: relative; overflow: hidden;
+        }
+        .roll-all-btn:hover {
+            background: rgba(184,146,58,0.14);
+            border-color: var(--ash-gold);
+            box-shadow: 0 0 24px rgba(184,146,58,0.15);
+        }
+        .roll-all-btn::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(184,146,58,0.12), transparent);
+            transform: translateX(-100%); transition: transform 0.5s;
+        }
+        .roll-all-btn:hover::before { transform: translateX(100%); }
+
+        /* Dice display */
+        .dice-row {
+            display: flex; gap: 6px; justify-content: center; margin-top: 4px;
+        }
+        .dice-pip {
+            width: 16px; height: 16px;
+            background: var(--ash-gold-dim);
+            border-radius: 2px; opacity: 0;
+            transform: rotate(0deg) scale(0);
+            transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+            font-size: 0.6rem; color: var(--ash-dark);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+        }
+        .dice-pip.show {
+            opacity: 1; transform: rotate(360deg) scale(1);
+        }
+
+        /* Summary */
+        .roll-summary {
+            text-align: center; margin-top: 10px;
+            font-size: 0.8rem; color: var(--ash-light); opacity: 0;
+            transition: opacity 0.5s;
+        }
+        .roll-summary.visible { opacity: 0.7; }
+
+        @media (max-width: 768px) {
+            .attr-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .attr-box .attr-value { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -76,40 +150,159 @@
 
     <main class="content">
         <h2 class="section-title">核心属性（3d6 系统）</h2>
-        <div class="attr-grid">
-            <div class="attr-box">
+        <div class="roll-all-wrap">
+            <button class="roll-all-btn" onclick="rollAll()">掷骰生成属性</button>
+        </div>
+        <div class="attr-grid" id="attrGrid">
+            <div class="attr-box" data-attr="str" onclick="rollAttr(this)">
                 <div class="attr-name">力量 STR</div>
                 <div class="attr-value">?</div>
+                <div class="dice-row">
+                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
+                </div>
+                <div class="attr-detail">近战 · 负重 · 体能</div>
+                <div class="attr-hint">点击重掷</div>
             </div>
-            <div class="attr-box">
+            <div class="attr-box" data-attr="dex" onclick="rollAttr(this)">
                 <div class="attr-name">敏捷 DEX</div>
                 <div class="attr-value">?</div>
+                <div class="dice-row">
+                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
+                </div>
+                <div class="attr-detail">远程 · 闪避 · 巧手</div>
+                <div class="attr-hint">点击重掷</div>
             </div>
-            <div class="attr-box">
+            <div class="attr-box" data-attr="con" onclick="rollAttr(this)">
                 <div class="attr-name">体质 CON</div>
                 <div class="attr-value">?</div>
+                <div class="dice-row">
+                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
+                </div>
+                <div class="attr-detail">生命 · 耐力 · 抵抗</div>
+                <div class="attr-hint">点击重掷</div>
             </div>
-            <div class="attr-box">
+            <div class="attr-box" data-attr="int" onclick="rollAttr(this)">
                 <div class="attr-name">智力 INT</div>
                 <div class="attr-value">?</div>
+                <div class="dice-row">
+                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
+                </div>
+                <div class="attr-detail">奥术 · 知识 · 逻辑</div>
+                <div class="attr-hint">点击重掷</div>
             </div>
-            <div class="attr-box">
+            <div class="attr-box" data-attr="wis" onclick="rollAttr(this)">
                 <div class="attr-name">感知 WIS</div>
                 <div class="attr-value">?</div>
+                <div class="dice-row">
+                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
+                </div>
+                <div class="attr-detail">洞察 · 神术 · 生存</div>
+                <div class="attr-hint">点击重掷</div>
             </div>
-            <div class="attr-box">
+            <div class="attr-box" data-attr="cha" onclick="rollAttr(this)">
                 <div class="attr-name">魅力 CHA</div>
                 <div class="attr-value">?</div>
+                <div class="dice-row">
+                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
+                </div>
+                <div class="attr-detail">交涉 · 威吓 · 领导</div>
+                <div class="attr-hint">点击重掷</div>
             </div>
         </div>
+        <div class="roll-summary" id="rollSummary"></div>
 
-        <div class="sheet-placeholder">
-            <h3>可填写角色卡（PDF / 在线版制作中）</h3>
-            <p>完整版角色卡将包含：属性计算、技能列表、装备栏、</p>
-            <p>背景故事、信仰记录、灰烬感应度追踪等功能。</p>
-            <p style="margin-top:16px; font-size:0.8rem; opacity:0.6;">预计 AH 8.07 上线</p>
+        <h2 class="section-title" style="margin-top:48px;">角色信息</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>创建你的角色</h3>
+                <p>点击属性框掷骰（3d6），也可以点击单个属性重掷。所有属性掷出后，总点数将显示在下方。标准 3d6 系统期望总点数为 63（个体范围 54~72）。</p>
+                <div class="meta">提示：3d6 呈正态分布，10~11 为最常见的单属性值</div>
+            </div>
         </div>
     </main>
+
+    <script>
+    // ==================== 3d6 骰子系统 ====================
+    const attrBoxes = document.querySelectorAll('.attr-box');
+    const summaryEl = document.getElementById('rollSummary');
+
+    function rollD6() { return Math.floor(Math.random() * 6) + 1; }
+
+    function rollAttr(box) {
+        if (box.classList.contains('rolling')) return;
+        box.classList.add('rolling');
+
+        // 骰子滚动动画
+        const pips = box.querySelectorAll('.dice-pip');
+        const valueEl = box.querySelector('.attr-value');
+        const detailEl = box.querySelector('.attr-detail');
+
+        // 快速闪烁动画
+        let ticks = 0;
+        const maxTicks = 8;
+        const dice = [rollD6(), rollD6(), rollD6()];
+        const total = dice[0] + dice[1] + dice[2];
+
+        function tick() {
+            ticks++;
+            if (ticks < maxTicks) {
+                // 随机闪烁
+                pips.forEach((p, i) => {
+                    p.textContent = rollD6();
+                    p.classList.toggle('show', Math.random() > 0.3);
+                });
+                valueEl.textContent = Math.floor(Math.random() * 16) + 3;
+                setTimeout(tick, 60 + ticks * 10);
+            } else {
+                // 最终结果
+                pips.forEach((p, i) => {
+                    p.textContent = dice[i];
+                    p.classList.add('show');
+                    p.style.transitionDelay = (i * 0.1) + 's';
+                });
+                valueEl.textContent = total;
+                box.classList.add('rolled');
+                box.classList.remove('rolling');
+
+                // 高亮极端值
+                if (total >= 16) {
+                    valueEl.style.color = '#e8b84c';
+                    valueEl.style.textShadow = '0 0 24px rgba(232,184,76,0.4)';
+                } else if (total <= 6) {
+                    valueEl.style.color = '#d46b3a';
+                    valueEl.style.textShadow = '0 0 24px rgba(212,107,58,0.4)';
+                } else {
+                    valueEl.style.color = '';
+                    valueEl.style.textShadow = '';
+                }
+
+                updateSummary();
+            }
+        }
+        tick();
+    }
+
+    function rollAll() {
+        attrBoxes.forEach((box, i) => {
+            setTimeout(() => rollAttr(box), i * 120);
+        });
+    }
+
+    function updateSummary() {
+        const boxes = document.querySelectorAll('.attr-box.rolled');
+        if (boxes.length === 6) {
+            let total = 0;
+            boxes.forEach(b => total += parseInt(b.querySelector('.attr-value').textContent) || 0);
+            summaryEl.textContent = '属性总和：' + total + ' 点';
+            summaryEl.classList.add('visible');
+        } else if (boxes.length > 0) {
+            let total = 0;
+            boxes.forEach(b => total += parseInt(b.querySelector('.attr-value').textContent) || 0);
+            summaryEl.textContent = '已掷 ' + boxes.length + '/6 属性 · 当前总和：' + total + ' 点';
+            summaryEl.classList.add('visible');
+        }
+    }
+    </script>
 
     <nav class="bottom-nav">
         <a href="news.html">最新资讯</a>
@@ -125,6 +318,8 @@
     <footer class="footer">
         <p>灰烬世界 Ash World &copy; 2026 桌游工作室</p>
     </footer>
+    <script src="../transition.js"></script>
+    <script src="../ash-bg.js"></script>
     <script src="../mouse-trail.js"></script>
 </body>
 </html>
