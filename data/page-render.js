@@ -115,51 +115,33 @@
     el.innerHTML = html;
   }
 
-  function renderGlossary(data) {
-    const el = document.getElementById('onto-content');
-    if (!el) return;
-    el.innerHTML = '<p style="text-align:center;color:var(--ash-gold-dim);padding:40px">术语表数据已迁移至 data/ 层。<br>搜索和分类筛选功能保持可用。</p>';
-  }
-
-  function renderNews(data) {
-    const el = document.getElementById('onto-content');
-    if (!el) return;
-    el.innerHTML = '<p style="text-align:center;color:var(--ash-gold-dim);padding:40px">新闻数据已迁移至 data/ 层。<br>时间线展示功能保持可用。</p>';
-  }
-
-  function renderArticles(data) {
-    const el = document.getElementById('onto-content');
-    if (!el) return;
-    el.innerHTML = '<p style="text-align:center;color:var(--ash-gold-dim);padding:40px">文章数据已迁移至 data/ 层。<br>深度阅读功能保持可用。</p>';
-  }
-
-  function renderCommunity(data) {
-    const el = document.getElementById('onto-content');
-    if (!el) return;
-    el.innerHTML = '<p style="text-align:center;color:var(--ash-gold-dim);padding:40px">共创项目数据已迁移至 data/ 层。</p>';
-  }
-
-  function renderMerch(data) {
-    const el = document.getElementById('onto-content');
-    if (!el) return;
-    el.innerHTML = '<p style="text-align:center;color:var(--ash-gold-dim);padding:40px">商品数据已迁移至 data/ 层。</p>';
-  }
-
-  function renderWorks(data) {
-    const el = document.getElementById('onto-content');
-    if (!el) return;
-    el.innerHTML = '<p style="text-align:center;color:var(--ash-gold-dim);padding:40px">衍生作品数据已迁移至 data/ 层。</p>';
-  }
+  // 以下页面已有丰富的 HTML 内容，不覆盖 #onto-content
+  // 仅保留底部 Ontology 关联区块
+  function renderGlossary(data) {}
+  function renderNews(data) {}
+  function renderArticles(data) {}
+  function renderCommunity(data) {}
+  function renderMerch(data) {}
+  function renderWorks(data) {}
 
   function renderPageLinks(data, el) {
-    el.innerHTML = '<h2 class="section-title">Ontology 关联一览</h2>' +
-      '<div style="font-size:0.85rem;color:var(--ash-gold-dim);line-height:1.8">' +
-      '<p>数据来源：<code>data/links.json</code>（共 ' + (data.links ? data.links.length : 0) + ' 条关系链接）</p>' +
-      '<p>链接类型：栖息于 · 发生在 · 涉及 · 受信仰于 · 关联事件</p>' +
-      '<p>数据实体：' + data.races.total + ' 个种族 · ' +
-      (data.deities?.pantheons?.length || 0) + ' 神系 · ' +
-      (data.deities?.twelve_labors?.length || 0) + ' 圣工</p>' +
-      '</div>';
+    // 用户友好的关联内容展示，不再暴露调试信息
+    const raceCount = data.races ? data.races.total : 0;
+    const deityCount = (data.deities?.pantheons?.length || 0) + (data.deities?.twelve_labors?.length || 0) + (data.deities?.notable_deities?.length || 0);
+    const moduleCount = data.modules ? (data.modules.official?.length || 0) + (data.modules.short?.length || 0) : 0;
+    const regionCount = data.regions ? data.regions.length : 0;
+    const linkCount = data.links ? data.links.length : 0;
+
+    let html = '<h2 class="section-title">相关内容</h2>';
+    html += '<div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">';
+    html += '<div class="card"><h3>种族</h3><p class="meta">' + raceCount + ' 个种族设定</p></div>';
+    html += '<div class="card"><h3>神系</h3><p class="meta">' + deityCount + ' 位神祇与圣工</p></div>';
+    html += '<div class="card"><h3>模组</h3><p class="meta">' + moduleCount + ' 个冒险模组</p></div>';
+    html += '<div class="card"><h3>地区</h3><p class="meta">' + regionCount + ' 个地区设定</p></div>';
+    html += '</div>';
+    html += '<div style="text-align:center;margin-top:20px;font-size:0.8rem;color:var(--ash-gold-dim);opacity:0.6">' +
+      '以上内容通过 ' + linkCount + ' 条设定关联相互连接</div>';
+    el.innerHTML = html;
   }
 
   window.PageRender = { init };
