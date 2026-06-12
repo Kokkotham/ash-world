@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绘图 — 灰烬世界</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px; margin-top: 30px;
+        }
+        .gallery-item {
+            aspect-ratio: 4/3;
+            background: var(--ash-gray);
+            border: 1px solid rgba(201, 168, 76, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--ash-light); font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .gallery-item:hover {
+            border-color: rgba(201, 168, 76, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="../index.html" class="nav-brand"><span>灰烬世界</span></a>
+        <div class="nav-links">
+            <div class="nav-item"><a href="news.html">最新资讯</a></div>
+            <div class="nav-item">
+                <span>世界设定</span>
+                <div class="nav-dropdown">
+                    <a href="worldview.html">世界观</a>
+                    <a href="map.html">地图</a>
+                    <a href="pantheon.html">神系</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <span>规则&模组</span>
+                <div class="nav-dropdown">
+                    <a href="rules.html">规则书</a>
+                    <a href="character-sheet.html">角色卡</a>
+                    <a href="glossary.html">规则术语表</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <span>社区</span>
+                <div class="nav-dropdown">
+                    <a href="articles.html">文章</a>
+                    <a href="art.html">绘图</a>
+                    <a href="discussion.html">讨论</a>
+                    <a href="community.html">玩家共创</a>
+                </div>
+            </div>
+            <div class="nav-item"><a href="merch.html">商店</a></div>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>绘图</h1>
+        <p class="subtitle">ARTWORK &amp; GALLERY</p>
+        <div class="divider"></div>
+    </header>
+
+    <main class="content">
+        <h2 class="section-title">概念艺术</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">灰之王概念图</div>
+            <div class="gallery-item">纳露安城废墟</div>
+            <div class="gallery-item">普尔曼隘口</div>
+            <div class="gallery-item">十二圣工立绘</div>
+            <div class="gallery-item">各族角色设定</div>
+            <div class="gallery-item">空洞浩劫场景</div>
+        </div>
+
+        <h2 class="section-title">玩家同人</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">同人作品 #1</div>
+            <div class="gallery-item">同人作品 #2</div>
+            <div class="gallery-item">同人作品 #3</div>
+            <div class="gallery-item">同人作品 #4</div>
+        </div>
+
+        <div class="quote-block" style="margin-top:40px;">
+            「每一幅画作都是对灰烬世界的一次重新想象。这里没有标准答案，只有无数个等待被讲述的故事。」
+            <br>—— 灰烬世界美术组
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="news.html">最新资讯</a>
+        <a href="worldview.html">世界观</a>
+        <a href="map.html">地图</a>
+        <a href="races.html">种族</a>
+        <a href="rules.html">规则</a>
+        <a href="modules.html">模组</a>
+        <a href="works.html">衍生</a>
+        <a href="merch.html">商店</a>
+    </nav>
+
+    <footer class="footer">
+        <p>灰烬世界 Ash World &copy; 2026 桌游工作室</p>
+    </footer>
+</body>
+</html>

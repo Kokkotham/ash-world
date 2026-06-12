@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏规则 — 灰烬世界</title>
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+        <nav class="top-nav">
+        <a href="../index.html" class="nav-brand"><span>灰烬世界</span></a>
+        <div class="nav-links">
+            <div class="nav-item"><a href="news.html">最新资讯</a></div>
+            <div class="nav-item">
+                <span>世界设定</span>
+                <div class="nav-dropdown">
+                    <a href="worldview.html">世界观</a>
+                    <a href="map.html">地图</a>
+                    <a href="pantheon.html">神系</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <span>规则&模组</span>
+                <div class="nav-dropdown">
+                    <a href="rules.html">规则书</a>
+                    <a href="character-sheet.html">角色卡</a>
+                    <a href="glossary.html">规则术语表</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <span>社区</span>
+                <div class="nav-dropdown">
+                    <a href="articles.html">文章</a>
+                    <a href="art.html">绘图</a>
+                    <a href="discussion.html">讨论</a>
+                    <a href="community.html">玩家共创</a>
+                </div>
+            </div>
+            <div class="nav-item"><a href="merch.html">商店</a></div>
+        </div>
+    </nav>
+
+    <header class="page-header">
+        <h1>游戏规则</h1>
+        <p class="subtitle">RULES &amp; SYSTEM</p>
+        <div class="divider"></div>
+    </header>
+
+    <main class="content">
+        <h2 class="section-title">核心机制概述</h2>
+        <div class="text-block">
+            《灰烬世界》采用<strong>3d6（三颗六面骰）</strong>作为核心判定系统。相比传统的 d20 系统，3d6 呈现出更接近正态分布的概率曲线，让角色的属性与技能训练真正有意义——高手不会频繁失手，新手也不会侥幸常胜。
+        </div>
+        <div class="text-block">
+            判定流程：掷 3d6 + 属性修正 + 技能等级 + 情境修正，对比目标难度值（TN）。等于或超过 TN 即为成功，超出越多效果越好。
+        </div>
+        <div class="text-block">
+            <strong>灰烬骰（Ash Dice）</strong>：当剧情进入关键时刻，主持人可宣告启用灰烬骰。此时玩家额外掷一颗特殊的灰烬色 d6，其结果可替代三颗普通骰中最低的一颗，象征着灰烬之力对命运的干预。
+        </div>
+
+        <h2 class="section-title">父神体系</h2>
+        <div class="text-block">
+            父神体系以<strong>德米乌尔格斯</strong>（匠神之父）为至高神，主管锻造、工艺、建筑与雕塑。父神信徒崇尚创造与秩序，认为世间万物皆可被塑造、被理解、被改造。
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr><th>神祇</th><th>身份</th><th>神职</th><th>象征</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>德米乌尔格斯</td><td>父神、造物主</td><td>锻造、工艺、建筑、雕塑</td><td>天球仪、双头锤、铁砧与火、槲寄生</td></tr>
+                <tr><td>尤里昂</td><td>长子</td><td>引导、排列组合、命运塑造</td><td>指模、水晶簇、竖琴、三根羽毛、金雀花</td></tr>
+                <tr><td>兹尔戈斯</td><td>长女（尤里昂之妹）</td><td>守序、划界、惩戒</td><td>织布、蜂巢、日晷、蜘蛛网、纺锤</td></tr>
+                <tr><td>生命熔炉</td><td>尤里昂的弟弟</td><td>生命起源、演化、轮回</td><td>火山、熔炉、鲑鱼、橡树果</td></tr>
+                <tr><td>亚弗拉克斯</td><td>父神的仆从</td><td>筛选、淘汰、引导亡魂</td><td>回廊、渡鸦、荆棘、银色镰刀</td></tr>
+            </tbody>
+        </table>
+
+        <h2 class="section-title">母神体系</h2>
+        <div class="text-block">
+            母神体系以<strong>时序海妖（Chronoscylla）</strong>为至高神，主管时间管理、秩序起源与最终命运。母神信徒相信万物皆有其时，强行逆天而行者终将遭到时间的反噬。
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr><th>神祇</th><th>身份</th><th>神职</th><th>象征</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>时序海妖</td><td>母神、秩序之母</td><td>时间管理、秩序起源、最终命运</td><td>星盘、螺旋贝壳、钟摆</td></tr>
+                <tr><td>艾奥尼亚</td><td>长女</td><td>观察过去、记忆、见证历史</td><td>琥珀、梦境、古橡树、溪流</td></tr>
+                <tr><td>帕诺普塔</td><td>二女儿</td><td>洞察现在、记录当下</td><td>鹰、平静湖面、白色三叶草</td></tr>
+                <tr><td>卡珊德拉</td><td>三女儿</td><td>预警、告诫</td><td>迷雾岔路口、双刃剑、水晶球、染血的羽毛</td></tr>
+                <tr><td>虚无冠冕</td><td>母神的奴仆</td><td>回归虚无、循环更替</td><td>日蚀、寂静墓地、新月、黑土、冬眠种子</td></tr>
+            </tbody>
+        </table>
+
+        <h2 class="section-title">深渊之神体系</h2>
+        <div class="text-block">
+            深渊之神是<strong>虚无冠冕的阴影</strong>，代表着与母神秩序完全相反的力量——遗忘、瓦解、终结。深渊之神并非邪恶，而是宇宙循环中不可或缺的另一半。
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr><th>神祇</th><th>身份</th><th>神职</th><th>象征</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>遗忘深渊</td><td>虚无冠冕的阴影、冥界</td><td>遗忘、虚无、抹除痕迹</td><td>黑曜石镜面、熄灭星辰、螺旋迷宫、深井、褪色壁画</td></tr>
+                <tr><td>涅斯托斯</td><td>母神的私生子，深渊义肢</td><td>瓦解、消融僵化结构</td><td>锈迹、腐烂水果、落叶、朽木、蛇蜕</td></tr>
+                <tr><td>莱忒</td><td>涅斯托斯的哥哥，深渊义肢</td><td>抹除存在、剥夺意义</td><td>无回声山谷、消散足迹、空无渡口</td></tr>
+                <tr><td>阿那库隆</td><td>涅斯托斯的姐姐，深渊义肢</td><td>终结循环、归还自身</td><td>衔尾蛇、闭合圆环、空旷王座、静止沙漏、坍塌洞穴</td></tr>
+                <tr><td>阿拉温</td><td>虚无冠冕的半神化身</td><td>死亡、亡灵、轮回、审判</td><td>天平</td></tr>
+            </tbody>
+        </table>
+
+        <h2 class="section-title">小神与荒野神</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>安温（丰饶女神）</h3>
+                <p>尤里昂和兹尔戈斯的女儿。神职：农业、丰收、牲畜。</p>
+            </div>
+            <div class="card">
+                <h3>埃兰（治愈之神）</h3>
+                <p>安温的孪生兄弟。神职：大自然、生命、精神疗愈。</p>
+            </div>
+            <div class="card">
+                <h3>瑞安农（家庭与婚姻女神）</h3>
+                <p>安温和埃兰的女儿。神职：家庭、婚姻、生育、爱与失去。</p>
+            </div>
+            <div class="card">
+                <h3>塞恩（狩猎之神）</h3>
+                <p>生命熔炉的兄弟。神职：狩猎、森林、野物。</p>
+            </div>
+            <div class="card">
+                <h3>艾丽尔（水域女神）</h3>
+                <p>时序海妖的妹妹。神职：海洋、河流、渔业、航海、潮汐。</p>
+            </div>
+            <div class="card">
+                <h3>马布斯（贸易与旅行之神）</h3>
+                <p>艾丽尔的仆从。神职：贸易、旅行、道路、交流。</p>
+            </div>
+            <div class="card">
+                <h3>克莱德温（诗歌音乐艺术女神）</h3>
+                <p>艾奥尼亚和卡珊德拉的妹妹。神职：诗歌、音乐、艺术、灵感。</p>
+            </div>
+            <div class="card">
+                <h3>贝伦（战争与光辉之神）</h3>
+                <p>塞恩的私生子（半神）。神职：战争、勇气、胜利、荣誉、光明、正义。</p>
+            </div>
+        </div>
+
+        <h2 class="section-title">纳入荒野神的神兽</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>赤蹄（卡莱顿）</h3>
+                <p>塞恩庇护的神兽。在雷火中诞生，拥有火焰治愈与火焰惩罚的双重能力，可号令动物。</p>
+            </div>
+            <div class="card">
+                <h3>银爪（维亚斯）</h3>
+                <p>艾丽尔庇护的神兽。诞生于巨人洞穴，可控制气象与闪电。</p>
+            </div>
+            <div class="card">
+                <h3>黑牙（杜布）</h3>
+                <p>阿拉温庇护的神兽。由战死怨念与神力融合而成，可穿梭于生死之间，追捕逃亡的亡灵。</p>
+            </div>
+            <div class="card">
+                <h3>白鬃（菲翁-梅恩）</h3>
+                <p>瑞安农庇护的神兽。在春雪中诞生，拥有生机抚慰之力，可短暂打破时空界限。</p>
+            </div>
+        </div>
+
+        <h2 class="section-title">重要典籍与戒律</h2>
+
+        <h3 style="color:var(--ash-gold);margin:20px 0 10px;font-size:1.05rem">《尤里昂圣典》</h3>
+        <div class="text-block">
+            <strong>教条：</strong>顺流、未塑、弦动、聆听。<br>
+            <strong>信徒：</strong>工匠、艺术家、导师。<br>
+            尤里昂的信徒相信命运如琴弦，既已被拨动，便只能随之共鸣。
+        </div>
+
+        <h3 style="color:var(--ash-gold);margin:20px 0 10px;font-size:1.05rem">《纺锤法典》（兹尔戈斯）</h3>
+        <div class="text-block">
+            <strong>教条：</strong>万物皆在网中；各司其位；界限神圣；混沌是瑕疵。<br>
+            <strong>惩戒：</strong>生活中的微小异变——羽毛笔分叉、锁卡住、茶水泼洒。<br>
+            兹尔戈斯的信徒相信秩序是宇宙的根本属性，任何越界行为都会遭到现实的反噬。
+        </div>
+
+        <h3 style="color:var(--ash-gold);margin:20px 0 10px;font-size:1.05rem">《柯诺斯库拉教义》（时序海妖）</h3>
+        <div class="text-block">
+            <strong>教条：</strong>时间之河；万物皆有时节；未来乃过往之影；宏图的终点是和谐。<br>
+            <strong>惩戒：</strong>时间本身的扭曲——延迟、加速、永恒梦魇。<br>
+            母神信徒敬畏时间，相信每个行动都有其最合适的时机。
+        </div>
+
+        <h3 style="color:var(--ash-gold);margin:20px 0 10px;font-size:1.05rem">《阿拉温的教义》</h3>
+        <div class="text-block">
+            <strong>教条：</strong>死亡是清算的起头；汝之一生皆为砝码；生者归于阳光，亡者安于冥土；所有债务终将偿还。<br>
+            <strong>惩戒：</strong>灵魂层面的公正处理（滞纳金、信用不良、销账）。<br>
+            阿拉温的信徒将死亡视为一种会计行为——生前的善恶最终都会在死亡的天平上得到清算。
+        </div>
+
+        <h2 class="section-title">关键历史战争</h2>
+        <table class="data-table">
+            <thead>
+                <tr><th>战争</th><th>时间</th><th>交战方</th><th>结果</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>贸易战争</td>
+                    <td>BHC 245</td>
+                    <td>父神教会 vs 母神教会</td>
+                    <td>贸易领域的长期对抗</td>
+                </tr>
+                <tr>
+                    <td>南方战争（南北战争）</td>
+                    <td>BHC 142–33</td>
+                    <td>奥弗丹 vs 安温提</td>
+                    <td>长期消耗战，最终签署《南北合约》</td>
+                </tr>
+                <tr>
+                    <td>艾比昂渡口之战</td>
+                    <td>BHC 142</td>
+                    <td>安温提 vs 奥弗丹</td>
+                    <td>安温提获胜</td>
+                </tr>
+                <tr>
+                    <td>法凯伦反围剿之战</td>
+                    <td>BHC 138–132</td>
+                    <td>安温提 vs 奥弗丹</td>
+                    <td>安温提惨胜</td>
+                </tr>
+                <tr>
+                    <td>三皇之乱</td>
+                    <td>AH 0–100</td>
+                    <td>瑞坦维亚 vs 奥弗丹 vs 安温提</td>
+                    <td>人类内战，因兽人入侵而中断</td>
+                </tr>
+                <tr>
+                    <td>兽人世界级大战</td>
+                    <td>AH 100–200</td>
+                    <td>兽人钢铁帝国 vs 格维恩各族</td>
+                    <td>阿西纳人与巴伦达人几乎覆灭；木林精与精灵联盟</td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="news.html">最新资讯</a>
+        <a href="worldview.html">世界观</a>
+        <a href="map.html">地图</a>
+        <a href="races.html">种族</a>
+        <a href="rules.html" class="active">游戏规则</a>
+        <a href="modules.html">模组</a>
+        <a href="works.html">衍生作品</a>
+        <a href="merch.html">周边产品</a>
+    </nav>
+
+    <footer class="footer">
+        <p>灰烬世界 Ash World &copy; 2026 桌游工作室</p>
+    </footer>
+</body>
+</html>
