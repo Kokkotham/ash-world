@@ -1,0 +1,30 @@
+[
+  { "from_type": "race", "from_id": "orc", "link": "栖息于", "to_type": "region", "to_id": "namilani" },
+  { "from_type": "race", "from_id": "minotaur", "link": "栖息于", "to_type": "region", "to_id": "blanka" },
+  { "from_type": "race", "from_id": "northerner", "link": "栖息于", "to_type": "region", "to_id": "blanka" },
+  { "from_type": "race", "from_id": "vilas", "link": "栖息于", "to_type": "region", "to_id": "blanka" },
+  { "from_type": "race", "from_id": "axina", "link": "栖息于", "to_type": "region", "to_id": "namilani" },
+  { "from_type": "race", "from_id": "babylonian", "link": "栖息于", "to_type": "region", "to_id": "namilani" },
+  { "from_type": "race", "from_id": "naluan", "link": "栖息于", "to_type": "region", "to_id": "naluan" },
+  { "from_type": "race", "from_id": "ancient_dragon", "link": "栖息于", "to_type": "region", "to_id": "giant_sea" },
+  { "from_type": "race", "from_id": "titan", "link": "栖息于", "to_type": "region", "to_id": "giant_sea" },
+  { "from_type": "race", "from_id": "arch_dragon", "link": "栖息于", "to_type": "sea", "to_id": "dragon_sea" },
+  { "from_type": "race", "from_id": "feral_dragon", "link": "栖息于", "to_type": "sea", "to_id": "dragon_sea" },
+
+  { "from_type": "module", "from_id": "abyss_maw", "link": "发生在", "to_type": "region", "to_id": "地心" },
+  { "from_type": "module", "from_id": "purman_pass_module", "link": "发生在", "to_type": "region", "to_id": "purman_pass" },
+  { "from_type": "module", "from_id": "twilight_of_labors", "link": "发生在", "to_type": "region", "to_id": "ophidan" },
+  { "from_type": "module", "from_id": "shrimp_song", "link": "发生在", "to_type": "region", "to_id": "anventi" },
+  { "from_type": "module", "from_id": "winter_hunt", "link": "发生在", "to_type": "region", "to_id": "fennlight" },
+  { "from_type": "module", "from_id": "spider_dowry", "link": "涉及", "to_type": "race", "to_id": "spiderfolk" },
+  { "from_type": "module", "from_id": "moji_night", "link": "涉及", "to_type": "race", "to_id": "minotaur" },
+
+  { "from_type": "module", "from_id": "purman_pass_module", "link": "涉及", "to_type": "race", "to_id": "orc" },
+
+  { "from_type": "deity", "from_id": "demiurge", "link": "受信仰于", "to_type": "region", "to_id": "ophidan" },
+  { "from_type": "deity", "from_id": "chronoscylla", "link": "受信仰于", "to_type": "region", "to_id": "anventi" },
+
+  { "from_type": "labor", "from_id": "skull_cracker", "link": "关联事件", "to_type": "region", "to_id": "purman_pass" },
+  { "from_type": "labor", "from_id": "skull_cracker", "link": "属于", "to_type": "race", "to_id": "orc" },
+  { "from_type": "labor", "from_id": "ash_king", "link": "关联", "to_type": "region", "to_id": "naluan" }
+]
