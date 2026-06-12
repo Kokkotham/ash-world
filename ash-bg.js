@@ -142,6 +142,44 @@
       document.body.insertBefore(container, document.body.firstChild);
     }
     createReturnBtn();
+    highlightCurrentPage();
+  }
+
+  // ============================================================
+  // 当前页面高亮
+  // ============================================================
+  function highlightCurrentPage() {
+    if (window.location.pathname === '/' || window.location.pathname.endsWith('index.html')) return;
+    var path = window.location.pathname.split('/').pop();
+    if (!path) return;
+
+    // 高亮顶部导航的一级菜单项
+    var navItems = document.querySelectorAll('.top-nav .nav-item > a, .top-nav .nav-item > span');
+    navItems.forEach(function(item) { item.classList.remove('active'); });
+
+    // 高亮下拉菜单中的对应二级链接
+    var dropdownLinks = document.querySelectorAll('.top-nav .nav-dropdown a');
+    dropdownLinks.forEach(function(a) {
+      a.classList.remove('active');
+      if (a.getAttribute('href') === path) {
+        a.classList.add('active');
+        // 也高亮其父级 nav-item
+        var navItem = a.closest('.nav-item');
+        if (navItem) {
+          var trigger = navItem.querySelector(':scope > a, :scope > span');
+          if (trigger) trigger.classList.add('active');
+        }
+      }
+    });
+
+    // 高亮一级扁平链接
+    var flatLinks = document.querySelectorAll('.top-nav .nav-item > a');
+    flatLinks.forEach(function(a) {
+      if (a.getAttribute('href') === path) {
+        a.classList.add('active');
+        a.closest('.nav-item').classList.add('active');
+      }
+    });
   }
 
   if (document.readyState === 'loading') {

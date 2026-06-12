@@ -235,16 +235,15 @@
         /* 全宽下拉菜单 */
         .top-nav .nav-dropdown {
             position: fixed; top: 62px; left: 0; right: 0;
-            padding: 20px 32px 36px;
+            padding: 20px 32px 40px;
             opacity: 0; pointer-events: none;
-            transition: opacity 0.18s ease-out;
-            z-index: 99;
-            display: flex; justify-content: center; gap: 28px;
+            transition: opacity 0.15s ease-out;
+            z-index: 101;
+            display: flex; justify-content: center; gap: 32px;
             background: linear-gradient(180deg, #0e1218 0%, #0a0e14 100%);
             border-top: 1px solid rgba(201,168,76,0.12);
+            border-bottom: 1px solid rgba(201,168,76,0.06);
             box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
         }
         .top-nav .nav-item:hover .nav-dropdown {
             opacity: 1; pointer-events: auto;
@@ -267,6 +266,16 @@
         }
         .top-nav .nav-dropdown a:hover::after {
             width: 100%;
+        }
+        /* 当前页高亮 */
+        .top-nav .nav-item.active > a,
+        .top-nav .nav-item.active > span {
+            color: var(--ash-gold);
+            border-bottom-color: rgba(201,168,76,0.5);
+            font-weight: 500;
+        }
+        .nav-dropdown a.active {
+            color: #e8cc60; font-weight: 500;
         }
         @media (max-width: 900px) {
             .top-nav { padding: 0 16px; }
@@ -368,6 +377,7 @@
                     <a href="pages/worldview.html">世界观</a>
                     <a href="pages/map.html">地图</a>
                     <a href="pages/pantheon.html">神系</a>
+                    <a href="pages/races-ontology.html">种族</a>
                 </div>
             </div>
             <div class="nav-item">
@@ -376,6 +386,7 @@
                     <a href="pages/rules.html">规则书</a>
                     <a href="pages/character-sheet.html">角色卡</a>
                     <a href="pages/glossary.html">规则术语表</a>
+                    <a href="pages/modules.html">模组</a>
                 </div>
             </div>
             <div class="nav-item">
@@ -385,6 +396,7 @@
                     <a href="pages/art.html">绘图</a>
                     <a href="pages/discussion.html">讨论</a>
                     <a href="pages/community.html">玩家共创</a>
+                    <a href="pages/works.html">衍生作品</a>
                 </div>
             </div>
             <div class="nav-item">
