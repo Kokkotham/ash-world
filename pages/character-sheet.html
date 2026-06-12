@@ -148,7 +148,7 @@
         <div class="divider"></div>
     </header>
 
-    <main class="content">
+    <main class="content" id="onto-content">
         <h2 class="section-title">核心属性（3d6 系统）</h2>
         <div class="roll-all-wrap">
             <button class="roll-all-btn" onclick="rollAll()">掷骰生成属性</button>
@@ -220,6 +220,7 @@
             </div>
         </div>
     </main>
+<div class="content" id="onto-linked"></div>
 
     <script>
     // ==================== 3d6 骰子系统 ====================
@@ -321,5 +322,8 @@
     <script src="../transition.js"></script>
     <script src="../ash-bg.js"></script>
     <script src="../mouse-trail.js"></script>
+    <script src="../data/ash-data.js"></script>
+    <script src="../data/page-render.js"></script>
+    <script>PageRender.init('character-sheet');</script>
 </body>
 </html>

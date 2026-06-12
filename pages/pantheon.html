@@ -46,36 +46,8 @@
         <div class="divider"></div>
     </header>
 
-    <main class="content">
-        <h2 class="section-title">三大神系</h2>
-        <div class="card-grid">
-            <div class="card">
-                <h3>宝石神系</h3>
-                <p>最古老的神系，与特达卡西亚星一同诞生。宝石神不具人形，以巨大宝石的形态沉眠于地底深处。它们极少干预世间事务，但每一次苏醒都会带来地质浩劫。</p>
-            </div>
-            <div class="card">
-                <h3>荒野神系</h3>
-                <p>自然的化身，掌管山川、河流、森林与野兽。荒野神的形态随环境而变化，在雪山中是白鹿，在沙漠中是独眼的秃鹫。它们的信仰最为松散，但也有着最古老的传统。</p>
-            </div>
-            <div class="card">
-                <h3>亡灵神系</h3>
-                <p>掌管死亡与轮回的神明。在灰烬世界中，死亡并非终结，而是灰烬回归本源的过程。亡灵神系的祭司被称为「引路人」，负责安抚亡魂，引导它们回归灰烬之海。</p>
-            </div>
-        </div>
-
-        <h2 class="section-title">十二圣工</h2>
-        <div class="text-block">
-            十二圣工是万神纪末期崛起的十二位半神/英雄，他们在空洞浩劫中发挥了关键作用。每一位圣工都代表着一种人类美德或技艺的极致，后世以他们的名字命名了十二种核心职业。
-        </div>
-        <div class="card-grid">
-            <div class="card"><h3>灰之王 — 领袖</h3><p>末代纳露安皇帝，浩劫中最坚定的守护者。传说他在最后的时刻以身躯堵住了天空的裂口。</p></div>
-            <div class="card"><h3>织星者 — 巫师</h3><p>掌握奥术真理的智者，第一个系统性地研究灰烬结晶与魔法关系的学者。</p></div>
-            <div class="card"><h3>裂颅者 — 战士</h3><p>兽人勇士，在普尔曼隘口独自阻挡了兽潮七日七夜。</p></div>
-            <div class="card"><h3>无声步 — 盗贼</h3><p>从未露面的传奇刺客，据说在浩劫前刺杀了引发灾难的邪教首领。</p></div>
-            <div class="card"><h3>愈痕者 — 医师</h3><p>第一位掌握灰烬疗愈术的先知，救治了数万灾民。</p></div>
-            <div class="card"><h3>鸣弦者 — 吟游诗人</h3><p>用歌声记录浩劫真相的盲眼歌者，《余烬之书》的最初口述者。</p></div>
-        </div>
-    </main>
+    <main class="content" id="onto-content"></main>
+<div class="content" id="onto-linked"></div>
 
     <nav class="bottom-nav">
         <a href="news.html">最新资讯</a>
@@ -94,5 +66,8 @@
     <script src="../transition.js"></script>
     <script src="../ash-bg.js"></script>
     <script src="../mouse-trail.js"></script>
+    <script src="../data/ash-data.js"></script>
+    <script src="../data/page-render.js"></script>
+    <script>PageRender.init('pantheon');</script>
 </body>
 </html>

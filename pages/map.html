@@ -80,7 +80,7 @@
         <div class="divider"></div>
     </header>
 
-    <main class="content">
+    <main class="content" id="onto-content">
         <h2 class="section-title">格维恩大陆总览</h2>
         <div class="map-container">
             <svg class="map-svg" viewBox="0 0 800 520" xmlns="http://www.w3.org/2000/svg">
@@ -197,6 +197,7 @@
             从奥弗丹圣城安瑞蒂弗斯出发，经普尔曼隘口可通往纳米拉尼与兽人钢铁帝国边境。从安温提的潜礁港北上，沿东海岸道路可抵达阿伦黛尔。芬恩莱特则通过冰封隘道与布兰卡冻土相连。
         </div>
     </main>
+<div class="content" id="onto-linked"></div>
 
     <nav class="bottom-nav">
         <a href="news.html">最新资讯</a>
@@ -215,5 +216,8 @@
     <script src="../transition.js"></script>
     <script src="../ash-bg.js"></script>
     <script src="../mouse-trail.js"></script>
+    <script src="../data/ash-data.js"></script>
+    <script src="../data/page-render.js"></script>
+    <script>PageRender.init('map');</script>
 </body>
 </html>

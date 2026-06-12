@@ -46,7 +46,7 @@
         <div class="divider"></div>
     </header>
 
-    <main class="content">
+    <main class="content" id="onto-content">
         <h2 class="section-title">深度阅读</h2>
         <div class="card-grid">
             <div class="card">
@@ -71,6 +71,7 @@
             </div>
         </div>
     </main>
+<div class="content" id="onto-linked"></div>
 
     <nav class="bottom-nav">
         <a href="news.html">最新资讯</a>
@@ -89,5 +90,8 @@
     <script src="../transition.js"></script>
     <script src="../ash-bg.js"></script>
     <script src="../mouse-trail.js"></script>
+    <script src="../data/ash-data.js"></script>
+    <script src="../data/page-render.js"></script>
+    <script>PageRender.init('articles');</script>
 </body>
 </html>
