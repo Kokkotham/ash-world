@@ -488,6 +488,49 @@ body::before {
     background: rgba(201, 168, 76, 0.03);
 }
 
+/* 关键词高亮 */
+[data-keyword] {
+  border-bottom: 1px dashed var(--ash-gold-dim);
+  cursor: help;
+  transition: color 0.15s, border-color 0.15s;
+}
+[data-keyword]:hover {
+  color: var(--ash-gold);
+  border-bottom-color: var(--ash-gold);
+}
+
+/* tooltip */
+#ash-tooltip {
+  position: fixed; z-index: 9999;
+  background: linear-gradient(160deg, #10151c, #0b0f15);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 6px; padding: 12px 16px;
+  max-width: 320px; font-size: 0.85rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,0,0,0.3);
+  pointer-events: none; transition: opacity 0.15s;
+}
+.tt-hidden { opacity: 0; }
+#ash-tooltip:not(.tt-hidden) { opacity: 1; }
+.tt-term { color: var(--ash-gold); font-weight: 600; margin-bottom: 4px; }
+.tt-category { color: var(--ash-gold-dim); font-size: 0.75rem; margin-bottom: 8px; }
+.tt-def { color: #c9c5b8; line-height: 1.6; }
+
+/* 等级表格 */
+.level-table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.level-table th { background: rgba(201,168,76,0.12); color: var(--ash-gold); padding: 8px 12px; text-align: left; border-bottom: 1px solid rgba(201,168,76,0.2); }
+.level-table td { padding: 6px 12px; color: #c9c5b8; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.level-table tr:hover td { background: rgba(201,168,76,0.04); }
+
+/* 规则书布局 */
+.rules-layout { display: grid; grid-template-columns: 260px 1fr; gap: 0; min-height: calc(100vh - 62px); margin-top: 62px; }
+.rules-sidebar { background: linear-gradient(180deg, #0a0e14 0%, #080c10 100%); border-right: 1px solid rgba(201,168,76,0.1); padding: 24px 16px; overflow-y: auto; }
+.rules-sidebar details { margin-bottom: 4px; }
+.rules-sidebar summary { color: var(--ash-gold); cursor: pointer; padding: 6px 8px; font-size: 0.9rem; }
+.rules-sidebar a { color: #c9c5b8; text-decoration: none; display: block; padding: 4px 8px 4px 20px; font-size: 0.85rem; }
+.rules-sidebar a:hover, .rules-sidebar a.active { color: var(--ash-gold); background: rgba(201,168,76,0.05); }
+.rules-content { padding: 32px 40px; overflow-y: auto; }
+.rules-placeholder { text-align: center; padding: 80px 0; color: var(--ash-gold-dim); }
+
 /* 响应式 */
 @media (max-width: 768px) {
     .top-nav {
