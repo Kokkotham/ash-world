@@ -1,0 +1,193 @@
+classDiagram
+    direction TB
+
+    class AshData {
+        +Object races
+        +Object deities
+        +Object regions
+        +Object modules
+        +Array links
+        +Object professions
+        +Object divineArts
+        +Object storyRules
+        +Array glossaryEntries
+        +Object chapters
+        +Boolean loaded
+        +loadAll() Promise
+        +getLinked(type, id) Array
+        +resolveLinks(type, id) Array
+        +findAll(data, id) Object|null
+    }
+
+    class PageRender {
+        +init(pageName) void
+        +renderRules(data) void
+        +renderModules(data) void
+        +renderPantheon(data) void
+        +renderGlossary(data) void
+        +renderRacesOntology(data) void
+        +renderLevelTable(tableData) string
+        +renderPageLinks(data, el) void
+        +renderChapterSidebar(chapters) void
+        +renderChapterPanel(chapter, data) void
+    }
+
+    class KeywordTooltip {
+        -Map glossaryMap
+        -HTMLElement tooltipEl
+        -Number hoverTimer
+        -HTMLElement currentTarget
+        +init() void
+        -buildMap() Promise
+        -createTooltip() void
+        -renderTooltip(entry) string
+        -positionTooltip(event) void
+        -scanAndRegister() void
+    }
+
+    class RacesJSON {
+        +Array ancient
+        +Array spirit_mixed
+        +Array nature_psionic
+        +Array human_branches
+        +Array players
+        +Number total
+    }
+
+    class RacePlayerEntry {
+        +String id
+        +String name
+        +String category
+        +String chapter
+        +String version_status
+        +Array~String~ desc
+        +Object attribute_mods
+        +Array~Object~ traits
+        +String gameplay_notes
+        +Array~String~ related_keywords
+    }
+
+    class ProfessionsJSON {
+        +Array categories
+    }
+
+    class ProfessionCategory {
+        +String id
+        +String name
+        +String chapter
+        +String version_status
+        +Array~String~ desc
+        +Array~Ability~ abilities
+    }
+
+    class Ability {
+        +String id
+        +String name
+        +Array~String~ desc
+        +Array~Object~ level_table
+        +String prerequisites
+        +Array~String~ keywords
+    }
+
+    class LevelTableRow {
+        +Number level
+        +String bonus
+        +String cost
+        +String effect
+    }
+
+    class DivineArtsJSON {
+        +Array pantheons
+    }
+
+    class Pantheon {
+        +String id
+        +String name
+        +String chapter
+        +String version_status
+        +Array~String~ doctrine
+        +Array~Object~ prayer_table
+        +Array~Object~ divine_spells
+    }
+
+    class StoryRulesJSON {
+        +Array sections
+    }
+
+    class StorySection {
+        +String id
+        +String name
+        +String chapter
+        +String version_status
+        +Array~Object~ rules
+    }
+
+    class GlossaryJSON {
+        +Array entries
+        +Array categories
+    }
+
+    class GlossaryEntry {
+        +String key
+        +String term
+        +String category
+        +String definition
+        +Array~String~ related_keys
+        +Array~String~ aliases
+    }
+
+    class ChaptersJSON {
+        +String book_title
+        +Array chapters
+    }
+
+    class ChapterNode {
+        +String id
+        +String title
+        +String number
+        +String type
+        +String data_source
+        +String data_path
+        +String renderer
+        +Array~String~ content
+        +Array~ChapterNode~ sub_sections
+    }
+
+    class LinksJSON {
+        +String from_type
+        +String from_id
+        +String link
+        +String to_type
+        +String to_id
+    }
+
+    class Docx2Json {
+        +extract_filename_info(filename) dict
+        +extract_paragraphs(doc) list
+        +extract_tables(doc) list
+        +process_docx(filepath) dict
+        +process_all() void
+        +process_single(filename) void
+    }
+
+    AshData "1" --> "1" RacesJSON : loads
+    AshData "1" --> "1" ProfessionsJSON : loads
+    AshData "1" --> "1" DivineArtsJSON : loads
+    AshData "1" --> "1" StoryRulesJSON : loads
+    AshData "1" --> "1" GlossaryJSON : loads
+    AshData "1" --> "1" ChaptersJSON : loads
+    AshData "1" --> "n" LinksJSON : loads
+
+    PageRender "1" --> "1" AshData : reads
+    PageRender "1" --> "1" ChaptersJSON : renders from
+    KeywordTooltip "1" --> "1" GlossaryJSON : builds map from
+
+    RacesJSON "1" --> "n" RacePlayerEntry : players[]
+    ProfessionsJSON "1" --> "n" ProfessionCategory : categories[]
+    ProfessionCategory "1" --> "n" Ability : abilities[]
+    Ability "1" --> "n" LevelTableRow : level_table[]
+    DivineArtsJSON "1" --> "n" Pantheon : pantheons[]
+    StoryRulesJSON "1" --> "n" StorySection : sections[]
+    GlossaryJSON "1" --> "n" GlossaryEntry : entries[]
+    ChaptersJSON "1" --> "n" ChapterNode : chapters[]
+    ChapterNode "1" --> "n" ChapterNode : sub_sections[]

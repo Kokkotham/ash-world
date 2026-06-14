@@ -1,0 +1,69 @@
+TOTAL: 65
+SUCCESS: 65
+FAILED: 0
+
+  22 paragraphs,  0 tables   0前言.json
+ 122 paragraphs,  0 tables   1创建角色：属性(改动）.json
+  38 paragraphs,  0 tables   2.2.10亡灵(改动） (1).json
+  38 paragraphs,  0 tables   2.2.11北地人（改动）.json
+  42 paragraphs,  0 tables   2.2.12豺狼人（改动）.json
+  37 paragraphs,  0 tables   2.2.13牛头人(改动）.json
+  36 paragraphs,  0 tables   2.2.14木林精（改动）.json
+  37 paragraphs,  0 tables   2.2.15猪人(改动）.json
+  64 paragraphs,  0 tables   2.2.16混血者与通用灵涅特质（新）.json
+  49 paragraphs,  0 tables   2.2.1纳露安人类(改动）.json
+  37 paragraphs,  0 tables   2.2.2精灵(改动） (1).json
+  73 paragraphs,  0 tables   2.2.3矮人(改动）.json
+  36 paragraphs,  0 tables   2.2.4侏儒(改动）.json
+  35 paragraphs,  0 tables   2.2.5维拉斯人(改动） (3).json
+  35 paragraphs,  0 tables   2.2.6兽人(改动）.json
+  36 paragraphs,  0 tables   2.2.7哥布林（改动）.json
+  51 paragraphs,  0 tables   2.2.8龙族（改动）.json
+  36 paragraphs,  0 tables   2.2.9蛛灵（改动）.json
+  39 paragraphs,  0 tables   2种族 (1).json
+  28 paragraphs, 14 tables   3.10.1短柄武技（改动） (1).json
+  56 paragraphs, 28 tables   3.10.2中柄武技(改动）.json
+  40 paragraphs, 20 tables   3.10.3长柄武技（改动）.json
+  28 paragraphs, 14 tables   3.10.4重柄武技（改动）.json
+ 110 paragraphs, 55 tables   3.10.5特殊武技（改动）.json
+   8 paragraphs,  0 tables   3.10武技 (3).json
+  29 paragraphs, 27 tables   3.11.10统合法术聚变(改动）.json
+  60 paragraphs, 26 tables   3.11.2奥法元素专修（改动）.json
+  23 paragraphs,  8 tables   3.11.3奥法变形专修（改动）.json
+  32 paragraphs, 10 tables   3.11.4奥法环境专修（改动） (1).json
+  32 paragraphs, 16 tables   3.11.5奥法保护专修  (改动）.json
+  26 paragraphs, 11 tables   3.11.6奥法召唤专修 （改动）.json
+  22 paragraphs, 11 tables   3.11.7奥法特感专修（改动）.json
+  32 paragraphs, 12 tables   3.11.8奥法乐理专修（重做）.json
+  25 paragraphs, 11 tables   3.11.9奥法拟象专修（重做）.json
+  54 paragraphs,  0 tables   3.11奥法专修 (1).json
+  49 paragraphs, 22 tables   3.1本能专修（改动）.json
+  26 paragraphs, 12 tables   3.2知识类专修（改动）.json
+  14 paragraphs,  6 tables   3.3交流类专修（改动）.json
+  22 paragraphs, 10 tables   3.4艺术类专修（改动）.json
+  34 paragraphs, 14 tables   3.5生存类专修（改动）.json
+  27 paragraphs,  7 tables   3.6特殊类专修(改动） (1).json
+  19 paragraphs,  6 tables   3.7.1专业工艺加工（改动）.json
+  17 paragraphs,  5 tables   3.7.2专业金属加工（改动）.json
+  14 paragraphs,  4 tables   3.7.3专业纺织加工(改动）.json
+  41 paragraphs,  7 tables   3.7.4专业符文缔造（改动） (1).json
+  11 paragraphs,  3 tables   3.7.5专业养殖培育（改动） (1).json
+  12 paragraphs,  2 tables   3.7.6专业铭文卷轴（改动）.json
+   2 paragraphs,  0 tables   3.7专业专修.json
+  26 paragraphs,  8 tables   3.8.1短柄类武器专修（改动）.json
+  38 paragraphs, 12 tables   3.8.2中柄类武器专修（改动） (2).json
+  26 paragraphs,  8 tables   3.8.3长柄类武器专修（改动）.json
+  14 paragraphs,  4 tables   3.8.4重柄类武器专修（改动）.json
+  38 paragraphs, 12 tables   3.8.5远程类武器专修(改动） (1).json
+  35 paragraphs, 11 tables   3.8.6特殊类武器专修（改动）.json
+   5 paragraphs,  0 tables   3.8武器专修.json
+  70 paragraphs,  3 tables   3.9战斗造诣专修（改动） (1).json
+  11 paragraphs,  0 tables   3专修.json
+  72 paragraphs, 21 tables   4.1.1纳露安人类父神系（改动）.json
+  52 paragraphs, 22 tables   4.1.2纳露安人类母神系（改动） (1).json
+  17 paragraphs,  1 tables   4神术.json
+ 141 paragraphs,  0 tables   5.1战斗与挑战（新） (1).json
+  32 paragraphs,  0 tables   5.2交流与生活（新） (1).json
+  27 paragraphs,  4 tables   5.3经营与管理（新） (1).json
+  72 paragraphs,  0 tables   5.4效应状态词缀(改动）.json
+  32 paragraphs,  0 tables   5故事运作与角色投掷 (1).json

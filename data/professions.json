@@ -1,0 +1,114 @@
+{
+  "categories": [
+    {
+      "id": "instinct",
+      "name": "本能专修",
+      "chapter": "3.1",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "knowledge",
+      "name": "知识类专修",
+      "chapter": "3.2",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "communication",
+      "name": "交流类专修",
+      "chapter": "3.3",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "art",
+      "name": "艺术类专修",
+      "chapter": "3.4",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "survival",
+      "name": "生存类专修",
+      "chapter": "3.5",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "special",
+      "name": "特殊类专修",
+      "chapter": "3.6",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "profession_craft",
+      "name": "专业专修",
+      "chapter": "3.7",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "weapon",
+      "name": "武器专修",
+      "chapter": "3.8",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "combat",
+      "name": "战斗造诣专修",
+      "chapter": "3.9",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "martial",
+      "name": "武技",
+      "chapter": "3.10",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    },
+    {
+      "id": "arcane",
+      "name": "奥法专修",
+      "chapter": "3.11",
+      "version_status": "改动",
+      "desc": [
+        "占位"
+      ],
+      "abilities": []
+    }
+  ]
+}

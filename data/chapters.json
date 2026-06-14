@@ -1,0 +1,228 @@
+{
+  "book_title": "灰烬世界规则书",
+  "chapters": [
+    {
+      "id": "ch0",
+      "title": "前言",
+      "number": "第0章",
+      "type": "text",
+      "data_source": null,
+      "content": [],
+      "sub_sections": []
+    },
+    {
+      "id": "ch1",
+      "title": "创建角色",
+      "number": "第1章",
+      "type": "text",
+      "data_source": null,
+      "content": [
+        {
+          "id": "ch1_attrs",
+          "title": "属性系统",
+          "type": "text",
+          "data_source": null,
+          "content": [],
+          "sub_sections": []
+        }
+      ],
+      "sub_sections": []
+    },
+    {
+      "id": "ch2",
+      "title": "种族",
+      "number": "第2章",
+      "type": "data",
+      "data_source": "races.json",
+      "data_path": "players",
+      "renderer": "race_list",
+      "content": [],
+      "sub_sections": []
+    },
+    {
+      "id": "ch3",
+      "title": "专修",
+      "number": "第3章",
+      "type": "data",
+      "data_source": "professions.json",
+      "data_path": "categories",
+      "renderer": "profession_list",
+      "content": [],
+      "sub_sections": [
+        {
+          "id": "ch3_instinct",
+          "title": "本能专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[0]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_knowledge",
+          "title": "知识类专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[1]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_communication",
+          "title": "交流类专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[2]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_art",
+          "title": "艺术类专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[3]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_survival",
+          "title": "生存类专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[4]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_special",
+          "title": "特殊类专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[5]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_craft",
+          "title": "专业专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[6]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_weapon",
+          "title": "武器专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[7]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_combat",
+          "title": "战斗造诣专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[8]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_martial",
+          "title": "武技",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[9]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch3_arcane",
+          "title": "奥法专修",
+          "type": "data",
+          "data_source": "professions.json",
+          "data_path": "categories[10]",
+          "renderer": "profession_detail",
+          "content": [],
+          "sub_sections": []
+        }
+      ]
+    },
+    {
+      "id": "ch4",
+      "title": "神术",
+      "number": "第4章",
+      "type": "data",
+      "data_source": "divine-arts.json",
+      "data_path": "pantheons",
+      "renderer": "divine_list",
+      "content": [],
+      "sub_sections": []
+    },
+    {
+      "id": "ch5",
+      "title": "故事运作",
+      "number": "第5章",
+      "type": "data",
+      "data_source": "story-rules.json",
+      "data_path": "sections",
+      "renderer": "story_rules",
+      "content": [],
+      "sub_sections": [
+        {
+          "id": "ch5_combat",
+          "title": "战斗与挑战",
+          "type": "data",
+          "data_source": "story-rules.json",
+          "data_path": "sections[0]",
+          "renderer": "story_rule_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch5_social",
+          "title": "交流与生活",
+          "type": "data",
+          "data_source": "story-rules.json",
+          "data_path": "sections[1]",
+          "renderer": "story_rule_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch5_management",
+          "title": "经营与管理",
+          "type": "data",
+          "data_source": "story-rules.json",
+          "data_path": "sections[2]",
+          "renderer": "story_rule_detail",
+          "content": [],
+          "sub_sections": []
+        },
+        {
+          "id": "ch5_status",
+          "title": "效应状态词缀",
+          "type": "data",
+          "data_source": "story-rules.json",
+          "data_path": "sections[3]",
+          "renderer": "story_rule_detail",
+          "content": [],
+          "sub_sections": []
+        }
+      ]
+    }
+  ]
+}

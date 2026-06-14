@@ -1,0 +1,22 @@
+{
+  "pantheons": [
+    {
+      "id": "father_pantheon",
+      "name": "纳露安人类父神系",
+      "chapter": "4.1.1",
+      "version_status": "改动",
+      "doctrine": [],
+      "prayer_table": [],
+      "divine_spells": []
+    },
+    {
+      "id": "mother_pantheon",
+      "name": "纳露安人类母神系",
+      "chapter": "4.1.2",
+      "version_status": "改动",
+      "doctrine": [],
+      "prayer_table": [],
+      "divine_spells": []
+    }
+  ]
+}

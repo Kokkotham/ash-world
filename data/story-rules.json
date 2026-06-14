@@ -1,0 +1,32 @@
+{
+  "sections": [
+    {
+      "id": "combat",
+      "name": "战斗与挑战",
+      "chapter": "5.1",
+      "version_status": "新",
+      "rules": []
+    },
+    {
+      "id": "social",
+      "name": "交流与生活",
+      "chapter": "5.2",
+      "version_status": "新",
+      "rules": []
+    },
+    {
+      "id": "management",
+      "name": "经营与管理",
+      "chapter": "5.3",
+      "version_status": "新",
+      "rules": []
+    },
+    {
+      "id": "status_effects",
+      "name": "效应状态词缀",
+      "chapter": "5.4",
+      "version_status": "改动",
+      "rules": []
+    }
+  ]
+}

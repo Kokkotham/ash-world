@@ -1,0 +1,49 @@
+sequenceDiagram
+    participant Browser
+    participant rules.html
+    participant ash-data.js
+    participant page-render.js
+    participant keyword-tooltip.js
+    participant JSON as data/*.json
+
+    Browser->>rules.html: GET pages/rules.html
+    rules.html->>ash-data.js: 加载 AshData
+    rules.html->>page-render.js: 加载 PageRender
+    rules.html->>keyword-tooltip.js: 加载 KeywordTooltip
+
+    rules.html->>page-render.js: PageRender.init('rules')
+
+    page-render.js->>ash-data.js: AshData.loadAll()
+    ash-data.js->>JSON: fetch(races.json) + 6 others
+    JSON-->>ash-data.js: Promise.all 返回全部数据
+    ash-data.js-->>page-render.js: loaded = true
+
+    page-render.js->>page-render.js: renderRules(data)
+    Note over page-render.js: 读取 data.chapters 章节树
+    Note over page-render.js: 遍历 chapters 数组：
+    Note over page-render.js: ├── 渲染侧边栏导航 (sidebar)
+    Note over page-render.js: ├── 渲染章节面板 (panels)
+    Note over page-render.js: ├── 调用 renderLevelTable() 处理等级表格
+    Note over page-render.js: ├── 在文本中注入 data-keyword 属性
+    Note over page-render.js: └── 调用 renderPageLinks() 底部关联
+
+    page-render.js-->>rules.html: DOM 渲染完成
+
+    rules.html->>keyword-tooltip.js: KeywordTooltip.init()
+    keyword-tooltip.js->>JSON: fetch(glossary.json)
+    JSON-->>keyword-tooltip.js: entries 数组
+    Note over keyword-tooltip.js: 构建 Map(key, entry)
+    Note over keyword-tooltip.js: 扫描 [data-keyword] 元素
+    Note over keyword-tooltip.js: 注册 mouseenter/mousemove/mouseleave
+    Note over keyword-tooltip.js: 创建全局 tooltip div
+    keyword-tooltip.js-->>rules.html: tooltip 就绪
+
+    Browser-->>User: 页面可用
+
+    User->>Browser: mouseenter [data-keyword="eb"]
+    keyword-tooltip.js->>keyword-tooltip.js: 延迟 200ms 后显示 tooltip
+    Note over keyword-tooltip.js: 定位：跟随鼠标 + 视口边界检测
+    Browser-->>User: tooltip 卡片显示术语释义
+
+    User->>Browser: mouseleave
+    keyword-tooltip.js->>keyword-tooltip.js: 隐藏 tooltip

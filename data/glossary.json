@@ -1,0 +1,37 @@
+{
+  "entries": [],
+  "categories": [
+    {
+      "id": "combat",
+      "name": "战斗规则"
+    },
+    {
+      "id": "attribute",
+      "name": "属性系统"
+    },
+    {
+      "id": "race",
+      "name": "种族"
+    },
+    {
+      "id": "profession",
+      "name": "专修"
+    },
+    {
+      "id": "divine",
+      "name": "神术"
+    },
+    {
+      "id": "status",
+      "name": "状态词缀"
+    },
+    {
+      "id": "equipment",
+      "name": "装备物品"
+    },
+    {
+      "id": "world",
+      "name": "世界设定"
+    }
+  ]
+}
