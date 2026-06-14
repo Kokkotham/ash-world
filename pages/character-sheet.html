@@ -6,109 +6,728 @@
     <title>角色卡 — 灰烬世界</title>
     <link rel="stylesheet" href="common.css">
     <style>
-        .attr-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
-            max-width: 660px; margin: 30px auto;
+        /* ===== Glass Panel System ===== */
+        :root {
+            --panel-bg: rgba(14,18,24,0.55);
+            --panel-border: rgba(201,168,76,0.12);
+            --card-gradient: linear-gradient(160deg, rgba(201,168,76,0.04), transparent);
         }
-        .attr-box {
-            background: var(--ash-gray);
-            border: 1px solid rgba(201, 168, 76, 0.15);
-            padding: 18px 16px 14px; text-align: center;
-            cursor: pointer; transition: all 0.3s;
-            position: relative; user-select: none;
+
+        .sheet-wrapper {
+            max-width: 780px;
+            margin: 0 auto;
+            padding-top: 100px;
+            padding-bottom: 60px;
+            padding-left: 20px;
+            padding-right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
         }
-        .attr-box:hover {
-            border-color: rgba(201, 168, 76, 0.4);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+
+        /* ===== Hero Section ===== */
+        .sheet-hero {
+            text-align: center;
+            padding: 40px 20px 20px;
         }
-        .attr-box.rolling {
-            pointer-events: none; opacity: 0.6;
+        .sheet-hero .hero-emoji {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 12px;
+            animation: heroFloat 3s ease-in-out infinite;
         }
-        .attr-box .attr-name {
-            font-family: 'Cinzel', serif; font-size: 0.75rem;
-            color: var(--ash-gold-dim); letter-spacing: 0.12em;
+        @keyframes heroFloat {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .sheet-hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--ash-gold);
+            letter-spacing: 0.18em;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(201,168,76,0.2);
+        }
+        .sheet-hero .hero-sub {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.95rem;
+            color: var(--ash-light);
+            letter-spacing: 0.06em;
+        }
+
+        /* ===== Glass Panel ===== */
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 28px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201,168,76,0.15), transparent);
+            opacity: 0.6;
+        }
+        .glass-panel .panel-icon {
+            font-size: 1.6rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .glass-panel .panel-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--ash-gold);
+            letter-spacing: 0.12em;
             margin-bottom: 6px;
         }
-        .attr-box .attr-value {
-            font-size: 2.4rem; color: var(--ash-gold); font-weight: 700;
+        .glass-panel .panel-desc {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.82rem;
+            color: var(--ash-light);
+            opacity: 0.7;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        /* ===== Race Panel ===== */
+        .race-link {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 8px 22px;
+            border: 1px solid rgba(201,168,76,0.25);
+            border-radius: 4px;
+            color: var(--ash-gold);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.85rem;
+            text-decoration: none;
+            letter-spacing: 0.06em;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: rgba(201,168,76,0.04);
+        }
+        .race-link:hover {
+            background: rgba(201,168,76,0.12);
+            border-color: var(--ash-gold);
+            box-shadow: 0 0 18px rgba(201,168,76,0.1);
+            text-shadow: 0 0 8px rgba(201,168,76,0.2);
+        }
+
+        /* ===== Method Toggle ===== */
+        .method-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 20px;
+            border: 1px solid rgba(201,168,76,0.15);
+            border-radius: 6px;
+            overflow: hidden;
+            display: inline-flex;
+        }
+        .method-toggle .method-opt {
+            padding: 10px 22px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.85rem;
+            color: var(--ash-light);
+            background: rgba(14,18,24,0.4);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+        .method-toggle .method-opt + .method-opt {
+            border-left: 1px solid rgba(201,168,76,0.15);
+        }
+        .method-toggle .method-opt.active {
+            background: rgba(201,168,76,0.12);
+            color: var(--ash-gold);
+            font-weight: 600;
+        }
+        .method-toggle .method-opt:hover:not(.active) {
+            background: rgba(201,168,76,0.06);
+            color: #c9c5b8;
+        }
+
+        /* ===== Attribute Cards (4-column grid) ===== */
+        .attr-four-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .attr-card {
+            background: var(--card-gradient);
+            border: 1px solid rgba(201,168,76,0.1);
+            border-radius: 8px;
+            padding: 16px 10px 12px;
+            text-align: center;
+            transition: all 0.35s;
+            position: relative;
+            cursor: default;
+        }
+        .attr-card .attr-card-icon {
+            font-size: 1.3rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .attr-card .attr-card-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            color: var(--ash-gold-dim);
+            letter-spacing: 0.1em;
+            margin-bottom: 4px;
+        }
+        .attr-card .attr-card-cn {
+            font-size: 0.7rem;
+            color: var(--ash-light);
+            opacity: 0.55;
+            margin-bottom: 8px;
+        }
+        .attr-card .attr-card-value {
+            font-family: 'Consolas', 'Source Code Pro', 'Courier New', monospace;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #c9c5b8;
             transition: color 0.3s, text-shadow 0.3s;
             line-height: 1.1;
         }
-        .attr-box.rolled .attr-value {
-            text-shadow: 0 0 18px rgba(201,168,76,0.3);
+        .attr-card.assigned .attr-card-value {
+            color: var(--ash-gold);
+            text-shadow: 0 0 16px rgba(201,168,76,0.25);
         }
-        .attr-box .attr-detail {
-            font-size: 0.7rem; color: var(--ash-light);
-            opacity: 0.5; margin-top: 2px;
-            transition: opacity 0.3s;
+        .attr-card.core-highlight {
+            border-color: rgba(201,168,76,0.45);
+            box-shadow: 0 0 20px rgba(201,168,76,0.1), inset 0 0 20px rgba(201,168,76,0.03);
         }
-        .attr-box.rolled .attr-detail { opacity: 0.85; }
-        .attr-box .attr-hint {
-            position: absolute; bottom: 4px; right: 8px;
-            font-size: 0.55rem; color: var(--ash-gold-dim);
-            opacity: 0; transition: opacity 0.3s;
+        .attr-card.core-highlight .attr-card-value {
+            color: #e8b84c;
+            text-shadow: 0 0 24px rgba(232,184,76,0.35);
         }
-        .attr-box:hover .attr-hint { opacity: 0.5; }
+        .attr-card.core-highlight .attr-card-name {
+            color: var(--ash-gold);
+        }
 
-        /* Roll All button */
-        .roll-all-wrap {
-            text-align: center; margin: 8px 0 20px;
+        /* ===== Method A: Dice Row ===== */
+        .dice-row-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin: 20px 0;
+            flex-wrap: wrap;
         }
-        .roll-all-btn {
-            display: inline-block; padding: 12px 40px;
+        .dice-result {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            background: linear-gradient(145deg, rgba(20,26,36,0.9), rgba(10,14,20,0.9));
+            border: 2px solid rgba(201,168,76,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Consolas', 'Source Code Pro', 'Courier New', monospace;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #c9c5b8;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            position: relative;
+            user-select: none;
+        }
+        .dice-result:hover {
+            border-color: rgba(201,168,76,0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+        .dice-result.selected {
+            border-color: var(--ash-gold);
+            color: var(--ash-gold);
+            background: linear-gradient(145deg, rgba(30,36,20,0.9), rgba(20,26,14,0.9));
+            box-shadow: 0 0 18px rgba(201,168,76,0.2);
+            transform: translateY(-3px);
+        }
+        .dice-result.used {
+            opacity: 0.3;
+            pointer-events: none;
+            border-color: rgba(201,168,76,0.06);
+        }
+        .dice-result.animating {
+            animation: diceRoll 0.6s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes diceRoll {
+            0% { transform: rotate(0deg) scale(0.3); opacity: 0; }
+            40% { transform: rotate(180deg) scale(1.15); opacity: 1; }
+            70% { transform: rotate(340deg) scale(0.9); }
+            100% { transform: rotate(360deg) scale(1); opacity: 1; }
+        }
+
+        /* ===== Roll Button ===== */
+        .roll-btn {
+            display: inline-block;
+            padding: 12px 36px;
             background: rgba(184,146,58,0.06);
             border: 1px solid rgba(184,146,58,0.35);
-            color: var(--ash-gold); font-family: 'Cinzel', serif;
-            font-size: 0.95rem; letter-spacing: 0.18em;
-            cursor: pointer; transition: all 0.35s;
-            position: relative; overflow: hidden;
+            color: var(--ash-gold);
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem;
+            letter-spacing: 0.18em;
+            cursor: pointer;
+            transition: all 0.35s;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            margin: 4px 8px;
         }
-        .roll-all-btn:hover {
+        .roll-btn:hover {
             background: rgba(184,146,58,0.14);
             border-color: var(--ash-gold);
             box-shadow: 0 0 24px rgba(184,146,58,0.15);
         }
-        .roll-all-btn::before {
-            content: ''; position: absolute; inset: 0;
+        .roll-btn:disabled {
+            opacity: 0.4;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+        .roll-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
             background: linear-gradient(90deg, transparent, rgba(184,146,58,0.12), transparent);
-            transform: translateX(-100%); transition: transform 0.5s;
+            transform: translateX(-100%);
+            transition: transform 0.5s;
         }
-        .roll-all-btn:hover::before { transform: translateX(100%); }
+        .roll-btn:hover::before {
+            transform: translateX(100%);
+        }
 
-        /* Dice display */
-        .dice-row {
-            display: flex; gap: 6px; justify-content: center; margin-top: 4px;
+        /* ===== Assign Dropdowns ===== */
+        .assign-row {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-top: 16px;
         }
-        .dice-pip {
-            width: 16px; height: 16px;
-            background: var(--ash-gold-dim);
-            border-radius: 2px; opacity: 0;
-            transform: rotate(0deg) scale(0);
-            transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
-            font-size: 0.6rem; color: var(--ash-dark);
-            display: flex; align-items: center; justify-content: center;
+        .assign-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .assign-slot .assign-label {
+            font-size: 0.7rem;
+            color: var(--ash-gold-dim);
+            letter-spacing: 0.08em;
+            font-family: 'Cinzel', serif;
+        }
+        .assign-slot select {
+            padding: 8px 12px;
+            background: rgba(14,18,24,0.8);
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 4px;
+            color: #c9c5b8;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 100px;
+            text-align: center;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23c9a84c' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+        }
+        .assign-slot select:hover {
+            border-color: var(--ash-gold);
+        }
+        .assign-slot select:focus {
+            outline: none;
+            border-color: var(--ash-gold);
+            box-shadow: 0 0 10px rgba(201,168,76,0.1);
+        }
+
+        /* ===== Method B: Point Buy ===== */
+        .point-buy-wrap {
+            margin-top: 8px;
+        }
+        .point-buy-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 640px;
+            margin: 0 auto 8px;
+        }
+        .pb-item {
+            background: var(--card-gradient);
+            border: 1px solid rgba(201,168,76,0.1);
+            border-radius: 8px;
+            padding: 14px 8px 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .pb-item .pb-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: var(--ash-gold-dim);
+            letter-spacing: 0.08em;
+        }
+        .pb-item .pb-cn {
+            font-size: 0.65rem;
+            color: var(--ash-light);
+            opacity: 0.5;
+        }
+        .pb-item .pb-value {
+            font-family: 'Consolas', 'Source Code Pro', 'Courier New', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #c9c5b8;
+            transition: color 0.3s;
+            line-height: 1;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+        }
+        .pb-item .pb-btns {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .pb-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 1px solid rgba(201,168,76,0.25);
+            background: rgba(14,18,24,0.7);
+            color: var(--ash-gold);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            line-height: 1;
+            user-select: none;
+        }
+        .pb-btn:hover {
+            background: rgba(201,168,76,0.15);
+            border-color: var(--ash-gold);
+            box-shadow: 0 0 10px rgba(201,168,76,0.1);
+        }
+        .pb-btn:disabled {
+            opacity: 0.25;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+        .points-remaining {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.85rem;
+            color: var(--ash-gold);
+            letter-spacing: 0.06em;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .points-remaining .pts-num {
+            font-family: 'Consolas', 'Source Code Pro', 'Courier New', monospace;
+            font-size: 1.1rem;
             font-weight: 700;
         }
-        .dice-pip.show {
-            opacity: 1; transform: rotate(360deg) scale(1);
+
+        /* ===== Core Attribute Selection ===== */
+        .core-select-grid {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .core-btn {
+            padding: 12px 20px;
+            background: rgba(14,18,24,0.5);
+            border: 2px solid rgba(201,168,76,0.12);
+            border-radius: 8px;
+            color: var(--ash-light);
+            font-family: 'Cinzel', serif;
+            font-size: 0.88rem;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: all 0.35s;
+            position: relative;
+            user-select: none;
+        }
+        .core-btn:hover {
+            border-color: rgba(201,168,76,0.35);
+            color: #c9c5b8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+        .core-btn.core-selected {
+            border-color: var(--ash-gold);
+            color: var(--ash-gold);
+            background: linear-gradient(160deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03));
+            box-shadow: 0 0 24px rgba(201,168,76,0.15);
+            transform: translateY(-2px);
+            font-weight: 700;
+        }
+        .core-btn.core-selected::after {
+            content: '⭐';
+            position: absolute;
+            top: -10px;
+            right: -8px;
+            font-size: 0.8rem;
+            animation: starPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes starPulse {
+            0%,100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+        .core-hint {
+            font-size: 0.75rem;
+            color: var(--ash-light);
+            opacity: 0.5;
+            margin-top: 10px;
         }
 
-        /* Summary */
-        .roll-summary {
-            text-align: center; margin-top: 10px;
-            font-size: 0.8rem; color: var(--ash-light); opacity: 0;
-            transition: opacity 0.5s;
+        /* ===== Derived Values ===== */
+        .derived-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 12px;
         }
-        .roll-summary.visible { opacity: 0.7; }
+        .derived-item {
+            background: var(--card-gradient);
+            border: 1px solid rgba(201,168,76,0.08);
+            border-radius: 8px;
+            padding: 16px 24px;
+            text-align: center;
+            min-width: 90px;
+            transition: all 0.3s;
+        }
+        .derived-item .dv-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            color: var(--ash-gold-dim);
+            letter-spacing: 0.12em;
+            margin-bottom: 6px;
+        }
+        .derived-item .dv-cn {
+            font-size: 0.65rem;
+            color: var(--ash-light);
+            opacity: 0.5;
+            margin-bottom: 4px;
+        }
+        .derived-item .dv-value {
+            font-family: 'Consolas', 'Source Code Pro', 'Courier New', monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #c9c5b8;
+            transition: all 0.4s;
+        }
+        .derived-item .dv-value.derived-active {
+            color: var(--ash-gold);
+            text-shadow: 0 0 12px rgba(201,168,76,0.2);
+        }
+        .derived-item .dv-note {
+            font-size: 0.6rem;
+            color: var(--ash-light);
+            opacity: 0.4;
+            margin-top: 2px;
+        }
 
+        /* ===== Accordion (Core Attribute Details) ===== */
+        .accordion-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+            text-align: left;
+        }
+        .accordion-item {
+            border: 1px solid rgba(201,168,76,0.08);
+            border-radius: 6px;
+            overflow: hidden;
+            background: rgba(10,14,20,0.4);
+            transition: all 0.3s;
+        }
+        .accordion-item:hover {
+            border-color: rgba(201,168,76,0.15);
+        }
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.3s;
+            background: rgba(14,18,24,0.3);
+        }
+        .accordion-header:hover {
+            background: rgba(201,168,76,0.04);
+        }
+        .accordion-header .acc-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .accordion-header .acc-icon {
+            font-size: 1.1rem;
+        }
+        .accordion-header .acc-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--ash-gold);
+            letter-spacing: 0.08em;
+        }
+        .accordion-header .acc-cn {
+            font-size: 0.75rem;
+            color: var(--ash-light);
+            opacity: 0.55;
+            margin-left: 4px;
+        }
+        .accordion-header .acc-arrow {
+            font-size: 0.7rem;
+            color: var(--ash-gold-dim);
+            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .accordion-item.open .accordion-header .acc-arrow {
+            transform: rotate(180deg);
+        }
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1);
+            background: rgba(10,14,20,0.3);
+        }
+        .accordion-item.open .accordion-body {
+            max-height: 400px;
+        }
+        .accordion-body-inner {
+            padding: 4px 18px 16px 52px;
+            font-size: 0.8rem;
+            color: var(--ash-text);
+            line-height: 1.8;
+        }
+        .accordion-body-inner .acc-benefit {
+            color: #8bc48a;
+            margin-bottom: 6px;
+        }
+        .accordion-body-inner .acc-limit {
+            color: #c48a8a;
+        }
+        .accordion-body-inner strong {
+            color: var(--ash-gold);
+            font-weight: 600;
+        }
+
+        /* ===== Section Divider ===== */
+        .sheet-divider {
+            width: 80px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201,168,76,0.25), transparent);
+            margin: 0 auto;
+        }
+
+        /* ===== Responsive ===== */
         @media (max-width: 768px) {
-            .attr-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .attr-box .attr-value { font-size: 1.8rem; }
+            .sheet-wrapper {
+                padding-top: 80px;
+                padding-left: 12px;
+                padding-right: 12px;
+                gap: 16px;
+            }
+            .attr-four-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .point-buy-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .core-select-grid {
+                gap: 8px;
+            }
+            .core-btn {
+                padding: 10px 14px;
+                font-size: 0.78rem;
+            }
+            .derived-grid {
+                gap: 10px;
+            }
+            .derived-item {
+                padding: 12px 16px;
+                min-width: 70px;
+            }
+            .derived-item .dv-value {
+                font-size: 1.4rem;
+            }
+            .dice-result {
+                width: 46px;
+                height: 46px;
+                font-size: 1.3rem;
+            }
+            .sheet-hero h1 {
+                font-size: 1.6rem;
+            }
+            .glass-panel {
+                padding: 20px 14px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .attr-four-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            .attr-card {
+                padding: 10px 6px 8px;
+            }
+            .attr-card .attr-card-value {
+                font-size: 1.6rem;
+            }
+            .point-buy-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 6px;
+            }
+            .core-select-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .core-btn {
+                width: 100%;
+                max-width: 200px;
+            }
+            .derived-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .derived-item {
+                width: 100%;
+                max-width: 160px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- ===== Top Navigation ===== -->
     <nav class="top-nav">
         <a href="../index.html" class="nav-brand"><span>灰烬世界</span></a>
         <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
@@ -146,7 +765,7 @@
         </div>
     </nav>
 
-
+    <!-- ===== Mobile Navigation ===== -->
     <nav class="nav-mobile" id="navMobile">
         <div class="mobile-group"><div class="mobile-group-title">最新</div>
             <a class="mobile-link" href="news.html">最新资讯</a></div>
@@ -168,183 +787,266 @@
             <a class="mobile-link" href="works.html">衍生作品</a></div>
         <div class="mobile-group"><a class="mobile-link" href="merch.html" style="color:var(--ash-gold)">商店</a></div>
     </nav>
-    <header class="page-header">
-        <h1>角色卡</h1>
-        <p class="subtitle">CHARACTER SHEET</p>
-        <div class="divider"></div>
-    </header>
 
-    <main class="content" id="onto-content">
-        <h2 class="section-title">核心属性（3d6 系统）</h2>
-        <div class="roll-all-wrap">
-            <button class="roll-all-btn" onclick="rollAll()">掷骰生成属性</button>
-        </div>
-        <div class="attr-grid" id="attrGrid">
-            <div class="attr-box" data-attr="str" onclick="rollAttr(this)">
-                <div class="attr-name">力量 STR</div>
-                <div class="attr-value">?</div>
-                <div class="dice-row">
-                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
-                </div>
-                <div class="attr-detail">近战 · 负重 · 体能</div>
-                <div class="attr-hint">点击重掷</div>
-            </div>
-            <div class="attr-box" data-attr="dex" onclick="rollAttr(this)">
-                <div class="attr-name">敏捷 DEX</div>
-                <div class="attr-value">?</div>
-                <div class="dice-row">
-                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
-                </div>
-                <div class="attr-detail">远程 · 闪避 · 巧手</div>
-                <div class="attr-hint">点击重掷</div>
-            </div>
-            <div class="attr-box" data-attr="con" onclick="rollAttr(this)">
-                <div class="attr-name">体质 CON</div>
-                <div class="attr-value">?</div>
-                <div class="dice-row">
-                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
-                </div>
-                <div class="attr-detail">生命 · 耐力 · 抵抗</div>
-                <div class="attr-hint">点击重掷</div>
-            </div>
-            <div class="attr-box" data-attr="int" onclick="rollAttr(this)">
-                <div class="attr-name">智力 INT</div>
-                <div class="attr-value">?</div>
-                <div class="dice-row">
-                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
-                </div>
-                <div class="attr-detail">奥术 · 知识 · 逻辑</div>
-                <div class="attr-hint">点击重掷</div>
-            </div>
-            <div class="attr-box" data-attr="wis" onclick="rollAttr(this)">
-                <div class="attr-name">感知 WIS</div>
-                <div class="attr-value">?</div>
-                <div class="dice-row">
-                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
-                </div>
-                <div class="attr-detail">洞察 · 神术 · 生存</div>
-                <div class="attr-hint">点击重掷</div>
-            </div>
-            <div class="attr-box" data-attr="cha" onclick="rollAttr(this)">
-                <div class="attr-name">魅力 CHA</div>
-                <div class="attr-value">?</div>
-                <div class="dice-row">
-                    <div class="dice-pip"></div><div class="dice-pip"></div><div class="dice-pip"></div>
-                </div>
-                <div class="attr-detail">交涉 · 威吓 · 领导</div>
-                <div class="attr-hint">点击重掷</div>
-            </div>
-        </div>
-        <div class="roll-summary" id="rollSummary"></div>
+    <!-- ===== Main Content ===== -->
+    <main class="sheet-wrapper">
 
-        <h2 class="section-title" style="margin-top:48px;">角色信息</h2>
-        <div class="card-grid">
-            <div class="card">
-                <h3>创建你的角色</h3>
-                <p>点击属性框掷骰（3d6），也可以点击单个属性重掷。所有属性掷出后，总点数将显示在下方。标准 3d6 系统期望总点数为 63（个体范围 54~72）。</p>
-                <div class="meta">提示：3d6 呈正态分布，10~11 为最常见的单属性值</div>
+        <!-- Hero -->
+        <section class="sheet-hero">
+            <span class="hero-emoji">🎲</span>
+            <h1>创建角色</h1>
+            <p class="hero-sub">在 EW 世界中塑造你的冒险者</p>
+        </section>
+
+        <!-- Race Panel -->
+        <section class="glass-panel" id="panel-race">
+            <span class="panel-icon">🧬</span>
+            <div class="panel-title">选择种族</div>
+            <div class="panel-desc">15 个基础种族 + 1 混血席位，在 Elden World 中，种族决定了你的初始天赋与文化背景。每个种族拥有独特的属性加成与专属技能。</div>
+            <a class="race-link" href="races-ontology.html">查看全部种族 →</a>
+        </section>
+
+        <!-- Attribute Allocation Panel -->
+        <section class="glass-panel" id="panel-attributes">
+            <span class="panel-icon">📊</span>
+            <div class="panel-title">核心属性分配</div>
+            <div class="panel-desc">EW 采用 4 核心属性系统。选择掷骰命运（5 次 1d4，选 4 组）或手动精修（10 点自由分配，单项不超过 4）。</div>
+
+            <!-- Method Toggle -->
+            <div class="method-toggle" id="methodToggle">
+                <button class="method-opt active" data-method="dice" onclick="switchMethod('dice')">🎲 掷骰分配</button>
+                <button class="method-opt" data-method="pointbuy" onclick="switchMethod('pointbuy')">✋ 手动分配</button>
             </div>
-        </div>
+
+            <!-- Attribute Display Grid -->
+            <div class="attr-four-grid" id="attrGrid">
+                <div class="attr-card" id="attrCardBody">
+                    <span class="attr-card-icon">💪</span>
+                    <div class="attr-card-name">BODY</div>
+                    <div class="attr-card-cn">躯魄</div>
+                    <div class="attr-card-value">?</div>
+                </div>
+                <div class="attr-card" id="attrCardAgility">
+                    <span class="attr-card-icon">🏃</span>
+                    <div class="attr-card-name">AGILITY</div>
+                    <div class="attr-card-cn">敏韧</div>
+                    <div class="attr-card-value">?</div>
+                </div>
+                <div class="attr-card" id="attrCardIntellect">
+                    <span class="attr-card-icon">🧠</span>
+                    <div class="attr-card-name">INTELLECT</div>
+                    <div class="attr-card-cn">心智</div>
+                    <div class="attr-card-value">?</div>
+                </div>
+                <div class="attr-card" id="attrCardPerception">
+                    <span class="attr-card-icon">👁️</span>
+                    <div class="attr-card-name">PERCEPTION</div>
+                    <div class="attr-card-cn">洞识</div>
+                    <div class="attr-card-value">?</div>
+                </div>
+            </div>
+
+            <!-- Method A: Dice UI -->
+            <div id="methodDiceUI">
+                <button class="roll-btn" id="rollDiceBtn" onclick="rollAllDice()">🎲 掷骰生成</button>
+                <div class="dice-row-wrap" id="diceRow"></div>
+                <div class="assign-row" id="assignRow"></div>
+            </div>
+
+            <!-- Method B: Point Buy UI -->
+            <div id="methodPointBuyUI" style="display:none;">
+                <div class="point-buy-wrap">
+                    <div class="point-buy-row">
+                        <div class="pb-item">
+                            <div class="pb-name">BODY</div>
+                            <div class="pb-cn">躯魄</div>
+                            <div class="pb-value" id="pbValBody">0</div>
+                            <div class="pb-btns">
+                                <button class="pb-btn" id="pbMinusBody" onclick="pointBuyAdjust('body',-1)" disabled>−</button>
+                                <button class="pb-btn" id="pbPlusBody" onclick="pointBuyAdjust('body',1)">+</button>
+                            </div>
+                        </div>
+                        <div class="pb-item">
+                            <div class="pb-name">AGILITY</div>
+                            <div class="pb-cn">敏韧</div>
+                            <div class="pb-value" id="pbValAgility">0</div>
+                            <div class="pb-btns">
+                                <button class="pb-btn" id="pbMinusAgility" onclick="pointBuyAdjust('agility',-1)" disabled>−</button>
+                                <button class="pb-btn" id="pbPlusAgility" onclick="pointBuyAdjust('agility',1)">+</button>
+                            </div>
+                        </div>
+                        <div class="pb-item">
+                            <div class="pb-name">INTELLECT</div>
+                            <div class="pb-cn">心智</div>
+                            <div class="pb-value" id="pbValIntellect">0</div>
+                            <div class="pb-btns">
+                                <button class="pb-btn" id="pbMinusIntellect" onclick="pointBuyAdjust('intellect',-1)" disabled>−</button>
+                                <button class="pb-btn" id="pbPlusIntellect" onclick="pointBuyAdjust('intellect',1)">+</button>
+                            </div>
+                        </div>
+                        <div class="pb-item">
+                            <div class="pb-name">PERCEPTION</div>
+                            <div class="pb-cn">洞识</div>
+                            <div class="pb-value" id="pbValPerception">0</div>
+                            <div class="pb-btns">
+                                <button class="pb-btn" id="pbMinusPerception" onclick="pointBuyAdjust('perception',-1)" disabled>−</button>
+                                <button class="pb-btn" id="pbPlusPerception" onclick="pointBuyAdjust('perception',1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="points-remaining">剩余点数：<span class="pts-num" id="ptsRemaining">10</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Attribute Selection Panel -->
+        <section class="glass-panel" id="panel-core">
+            <span class="panel-icon">⭐</span>
+            <div class="panel-title">选择核心属性</div>
+            <div class="panel-desc">从已分配的 4 项属性中选择一项作为核心属性，获得强化收益与专属限制。</div>
+            <div class="core-select-grid" id="coreSelectGrid">
+                <button class="core-btn" data-core="body" onclick="selectCore('body')">💪 躯魄</button>
+                <button class="core-btn" data-core="agility" onclick="selectCore('agility')">🏃 敏韧</button>
+                <button class="core-btn" data-core="intellect" onclick="selectCore('intellect')">🧠 心智</button>
+                <button class="core-btn" data-core="perception" onclick="selectCore('perception')">👁️ 洞识</button>
+            </div>
+            <div class="core-hint" id="coreHint">⬆ 点击选择一项作为核心属性</div>
+        </section>
+
+        <!-- Derived Values Panel -->
+        <section class="glass-panel" id="panel-derived">
+            <span class="panel-icon">📋</span>
+            <div class="panel-title">衍生数值</div>
+            <div class="panel-desc">基于属性值与核心属性自动计算。核心属性每点获得双倍衍生数值。</div>
+            <div class="derived-grid" id="derivedGrid">
+                <div class="derived-item">
+                    <div class="dv-label">HP</div>
+                    <div class="dv-cn">生命值</div>
+                    <div class="dv-value" id="dvHP">0</div>
+                    <div class="dv-note">每点躯魄 +2（核心 +4）</div>
+                </div>
+                <div class="derived-item">
+                    <div class="dv-label">EP</div>
+                    <div class="dv-cn">耐力值</div>
+                    <div class="dv-value" id="dvEP">0</div>
+                    <div class="dv-note">每点敏韧 +2（核心 +4）</div>
+                </div>
+                <div class="derived-item">
+                    <div class="dv-label">MP</div>
+                    <div class="dv-cn">精神值</div>
+                    <div class="dv-value" id="dvMP">0</div>
+                    <div class="dv-note">每点心智 +2（核心 +4）</div>
+                </div>
+                <div class="derived-item">
+                    <div class="dv-label">VP</div>
+                    <div class="dv-cn">专注值</div>
+                    <div class="dv-value" id="dvVP">0</div>
+                    <div class="dv-note">每点洞识 +2（核心 +4）</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Core Attribute Details (Accordion) -->
+        <section class="glass-panel" id="panel-details">
+            <span class="panel-icon">📖</span>
+            <div class="panel-title">核心属性详解</div>
+            <div class="panel-desc">了解每项属性的核心收益与选择限制，帮助你做出最适合角色概念的决定。</div>
+            <div class="accordion-list">
+                <!-- Body -->
+                <div class="accordion-item" id="accBody">
+                    <div class="accordion-header" onclick="toggleAccordion('accBody')">
+                        <div class="acc-title-group">
+                            <span class="acc-icon">💪</span>
+                            <span class="acc-name">BODY</span>
+                            <span class="acc-cn">躯魄 · 肉身强度</span>
+                        </div>
+                        <span class="acc-arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-body-inner">
+                            <p><strong>关联数值：</strong>HP 生命值（每点 +2HP）</p>
+                            <p class="acc-benefit"><strong>核心强化：</strong>每点 +4HP、+3 抗性点数。肉体坚韧无双，承受伤害的能力大幅提升。</p>
+                            <p class="acc-limit"><strong>核心限制：</strong>解锁奥法能力受限，无法施放高阶奥术。你的身体虽如钢铁，但灵魂通道却变得狭窄。</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Agility -->
+                <div class="accordion-item" id="accAgility">
+                    <div class="accordion-header" onclick="toggleAccordion('accAgility')">
+                        <div class="acc-title-group">
+                            <span class="acc-icon">🏃</span>
+                            <span class="acc-name">AGILITY</span>
+                            <span class="acc-cn">敏韧 · 行动天赋</span>
+                        </div>
+                        <span class="acc-arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-body-inner">
+                            <p><strong>关联数值：</strong>EP 耐力值（每点 +2EP）</p>
+                            <p class="acc-benefit"><strong>核心强化：</strong>每点 +4EP、自然回复 +2。行动迅捷如风，耐力回复远超常人。</p>
+                            <p class="acc-limit"><strong>核心限制：</strong>穿着重甲时部分敏捷优势失效，护甲适应性降低。轻灵的身法难以在铁甲下施展。</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Intellect -->
+                <div class="accordion-item" id="accIntellect">
+                    <div class="accordion-header" onclick="toggleAccordion('accIntellect')">
+                        <div class="acc-title-group">
+                            <span class="acc-icon">🧠</span>
+                            <span class="acc-name">INTELLECT</span>
+                            <span class="acc-cn">心智 · 精神禀赋</span>
+                        </div>
+                        <span class="acc-arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-body-inner">
+                            <p><strong>关联数值：</strong>MP 精神值（每点 +2MP）</p>
+                            <p class="acc-benefit"><strong>核心强化：</strong>每点 +4MP、额外施法行动。精神力浩瀚如海，每回合可施放更多法术。</p>
+                            <p class="acc-limit"><strong>核心限制：</strong>近战伤害减免降低，身体较为脆弱。过于专注精神世界使物理防御变得薄弱。</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Perception -->
+                <div class="accordion-item" id="accPerception">
+                    <div class="accordion-header" onclick="toggleAccordion('accPerception')">
+                        <div class="acc-title-group">
+                            <span class="acc-icon">👁️</span>
+                            <span class="acc-name">PERCEPTION</span>
+                            <span class="acc-cn">洞识 · 直觉洞察</span>
+                        </div>
+                        <span class="acc-arrow">▼</span>
+                    </div>
+                    <div class="accordion-body">
+                        <div class="accordion-body-inner">
+                            <p><strong>关联数值：</strong>VP 专注值（每点 +2VP）</p>
+                            <p class="acc-benefit"><strong>核心强化：</strong>每点 +4VP、VP 可替代 MP 用于神术施法。洞察力超越凡俗，能以专注之力沟通神域。</p>
+                            <p class="acc-limit"><strong>核心限制：</strong>奥法学习门槛提高，部分奥术不可用。神域的力量与奥术之力难以兼容。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
-<div class="content" id="onto-linked"></div>
 
-    <script>
-    // ==================== 3d6 骰子系统 ====================
-    const attrBoxes = document.querySelectorAll('.attr-box');
-    const summaryEl = document.getElementById('rollSummary');
-
-    function rollD6() { return Math.floor(Math.random() * 6) + 1; }
-
-    function rollAttr(box) {
-        if (box.classList.contains('rolling')) return;
-        box.classList.add('rolling');
-
-        // 骰子滚动动画
-        const pips = box.querySelectorAll('.dice-pip');
-        const valueEl = box.querySelector('.attr-value');
-        const detailEl = box.querySelector('.attr-detail');
-
-        // 快速闪烁动画
-        let ticks = 0;
-        const maxTicks = 8;
-        const dice = [rollD6(), rollD6(), rollD6()];
-        const total = dice[0] + dice[1] + dice[2];
-
-        function tick() {
-            ticks++;
-            if (ticks < maxTicks) {
-                // 随机闪烁
-                pips.forEach((p, i) => {
-                    p.textContent = rollD6();
-                    p.classList.toggle('show', Math.random() > 0.3);
-                });
-                valueEl.textContent = Math.floor(Math.random() * 16) + 3;
-                setTimeout(tick, 60 + ticks * 10);
-            } else {
-                // 最终结果
-                pips.forEach((p, i) => {
-                    p.textContent = dice[i];
-                    p.classList.add('show');
-                    p.style.transitionDelay = (i * 0.1) + 's';
-                });
-                valueEl.textContent = total;
-                box.classList.add('rolled');
-                box.classList.remove('rolling');
-
-                // 高亮极端值
-                if (total >= 16) {
-                    valueEl.style.color = '#e8b84c';
-                    valueEl.style.textShadow = '0 0 24px rgba(232,184,76,0.4)';
-                } else if (total <= 6) {
-                    valueEl.style.color = '#d46b3a';
-                    valueEl.style.textShadow = '0 0 24px rgba(212,107,58,0.4)';
-                } else {
-                    valueEl.style.color = '';
-                    valueEl.style.textShadow = '';
-                }
-
-                updateSummary();
-            }
-        }
-        tick();
-    }
-
-    function rollAll() {
-        attrBoxes.forEach((box, i) => {
-            setTimeout(() => rollAttr(box), i * 120);
-        });
-    }
-
-    function updateSummary() {
-        const boxes = document.querySelectorAll('.attr-box.rolled');
-        if (boxes.length === 6) {
-            let total = 0;
-            boxes.forEach(b => total += parseInt(b.querySelector('.attr-value').textContent) || 0);
-            summaryEl.textContent = '属性总和：' + total + ' 点';
-            summaryEl.classList.add('visible');
-        } else if (boxes.length > 0) {
-            let total = 0;
-            boxes.forEach(b => total += parseInt(b.querySelector('.attr-value').textContent) || 0);
-            summaryEl.textContent = '已掷 ' + boxes.length + '/6 属性 · 当前总和：' + total + ' 点';
-            summaryEl.classList.add('visible');
-        }
-    }
-    </script>
-
-        <nav class="bottom-nav">
+    <!-- ===== Bottom Navigation ===== -->
+    <nav class="bottom-nav">
         <a href="news.html">最新资讯</a>
         <a href="worldview.html">世界观</a>
         <a href="map.html">地图</a>
         <a href="races-ontology.html">种族</a>
-        <a href="rules.html" class="active">规则书</a>
+        <a href="rules.html">规则书</a>
         <a href="modules.html">模组</a>
         <a href="works.html">衍生作品</a>
         <a href="merch.html">商店</a>
     </nav>
 
+    <!-- ===== Footer ===== -->
     <footer class="footer">
         <p>灰烬世界 Ash World &copy; 2026 桌游工作室</p>
     </footer>
+
+    <!-- ===== External Scripts ===== -->
     <script src="../transition.js"></script>
     <script src="../ash-bg.js"></script>
     <script src="../mouse-trail.js"></script>
@@ -352,21 +1054,416 @@
     <script src="../data/page-render.js"></script>
     <script>PageRender.init('character-sheet');</script>
 
-<script>
-(function(){
-    var btn=document.getElementById('navToggle');
-    var panel=document.getElementById('navMobile');
-    if(btn&&panel){
-        btn.addEventListener('click',function(){
-            btn.classList.toggle('open');
-            panel.classList.toggle('open');
-        });
-        // Click a link closes the panel
-        panel.querySelectorAll('.mobile-link').forEach(function(l){
-            l.addEventListener('click',function(){btn.classList.remove('open');panel.classList.remove('open');});
-        });
-    }
-})();
-</script>
+    <!-- ===== Mobile Nav Toggle ===== -->
+    <script>
+    (function(){
+        var btn=document.getElementById('navToggle');
+        var panel=document.getElementById('navMobile');
+        if(btn&&panel){
+            btn.addEventListener('click',function(){
+                btn.classList.toggle('open');
+                panel.classList.toggle('open');
+            });
+            panel.querySelectorAll('.mobile-link').forEach(function(l){
+                l.addEventListener('click',function(){btn.classList.remove('open');panel.classList.remove('open');});
+            });
+        }
+    })();
+    </script>
+
+    <!-- ===== EW Character Sheet Logic ===== -->
+    <script>
+    (function(){
+        'use strict';
+
+        // ==================== State ====================
+        var state = {
+            method: 'dice',                // 'dice' | 'pointbuy'
+            attributes: {                  // Final assigned values
+                body: 0,
+                agility: 0,
+                intellect: 0,
+                perception: 0
+            },
+            core: null,                    // 'body' | 'agility' | 'intellect' | 'perception' | null
+            diceResults: [],               // Array of 5 numbers from 1d4 rolls
+            selectedDice: [],              // Indices of selected dice (max 4)
+            diceAssignments: {},           // { dieIndex: attrKey }
+            pointBuyValues: {              // Method B values
+                body: 0,
+                agility: 0,
+                intellect: 0,
+                perception: 0
+            },
+            pointBuyRemaining: 10
+        };
+
+        // ==================== DOM Refs ====================
+        var $ = function(id) { return document.getElementById(id); };
+
+        var attrCardMap = {
+            body: $('attrCardBody'),
+            agility: $('attrCardAgility'),
+            intellect: $('attrCardIntellect'),
+            perception: $('attrCardPerception')
+        };
+
+        var attrKeys = ['body', 'agility', 'intellect', 'perception'];
+
+        // ==================== Utility ====================
+        function rollD4() {
+            return Math.floor(Math.random() * 4) + 1;
+        }
+
+        // ==================== Method Switch ====================
+        window.switchMethod = function(method) {
+            state.method = method;
+            var diceUI = $('methodDiceUI');
+            var pbUI = $('methodPointBuyUI');
+            var toggles = document.querySelectorAll('#methodToggle .method-opt');
+
+            toggles.forEach(function(t) {
+                t.classList.toggle('active', t.getAttribute('data-method') === method);
+            });
+
+            if (method === 'dice') {
+                diceUI.style.display = 'block';
+                pbUI.style.display = 'none';
+                resetPointBuy();
+            } else {
+                diceUI.style.display = 'none';
+                pbUI.style.display = 'block';
+                resetDice();
+            }
+            resetAttributes();
+            resetCore();
+            updateAllUI();
+        };
+
+        // ==================== Reset Functions ====================
+        function resetAttributes() {
+            attrKeys.forEach(function(k) {
+                state.attributes[k] = 0;
+            });
+            updateAttrCards();
+        }
+
+        function resetCore() {
+            state.core = null;
+            var btns = document.querySelectorAll('#coreSelectGrid .core-btn');
+            btns.forEach(function(b) { b.classList.remove('core-selected'); });
+            $('coreHint').textContent = '⬆ 点击选择一项作为核心属性';
+            updateDerivedValues();
+            updateAttrCards();
+        }
+
+        function resetDice() {
+            state.diceResults = [];
+            state.selectedDice = [];
+            state.diceAssignments = {};
+            $('diceRow').innerHTML = '';
+            $('assignRow').innerHTML = '';
+        }
+
+        function resetPointBuy() {
+            attrKeys.forEach(function(k) {
+                state.pointBuyValues[k] = 0;
+            });
+            state.pointBuyRemaining = 10;
+            updatePointBuyUI();
+        }
+
+        // ==================== Method A: Dice Rolling ====================
+        window.rollAllDice = function() {
+            var btn = $('rollDiceBtn');
+            btn.disabled = true;
+            btn.textContent = '✨ 掷骰中...';
+
+            resetDice();
+            resetAttributes();
+            resetCore();
+            state.diceResults = [];
+            state.selectedDice = [];
+            state.diceAssignments = {};
+
+            // Generate 5 d4 results
+            for (var i = 0; i < 5; i++) {
+                state.diceResults.push(rollD4());
+            }
+
+            // Build dice HTML
+            var rowHTML = '';
+            for (var i = 0; i < 5; i++) {
+                rowHTML += '<div class="dice-result animating" data-die-index="' + i + '" onclick="toggleDiceSelection(' + i + ')" style="animation-delay:' + (i * 0.12) + 's">' + state.diceResults[i] + '</div>';
+            }
+            $('diceRow').innerHTML = rowHTML;
+            $('assignRow').innerHTML = '';
+
+            // Remove animating class after animation completes
+            setTimeout(function() {
+                var dice = document.querySelectorAll('#diceRow .dice-result');
+                dice.forEach(function(d) { d.classList.remove('animating'); });
+                btn.disabled = false;
+                btn.textContent = '🎲 掷骰生成';
+            }, 1000);
+        };
+
+        window.toggleDiceSelection = function(index) {
+            if (state.diceResults.length === 0) return;
+
+            var alreadySelected = state.selectedDice.indexOf(index);
+            var diceEls = document.querySelectorAll('#diceRow .dice-result');
+
+            if (alreadySelected >= 0) {
+                // Deselect
+                state.selectedDice.splice(alreadySelected, 1);
+                diceEls[index].classList.remove('selected');
+                // Remove assignment if exists
+                delete state.diceAssignments[index];
+            } else {
+                // Select (max 4)
+                if (state.selectedDice.length >= 4) return;
+                state.selectedDice.push(index);
+                diceEls[index].classList.add('selected');
+            }
+
+            // Update used states
+            updateDiceUsedStates();
+            // Rebuild assign dropdowns
+            buildAssignDropdowns();
+            // Apply assignments
+            applyDiceAssignments();
+        };
+
+        function updateDiceUsedStates() {
+            var diceEls = document.querySelectorAll('#diceRow .dice-result');
+            diceEls.forEach(function(el) {
+                var idx = parseInt(el.getAttribute('data-die-index'));
+                if (state.selectedDice.length >= 4 && state.selectedDice.indexOf(idx) < 0) {
+                    el.classList.add('used');
+                } else {
+                    el.classList.remove('used');
+                }
+            });
+        }
+
+        function buildAssignDropdowns() {
+            if (state.selectedDice.length === 0) {
+                $('assignRow').innerHTML = '';
+                return;
+            }
+
+            var attrNames = {
+                body: '躯魄 Body',
+                agility: '敏韧 Agility',
+                intellect: '心智 Intellect',
+                perception: '洞识 Perception'
+            };
+
+            var usedAttrs = {};
+            Object.keys(state.diceAssignments).forEach(function(k) {
+                usedAttrs[state.diceAssignments[k]] = true;
+            });
+
+            var html = '';
+            for (var i = 0; i < state.selectedDice.length; i++) {
+                var dieIdx = state.selectedDice[i];
+                var dieVal = state.diceResults[dieIdx];
+                var currentAssign = state.diceAssignments[dieIdx] || '';
+
+                html += '<div class="assign-slot">';
+                html += '<span class="assign-label">骰子 ' + dieVal + '</span>';
+                html += '<select data-die-index="' + dieIdx + '" onchange="assignDieToAttr(' + dieIdx + ', this.value)">';
+                html += '<option value="">-- 分配到 --</option>';
+                attrKeys.forEach(function(ak) {
+                    var sel = (currentAssign === ak) ? ' selected' : '';
+                    html += '<option value="' + ak + '"' + sel + '>' + attrNames[ak] + '</option>';
+                });
+                html += '</select>';
+                html += '</div>';
+            }
+            $('assignRow').innerHTML = html;
+        }
+
+        window.assignDieToAttr = function(dieIndex, attrKey) {
+            if (!attrKey) {
+                // Clear this die's assignment
+                delete state.diceAssignments[dieIndex];
+            } else {
+                // Check if another die already assigned to this attr
+                Object.keys(state.diceAssignments).forEach(function(k) {
+                    if (state.diceAssignments[k] === attrKey && parseInt(k) !== dieIndex) {
+                        delete state.diceAssignments[k];
+                    }
+                });
+                state.diceAssignments[dieIndex] = attrKey;
+            }
+            applyDiceAssignments();
+            // Rebuild dropdowns to reflect changes
+            buildAssignDropdowns();
+        };
+
+        function applyDiceAssignments() {
+            // Reset all attributes
+            attrKeys.forEach(function(k) { state.attributes[k] = 0; });
+
+            // Apply from dice assignments
+            Object.keys(state.diceAssignments).forEach(function(dieIdx) {
+                var attrKey = state.diceAssignments[dieIdx];
+                if (attrKey && attrKeys.indexOf(attrKey) >= 0) {
+                    state.attributes[attrKey] = state.diceResults[parseInt(dieIdx)];
+                }
+            });
+
+            updateAttrCards();
+            updateDerivedValues();
+
+            // Reset core if attributes changed
+            if (state.core && !allAttrsAssigned()) {
+                resetCore();
+            }
+        }
+
+        function allAttrsAssigned() {
+            return attrKeys.every(function(k) { return state.attributes[k] > 0; });
+        }
+
+        // ==================== Method B: Point Buy ====================
+        window.pointBuyAdjust = function(attrKey, delta) {
+            var current = state.pointBuyValues[attrKey];
+            var newVal = current + delta;
+
+            if (newVal < 0) return;
+            if (newVal > 4) return;
+            if (delta > 0 && state.pointBuyRemaining <= 0) return;
+
+            state.pointBuyValues[attrKey] = newVal;
+            state.pointBuyRemaining -= delta;
+
+            // Sync to main attributes
+            state.attributes[attrKey] = newVal;
+
+            updatePointBuyUI();
+            updateAttrCards();
+            updateDerivedValues();
+
+            // Reset core if attributes changed significantly
+            if (state.core && !allAttrsAssigned()) {
+                resetCore();
+            }
+        };
+
+        function updatePointBuyUI() {
+            attrKeys.forEach(function(k) {
+                var v = state.pointBuyValues[k];
+                $('pbVal' + capitalize(k)).textContent = v;
+                $('pbMinus' + capitalize(k)).disabled = (v <= 0);
+                $('pbPlus' + capitalize(k)).disabled = (v >= 4 || state.pointBuyRemaining <= 0);
+            });
+            $('ptsRemaining').textContent = state.pointBuyRemaining;
+        }
+
+        function capitalize(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+
+        // ==================== Core Attribute Selection ====================
+        window.selectCore = function(attrKey) {
+            state.core = attrKey;
+
+            var btns = document.querySelectorAll('#coreSelectGrid .core-btn');
+            btns.forEach(function(b) {
+                b.classList.toggle('core-selected', b.getAttribute('data-core') === attrKey);
+            });
+
+            var coreNames = {
+                body: '躯魄',
+                agility: '敏韧',
+                intellect: '心智',
+                perception: '洞识'
+            };
+            $('coreHint').textContent = '⭐ 已选择「' + coreNames[attrKey] + '」作为核心属性';
+
+            updateDerivedValues();
+            updateAttrCards();
+        };
+
+        // ==================== UI Updates ====================
+        function updateAttrCards() {
+            attrKeys.forEach(function(k) {
+                var card = attrCardMap[k];
+                var valEl = card.querySelector('.attr-card-value');
+                var v = state.attributes[k];
+
+                if (v > 0) {
+                    valEl.textContent = v;
+                    card.classList.add('assigned');
+                } else {
+                    valEl.textContent = '?';
+                    card.classList.remove('assigned');
+                }
+
+                // Core highlight
+                card.classList.toggle('core-highlight', state.core === k);
+            });
+        }
+
+        function updateDerivedValues() {
+            var multipliers = {
+                body: state.core === 'body' ? 4 : 2,
+                agility: state.core === 'agility' ? 4 : 2,
+                intellect: state.core === 'intellect' ? 4 : 2,
+                perception: state.core === 'perception' ? 4 : 2
+            };
+
+            var derivedMap = {
+                body: { el: $('dvHP'), key: 'body' },
+                agility: { el: $('dvEP'), key: 'agility' },
+                intellect: { el: $('dvMP'), key: 'intellect' },
+                perception: { el: $('dvVP'), key: 'perception' }
+            };
+
+            Object.keys(derivedMap).forEach(function(k) {
+                var entry = derivedMap[k];
+                var val = state.attributes[entry.key] * multipliers[entry.key];
+                entry.el.textContent = val;
+                if (state.core === entry.key && val > 0) {
+                    entry.el.classList.add('derived-active');
+                } else {
+                    entry.el.classList.remove('derived-active');
+                }
+            });
+        }
+
+        function updateAllUI() {
+            updateAttrCards();
+            updateDerivedValues();
+            if (state.method === 'pointbuy') {
+                updatePointBuyUI();
+            } else {
+                updateDiceUsedStates();
+                buildAssignDropdowns();
+            }
+        }
+
+        // ==================== Accordion ====================
+        window.toggleAccordion = function(accId) {
+            var item = document.getElementById(accId);
+            if (!item) return;
+            var isOpen = item.classList.contains('open');
+            // Close all
+            document.querySelectorAll('.accordion-item').forEach(function(ai) {
+                ai.classList.remove('open');
+            });
+            // Toggle clicked
+            if (!isOpen) {
+                item.classList.add('open');
+            }
+        };
+
+        // ==================== Init ====================
+        updateAllUI();
+    })();
+    </script>
 </body>
 </html>
