@@ -166,7 +166,7 @@
     }
 
     var html = '<div class="rules-layout">';
-    html += '<nav class="rules-sidebar">' + buildTree(chapters) + '</nav>';
+    html += '<nav class="rules-sidebar" id="rules-sidebar">' + buildTree(chapters) + '</nav>';
     html += '<div id="rules-content" class="rules-content"><p style="color:var(--ash-gold-dim);text-align:center;padding:40px">请从左侧选择一个章节</p></div>';
     html += '</div>';
     el.innerHTML = html;
