@@ -147,15 +147,15 @@
   function renderRules(data) {
     var el = document.getElementById('onto-content');
     if (!el || !data.chapters) return;
-    var chapters = data.chapters || [];
+    var chapters = data.chapters.chapters || [];
 
     function buildTree(nodes) {
       if (!nodes || !nodes.length) return '';
       var html = '<ul>';
       nodes.forEach(function(node) {
-        if (node.children && node.children.length) {
+        if (node.sub_sections && node.sub_sections.length) {
           html += '<li><details><summary>' + (node.title || node.name || '') + '</summary>';
-          html += buildTree(node.children);
+          html += buildTree(node.sub_sections);
           html += '</details></li>';
         } else {
           html += '<li><a href="#" class="rules-nav-link" data-chapter="' + (node.id || '') + '">' + (node.title || node.name || '') + '</a></li>';
@@ -189,14 +189,14 @@
     function findNode(nodes, id) {
       for (var i = 0; i < nodes.length; i++) {
         if (nodes[i].id === id) return nodes[i];
-        if (nodes[i].children) {
-          var found = findNode(nodes[i].children, id);
+        if (nodes[i].sub_sections) {
+          var found = findNode(nodes[i].sub_sections, id);
           if (found) return found;
         }
       }
       return null;
     }
-    var node = findNode(data.chapters, chapterId);
+    var node = findNode(data.chapters.chapters, chapterId);
     if (!node) {
       contentEl.innerHTML = '<p style="color:var(--ash-danger)">未找到章节：' + chapterId + '</p>';
       return;
@@ -204,7 +204,7 @@
     // 根据 data_source + data_path 查找内容
     var sourceData = null;
     if (node.data_source) {
-      sourceData = data[node.data_source];
+      sourceData = data[node.data_source.replace('.json', '')];
     }
     var content = node.content || '';
     var html = '<h2>' + (node.title || node.name || '') + '</h2>';
