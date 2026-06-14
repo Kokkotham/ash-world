@@ -11,8 +11,9 @@
       case 'pantheon': renderPantheon(data); break;
       case 'worldview': break;  // 世界观页以文本为主，底部加关联
       case 'map': break;        // 地图页是 SVG，底部加关联
-      case 'rules': break;      // 规则书是交互式，底部加关联
+      case 'rules': renderRules(data); break;
       case 'character-sheet': break;
+      case 'races': renderPlayerRaces(data); break;
       case 'glossary': renderGlossary(data); break;
       case 'news': renderNews(data); break;
       case 'articles': renderArticles(data); break;
@@ -115,9 +116,201 @@
     el.innerHTML = html;
   }
 
-  // 以下页面已有丰富的 HTML 内容，不覆盖 #onto-content
-  // 仅保留底部 Ontology 关联区块
-  function renderGlossary(data) {}
+  // 术语表页面：卡片网格，按 categories 分组过滤
+  function renderGlossary(data) {
+    var el = document.getElementById('onto-content');
+    if (!el || !data.glossary) return;
+    var entries = data.glossary.entries || [];
+    var categories = {};
+    entries.forEach(function(e) {
+      var cat = e.category || '未分类';
+      if (!categories[cat]) categories[cat] = [];
+      categories[cat].push(e);
+    });
+    var html = '';
+    var catNames = Object.keys(categories).sort();
+    catNames.forEach(function(cat) {
+      html += '<h2 class="section-title">' + cat + '</h2><div class="card-grid">';
+      categories[cat].forEach(function(entry) {
+        html += '<div class="card"><h3>' + (entry.term || entry.name || '') + '</h3>';
+        if (entry.aliases && entry.aliases.length) {
+          html += '<p class="meta">别称：' + entry.aliases.join('、') + '</p>';
+        }
+        html += '<p>' + (entry.definition || entry.desc || '') + '</p></div>';
+      });
+      html += '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  // 规则书页面：左侧折叠树 + 右侧内容面板
+  function renderRules(data) {
+    var el = document.getElementById('onto-content');
+    if (!el || !data.chapters) return;
+    var chapters = data.chapters || [];
+
+    function buildTree(nodes) {
+      if (!nodes || !nodes.length) return '';
+      var html = '<ul>';
+      nodes.forEach(function(node) {
+        if (node.children && node.children.length) {
+          html += '<li><details><summary>' + (node.title || node.name || '') + '</summary>';
+          html += buildTree(node.children);
+          html += '</details></li>';
+        } else {
+          html += '<li><a href="#" class="rules-nav-link" data-chapter="' + (node.id || '') + '">' + (node.title || node.name || '') + '</a></li>';
+        }
+      });
+      html += '</ul>';
+      return html;
+    }
+
+    var html = '<div class="rules-layout">';
+    html += '<nav class="rules-sidebar">' + buildTree(chapters) + '</nav>';
+    html += '<div id="rules-content" class="rules-content"><p style="color:var(--ash-gold-dim);text-align:center;padding:40px">请从左侧选择一个章节</p></div>';
+    html += '</div>';
+    el.innerHTML = html;
+
+    // 点击叶子节点加载内容
+    var links = el.querySelectorAll('.rules-nav-link');
+    links.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        var chapterId = this.getAttribute('data-chapter');
+        loadChapterContent(chapterId, data);
+      });
+    });
+  }
+
+  function loadChapterContent(chapterId, data) {
+    var contentEl = document.getElementById('rules-content');
+    if (!contentEl) return;
+    // 在 chapters 树中递归查找节点
+    function findNode(nodes, id) {
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].id === id) return nodes[i];
+        if (nodes[i].children) {
+          var found = findNode(nodes[i].children, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    }
+    var node = findNode(data.chapters, chapterId);
+    if (!node) {
+      contentEl.innerHTML = '<p style="color:var(--ash-danger)">未找到章节：' + chapterId + '</p>';
+      return;
+    }
+    // 根据 data_source + data_path 查找内容
+    var sourceData = null;
+    if (node.data_source) {
+      sourceData = data[node.data_source];
+    }
+    var content = node.content || '';
+    var html = '<h2>' + (node.title || node.name || '') + '</h2>';
+    if (content) {
+      html += '<div class="text-block">' + content + '</div>';
+    }
+    // 渲染关联表格
+    if (node.tables && node.tables.length) {
+      node.tables.forEach(function(t) {
+        html += '<h3>' + (t.title || '表格') + '</h3>';
+        html += renderLevelTable(t.rows || t.data || []);
+      });
+    }
+    // 如果 node 包含 level_table 直接渲染
+    if (node.level_table) {
+      html += renderLevelTable(node.level_table);
+    }
+    contentEl.innerHTML = html;
+  }
+
+  // 渲染等级/数据表格
+  function renderLevelTable(table) {
+    if (!table || !table.length) return '';
+    var headers = Object.keys(table[0]);
+    var html = '<table class="level-table"><thead><tr>';
+    headers.forEach(function(h) { html += '<th>' + h + '</th>'; });
+    html += '</tr></thead><tbody>';
+    table.forEach(function(row) {
+      html += '<tr>';
+      headers.forEach(function(h) { html += '<td>' + (row[h] != null ? row[h] : '') + '</td>'; });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    return html;
+  }
+
+  // 玩家种族页面：属性条 + 特质列表
+  function renderPlayerRaces(data) {
+    var el = document.getElementById('onto-content');
+    if (!el || !data.races || !data.races.players) return;
+    var players = data.races.players;
+    var attrNames = [
+      { key: 'strength', label: '躯魄' },
+      { key: 'agility', label: '敏韧' },
+      { key: 'constitution', label: '体质' },
+      { key: 'intelligence', label: '心智' },
+      { key: 'wisdom', label: '洞识' },
+      { key: 'charisma', label: '魅力' }
+    ];
+    var html = '<h2 class="section-title">玩家种族</h2><div class="card-grid">';
+    players.forEach(function(player) {
+      var vsTag = '';
+      if (player.version_status) {
+        var vsClass = player.version_status === '新' ? 'tag-new' : 'tag-modified';
+        vsTag = ' <span class="' + vsClass + '" style="font-size:0.7rem;padding:1px 6px;border-radius:8px;vertical-align:middle;margin-left:6px">' + player.version_status + '</span>';
+      }
+      html += '<div class="card"><h3>' + player.name + vsTag + '</h3>';
+      // 属性条形图
+      html += '<div class="attr-bars" style="margin:8px 0">';
+      var mods = player.attribute_mods || {};
+      attrNames.forEach(function(a) {
+        var val = mods[a.key] || 0;
+        var barColor = val > 0 ? 'var(--ash-gold)' : val < 0 ? 'var(--ash-danger)' : '#555';
+        var barWidth = Math.abs(val) * 20;
+        html += '<div style="display:flex;align-items:center;margin:2px 0;font-size:0.75rem">';
+        html += '<span style="width:32px;text-align:right;margin-right:4px;color:var(--ash-gold-dim)">' + a.label + '</span>';
+        html += '<span style="display:inline-block;width:' + barWidth + 'px;height:8px;background:' + barColor + ';border-radius:4px;min-width:4px"></span>';
+        html += '<span style="margin-left:4px;color:' + (val >= 0 ? 'var(--ash-gold)' : 'var(--ash-danger)') + '">' + (val >= 0 ? '+' : '') + val + '</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+      // 描述
+      if (player.desc && player.desc.length) {
+        html += '<p style="font-size:0.85rem;color:var(--ash-gold-dim)">' + player.desc.slice(0, 2).join(' ') + '</p>';
+      }
+      // 特质列表
+      if (player.traits && player.traits.length) {
+        html += '<div style="margin-top:6px"><strong style="font-size:0.8rem;color:var(--ash-gold)">种族特质：</strong>';
+        html += '<ul style="margin:4px 0 0 16px;font-size:0.78rem;color:var(--ash-gold-dim)">';
+        var shownTraits = player.traits.slice(0, 4);
+        shownTraits.forEach(function(t) {
+          html += '<li><strong>' + t.name + '</strong>：' + t.desc.substring(0, 80) + (t.desc.length > 80 ? '...' : '') + '</li>';
+        });
+        if (player.traits.length > 4) {
+          html += '<li style="list-style:none;color:var(--ash-gold)">...还有 ' + (player.traits.length - 4) + ' 个特质</li>';
+        }
+        html += '</ul></div>';
+      }
+      // 玩法提示
+      if (player.gameplay_notes) {
+        html += '<div class="meta" style="margin-top:6px">' + player.gameplay_notes + '</div>';
+      }
+      // 关键词
+      if (player.related_keywords && player.related_keywords.length) {
+        html += '<div class="region-tags" style="margin-top:6px">';
+        player.related_keywords.forEach(function(kw) {
+          html += '<span class="tag">' + kw + '</span>';
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+    el.innerHTML = html;
+  }
+
   function renderNews(data) {}
   function renderArticles(data) {}
   function renderCommunity(data) {}
