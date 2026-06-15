@@ -6,9 +6,453 @@
       "chapter": "3.1",
       "version_status": "改动",
       "desc": [
-        "占位"
+        "本能能力专修为所有角色与生灵与生俱来的基础判定能力，无需后天修习与培养即可天然拥有，同时亦是诸多专项专修的下位替代判定途径。所有本能专修均设有 0 至 20 级等级区间，可通过等级提升进一步丰富角色特质、完善人物塑造。"
       ],
-      "abilities": []
+      "abilities": [
+        {
+          "id": "running",
+          "name": "奔跑",
+          "desc": [
+            "奔跑为常规角色与生俱来的基础移动方式之一。战斗中，奔跑无需进行专修鉴定，可消耗对应耐力 EP，获得奔跑增益带来的额外移动米数。若自身与敌方处于1 米交战距离时发起奔跑移动，敌方将获得反击机会，可发起反击攻击并进行命中鉴定，此时该次奔跑具备（B）效应但只能用于对抗该次反击攻击。若敌方反击命中成功，则不削减本次奔跑的移动米数，但自身仍需承受本次反击所造成的伤害。处于部分追逐场景，亦可采用奔跑对抗进行判定。无特殊规则例外时，奔跑不得作为防御（B）手段使用。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+0", "cost": "3 EP", "effect": "奔跑移动你基础SP+1米距离" },
+            { "level": 1, "bonus": "+1", "cost": "3 EP", "effect": "奔跑移动你基础SP+1米距离" },
+            { "level": 5, "bonus": "+1", "cost": "3 EP", "effect": "奔跑移动你基础SP+2米距离" },
+            { "level": 8, "bonus": "+2", "cost": "2 EP", "effect": "奔跑移动你基础SP+2米距离" },
+            { "level": 10, "bonus": "+2", "cost": "2 EP", "effect": "奔跑移动你基础SP+3米距离" },
+            { "level": 13, "bonus": "+3", "cost": "2 EP", "effect": "奔跑移动你基础SP+3米距离" },
+            { "level": 15, "bonus": "+3", "cost": "1 EP", "effect": "奔跑移动你基础SP+4米距离" },
+            { "level": 18, "bonus": "+4", "cost": "1 EP", "effect": "奔跑移动你基础SP+4米距离" },
+            { "level": 20, "bonus": "+4", "cost": "1 EP", "effect": "奔跑移动你基础SP+5米距离" }
+          ],
+          "prerequisites": null,
+          "keywords": ["移动", "耐力行动", "速度", "奔跑"]
+        },
+        {
+          "id": "jumping",
+          "name": "跳跃",
+          "desc": [
+            "跳跃为角色最基础的移动方式之一。战斗中，跳跃移动无需进行鉴定，只需消耗对应耐力 EP，即可获得跳跃增益的移动格数与高度格数。角色无法跳跃超出自身当前跳跃移动格数的距离；跨越障碍物时，障碍物的高度格数必须低于自身跳跃极限，且高差至少控制在一米以内，方可成功越过。若与敌方处于一米交战距离内发起跳跃移动，敌方将获得反击权限，可向目标发动反击，此时该次跳跃具备（B）效应但只能用于对抗该次反击攻击。若敌方反击命中成功，不影响本次跳跃的移动距离与格数，但角色仍需承受本次反击造成的伤害。若无特殊规则许可，跳跃不得作为防御（B）对抗手段使用。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+0", "cost": "4 EP", "effect": "跳跃移动你基础SP米距离" },
+            { "level": 1, "bonus": "+1", "cost": "4 EP", "effect": "跳跃移动你基础SP米距离" },
+            { "level": 5, "bonus": "+1", "cost": "4 EP", "effect": "跳跃移动你基础SP+1米距离" },
+            { "level": 8, "bonus": "+2", "cost": "3 EP", "effect": "跳跃移动你基础SP+1米距离" },
+            { "level": 10, "bonus": "+2", "cost": "3 EP", "effect": "跳跃移动你基础SP+2米距离" },
+            { "level": 13, "bonus": "+3", "cost": "3 EP", "effect": "跳跃移动你基础SP+2米距离" },
+            { "level": 15, "bonus": "+3", "cost": "2 EP", "effect": "跳跃移动你基础SP+3米距离" },
+            { "level": 18, "bonus": "+4", "cost": "2 EP", "effect": "跳跃移动你基础SP+3米距离" },
+            { "level": 20, "bonus": "+4", "cost": "2 EP", "effect": "跳跃移动你基础SP+4米距离" }
+          ],
+          "prerequisites": null,
+          "keywords": ["移动", "耐力行动", "跳跃", "跨越障碍"]
+        },
+        {
+          "id": "climbing",
+          "name": "攀爬",
+          "desc": [
+            "攀爬属于特殊移动方式，可供角色翻越更为陡峭、高大的障碍物。与跳跃不同，攀爬能够跨越常规跳跃无法逾越的地形与阻碍。进行大高度攀爬时将进入攀爬轮，攀爬轮次由主持人裁定。每一轮攀爬均需依照主持人设定难度进行攀爬鉴定，并消耗对应耐力 EP；障碍物越高，所需攀爬轮数越多；地势越陡峭，攀爬鉴定难度越高。冒险过程中，部分专用道具可给予攀爬鉴定加成。处于攀爬维持状态且未主动解除时，自身每个回合开始都将扣除固定攀爬耐力消耗。角色处于攀爬状态下进入战斗时，无法施法、无法发动远程射击攻击，且投掷攻击判定将带有劣势；若防御判定失败，则直接脱离攀爬状态。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+0", "cost": "5 EP", "effect": "攀爬移动你基础SP米距离" },
+            { "level": 1, "bonus": "+1", "cost": "5 EP", "effect": "攀爬移动你基础SP米距离" },
+            { "level": 5, "bonus": "+1", "cost": "4 EP", "effect": "攀爬移动你基础SP+1米距离" },
+            { "level": 8, "bonus": "+2", "cost": "4 EP", "effect": "攀爬移动你基础SP+1米距离" },
+            { "level": 10, "bonus": "+2", "cost": "4 EP", "effect": "攀爬移动你基础SP+2米距离" },
+            { "level": 13, "bonus": "+3", "cost": "3 EP", "effect": "攀爬移动你基础SP+2米距离" },
+            { "level": 15, "bonus": "+3", "cost": "3 EP", "effect": "攀爬移动你基础SP+3米距离" },
+            { "level": 18, "bonus": "+4", "cost": "3 EP", "effect": "攀爬移动你基础SP+3米距离" },
+            { "level": 20, "bonus": "+4", "cost": "2 EP", "effect": "攀爬移动你基础SP+4米距离" }
+          ],
+          "prerequisites": null,
+          "keywords": ["移动", "耐力行动", "攀爬", "翻越障碍"]
+        },
+        {
+          "id": "unarmed_combat",
+          "name": "体术",
+          "desc": [
+            "体术为特殊基础行动类型，代表角色依托肉身发起的基础攻击方式，同时包含借助躯体施展的优势进攻手段，如擒抱、摔跤、推撞等，皆归属于体术判定范畴。",
+            "凡以身体任意部位发起的攻击行为，均视作体术行动，统一造成体伤类型伤害。体术亦可额外用于执行擒抱、绞杀等近身牵制类动作。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+0", "cost": "3 EP", "effect": "体术伤害1，暴击增值1，速率1" },
+            { "level": 1, "bonus": "+1", "cost": "2 EP", "effect": "体术伤害1，暴击增值2，速率1" },
+            { "level": 5, "bonus": "+1", "cost": "2 EP", "effect": "体术伤害2，暴击增值2，速率1" },
+            { "level": 8, "bonus": "+2", "cost": "2 EP", "effect": "体术伤害2，暴击增值3，速率1" },
+            { "level": 10, "bonus": "+2", "cost": "2 EP", "effect": "体术伤害3，暴击增值3，速率1" },
+            { "level": 13, "bonus": "+3", "cost": "2 EP", "effect": "体术伤害3，暴击增值3，速率2" },
+            { "level": 15, "bonus": "+3", "cost": "1 EP", "effect": "体术伤害3，暴击增值3，速率2" },
+            { "level": 18, "bonus": "+4", "cost": "1 EP", "effect": "体术伤害4，暴击增值3，速率2" },
+            { "level": 20, "bonus": "+4", "cost": "1 EP", "effect": "体术伤害4，暴击增值4，速率2" }
+          ],
+          "prerequisites": null,
+          "keywords": ["攻击", "近战", "体伤", "擒抱"]
+        },
+        {
+          "id": "dodge",
+          "name": "闪避",
+          "desc": [
+            "闪避是最基础的防御对抗行动，可用于规避近战攻击与远程攻击；部分范围类攻击无法通过闪避进行抵挡与规避。依托掩体、遮挡物进行闪避对抗远程攻击时，可获得额外判定加值，具体加成数值由主持人裁定。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "3 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "3 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "2 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "2 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "1 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "1 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["防御", "规避", "耐力行动", "闪避"]
+        },
+        {
+          "id": "exert_force",
+          "name": "用力",
+          "desc": [
+            "用力属于基础物理判定行动，多用于强行突破物理阻碍，或是战斗中的各类蛮力运用行为。绝大多数依靠肉身力量完成的场景，均可通过用力鉴定进行结算。",
+            "用力与体术有所区别，不可替代体术作为直接攻击手段；具体场景的判定难度，由主持人视实际情况设定。当角色受定缚、麻痹、重压、压制、擒抱等负面束缚状态影响时，可进行用力鉴定尝试挣脱，能否成功及判定条件均由主持人裁定。特殊为念重攻击的攻击形式时，用力具备防御（B）效应但只能用于对抗念重攻击。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "3 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "3 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "2 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "2 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "1 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "1 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["物理", "耐力行动", "挣脱", "蛮力"]
+        },
+        {
+          "id": "vitality",
+          "name": "维生",
+          "desc": [
+            "维生是一项核心基础属性，面对疾病、中毒、昏迷等负面状态时，将以此作为主要对抗与豁免判定依据。此外维生也具备了处于战斗之中角色恢复耐力的具体大小情况。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "耐力恢复1EP" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "耐力恢复1EP" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "耐力恢复2EP" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "耐力恢复2EP" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "耐力恢复3EP" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "耐力恢复3EP" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "耐力恢复4EP" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "耐力恢复4EP" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "耐力恢复5EP" }
+          ],
+          "prerequisites": null,
+          "keywords": ["生命", "豁免", "耐力恢复", "生存"]
+        },
+        {
+          "id": "insight",
+          "name": "洞悉",
+          "desc": [
+            "洞悉是一项感知类核心能力，可帮助角色察觉周遭潜藏生灵、辨识 NPC 言行神态异常，以及各类潜藏异动与反常征兆。提前成功进行洞悉判定，能够为角色争取更多行动决策空间，具体判定难度与实际生效效果由主持人裁定。部分特殊能力可进一步增幅洞悉成效；听觉、嗅觉、触觉等不同感知维度的洞悉判定，各自拥有独立难度标准。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["感知", "侦查", "生灵", "洞察"]
+        },
+        {
+          "id": "perception",
+          "name": "察觉",
+          "desc": [
+            "察觉与洞悉分属不同感知体系：察觉侧重观测周遭环境而非生灵，用于辨识潜在危险、侦测陷阱、察觉埋伏，亦能帮助角色发现隐匿物品与相关线索征兆。提前完成察觉判定，可为自身争取更多行动判断与应对余地，具体判定难度及实际效果由主持人裁定。部分特殊能力可增幅察觉成效；依托听觉、嗅觉、触觉等不同感知途径进行察觉判定时，各自拥有独立难度标准。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["感知", "环境", "陷阱", "侦查"]
+        },
+        {
+          "id": "thinking",
+          "name": "思考",
+          "desc": [
+            "当角色在剧情推进中遭遇瓶颈、受剧情安排陷入行动迷茫，或是在解谜环节无从着手时，可向主持人请求引导协助。思考鉴定便是主持人提供剧情提示的核心方式，鉴定难度由主持人根据事件情境自行设定；判定成功后，玩家将获得对应线索与关键信息作为回报，用以推进剧情与解谜。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["解谜", "剧情", "线索", "推理"]
+        },
+        {
+          "id": "sanity",
+          "name": "理智",
+          "desc": [
+            "角色遭受诅咒、精神魔法等外力干涉，致使行为遭意志操控；或是自身精神值过低触发各类负面状态时，在该类精神负面影响正式生效前，皆需进行理智鉴定。",
+            "理智鉴定若成功，可有效延缓甚至直接解除对应的精神侵蚀与行为控制效果。具体触发情境、鉴定难度及生效规则，均由主持人视剧情与场景设定裁定。特殊为精神攻击的攻击形式时，理智具备防御（B）效应但只能用于对抗精神攻击。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["精神", "意志", "豁免", "防御"]
+        },
+        {
+          "id": "hiding",
+          "name": "躲藏",
+          "desc": [
+            "躲藏是规避战斗、隐秘潜入区域时最常用的基础能力。进行躲藏鉴定的前提，必须在未被任何目标察觉的前提下，依托当前地形、建筑或掩体完成隐蔽行为；躲藏难度由主持人依据环境隐蔽条件进行设定。若有敌方目标主动进行搜寻察觉，则将触发躲藏与察觉的鉴定对抗；在特殊环境与条件下，躲藏判定可获得优势加成，具体由主持人裁定。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["隐秘", "潜入", "规避", "隐蔽"]
+        },
+        {
+          "id": "negotiation",
+          "name": "交涉",
+          "desc": [
+            "交涉与其他专修鉴定不同，仅限定用于与目标对话沟通、行为表意等人际互动场景。交涉的判定难度，由玩家自身的言辞与行为描述作为依据，最终由主持人评判该表达方式对交涉目标所产生的影响，并核定对应难度等级。交涉可作为下位替代，顶替任意交流类专修能力进行判定，但会因此增大鉴定难度，也无法获得额外优势加成。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["社交", "沟通", "交流", "下位替代"]
+        },
+        {
+          "id": "learning",
+          "name": "学习",
+          "desc": [
+            "学习是玩家角色剧情成长中至关重要的判定能力。战斗、魔法、造物、武技等各类专修能力，在正式习得并纳入培养体系前，均需通过学习鉴定，方可归入个人进修项目。其额外如各种语言，独特的知识记录，指定构成的奥法其同样需要进行学习鉴定来加入个人的进修项目之中。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["成长", "进修", "习得", "知识"]
+        },
+        {
+          "id": "organizing",
+          "name": "物品整理",
+          "desc": [
+            "物品整理是角色与生俱来的基础行动之一。常规情况下，普通拾取无需进行鉴定；但若需在短时间内完成规整收纳、区域清点、文书整理等行为，则需进行物品整理鉴定。进行物品整理时，所处整理区域有概率触发额外事件、发现隐藏物品，具体触发几率与内容由主持人裁定。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "3 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "3 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "2 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "2 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "1 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "1 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["整理", "收纳", "耐力行动", "物品"]
+        },
+        {
+          "id": "handicraft",
+          "name": "手工",
+          "desc": [
+            "手工无法替代专业制作类专修，仅适用于角色完成各类简易手部操作。以手工作为艺术、生存、养成等专修能力的下位替代进行判定时，对应行为的基础难度会大幅提升，具体难度设定由主持人裁定。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["制作", "下位替代", "手部操作", "简易"]
+        },
+        {
+          "id": "reading",
+          "name": "阅读理解",
+          "desc": [
+            "阅读理解代表角色解读文献、典籍、书籍等文字资料的专属能力，决定角色能否从中发掘关键线索、破译隐藏信息，或是完整掌握书中记载的知识与要义。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["文献", "阅读", "破译", "知识"]
+        },
+        {
+          "id": "acting",
+          "name": "演技",
+          "desc": [
+            "演技可让角色完成各类简易表演与伪装行为，纯熟的演技甚至可直接顶替欺骗能力进行判定。演技不可作为艺术类专修的下位替代使用。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["表演", "伪装", "欺骗替代", "社交"]
+        },
+        {
+          "id": "swimming",
+          "name": "游泳",
+          "desc": [
+            "游泳是角色在水域环境中进行移动的基础方式。进入水中战斗时，仅需进行一次游泳鉴定；鉴定成功后，游泳将临时替代常规移动，仅表现形式有所区别。鉴定失败的角色可能因环境与剧情承受严重负面影响。水域战斗中，常规游泳移动无需额外鉴定，可消耗对应耐力 EP，获得游泳增益的额外移动米数。若与敌方处于一米交战距离内发起游泳移动，敌方拥有反击权限，可向目标发动反击，此时该次游泳具备（B）效应但只能用于对抗该次反击攻击。敌方反击命中成功时，不削减本次游泳移动米数，角色仍需承受本次反击伤害。水域追逐场景，亦可采用游泳对抗进行判定结算。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+0", "cost": "3 EP", "effect": "游泳移动你基础SP米距离" },
+            { "level": 1, "bonus": "+1", "cost": "3 EP", "effect": "游泳移动你基础SP+1米距离" },
+            { "level": 5, "bonus": "+1", "cost": "3 EP", "effect": "游泳移动你基础SP+2米距离" },
+            { "level": 8, "bonus": "+2", "cost": "3 EP", "effect": "游泳移动你基础SP+2米距离" },
+            { "level": 10, "bonus": "+2", "cost": "3 EP", "effect": "游泳移动你基础SP+3米距离" },
+            { "level": 13, "bonus": "+3", "cost": "2 EP", "effect": "游泳移动你基础SP+3米距离" },
+            { "level": 15, "bonus": "+3", "cost": "2 EP", "effect": "游泳移动你基础SP+4米距离" },
+            { "level": 18, "bonus": "+4", "cost": "2 EP", "effect": "游泳移动你基础SP+4米距离" },
+            { "level": 20, "bonus": "+4", "cost": "2 EP", "effect": "游泳移动你基础SP+5米距离" }
+          ],
+          "prerequisites": null,
+          "keywords": ["移动", "水域", "耐力行动", "游泳"]
+        },
+        {
+          "id": "diving",
+          "name": "潜水",
+          "desc": [
+            "潜水效果与游泳相近，潜水鉴定成功可大幅延长角色在水下的停留时长。即便潜水判定通过，若角色不具备水下呼吸能力，久留水下仍会触发溺水状态并具备窒息效果，具体安全时限由主持人设定；潜水成功可延后并延长溺水起始时限，但水下位移依旧遵循游泳规则结算。拥有潜水能力后，角色可在水中自由进行上下纵深方向的游泳米数移动。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+0", "cost": "3 EP", "effect": "潜水时长10秒/1回合" },
+            { "level": 1, "bonus": "+1", "cost": "3 EP", "effect": "潜水时长30秒/3回合" },
+            { "level": 5, "bonus": "+1", "cost": "3 EP", "effect": "潜水时长1分钟/6回合" },
+            { "level": 8, "bonus": "+2", "cost": "3 EP", "effect": "潜水时长2分钟/12回合" },
+            { "level": 10, "bonus": "+2", "cost": "2 EP", "effect": "潜水时长3分钟/18回合" },
+            { "level": 13, "bonus": "+3", "cost": "2 EP", "effect": "潜水时长4分钟/24回合" },
+            { "level": 15, "bonus": "+3", "cost": "2 EP", "effect": "潜水时长5分钟/30回合" },
+            { "level": 18, "bonus": "+4", "cost": "2 EP", "effect": "潜水时长6分钟/36回合" },
+            { "level": 20, "bonus": "+4", "cost": "1 EP", "effect": "潜水时长7分钟/42回合" }
+          ],
+          "prerequisites": null,
+          "keywords": ["水域", "水下", "耐力行动", "潜水"]
+        },
+        {
+          "id": "tumbling",
+          "name": "翻滚",
+          "desc": [
+            "翻滚是角色专属的特殊防御对抗方式。翻滚鉴定成功后，可移动指定米数，借以规避攻击、拉开与敌方的交战距离。翻滚移动不可朝向有障碍物的方位，也不允许折返重复米位；若翻滚路径范围内存在阻碍，翻滚将直接中断。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+0", "cost": "4 EP", "effect": "翻滚1米距离" },
+            { "level": 1, "bonus": "+1", "cost": "4 EP", "effect": "翻滚1米距离" },
+            { "level": 5, "bonus": "+1", "cost": "3 EP", "effect": "翻滚1米距离" },
+            { "level": 8, "bonus": "+2", "cost": "3 EP", "effect": "翻滚1米距离" },
+            { "level": 10, "bonus": "+2", "cost": "2 EP", "effect": "翻滚2米距离" },
+            { "level": 13, "bonus": "+3", "cost": "2 EP", "effect": "翻滚2米距离" },
+            { "level": 15, "bonus": "+3", "cost": "1 EP", "effect": "翻滚2米距离" },
+            { "level": 18, "bonus": "+4", "cost": "1 EP", "effect": "翻滚3米距离" },
+            { "level": 20, "bonus": "+4", "cost": "1 EP", "effect": "翻滚4米距离" }
+          ],
+          "prerequisites": null,
+          "keywords": ["防御", "规避", "移动", "翻滚"]
+        },
+        {
+          "id": "stealth_step",
+          "name": "静步",
+          "desc": [
+            "静步是角色潜入行动中，用以无声移动的关键鉴定能力。通过放轻脚步、压低动静，能够大幅降低被敌方察觉的概率，减少行踪暴露的风险。在战斗场景中，静步鉴定成功还能为角色创造隐蔽接近的条件，提升偷袭目标的机会。"
+          ],
+          "level_table": [
+            { "level": 0, "bonus": "+1", "cost": "0 EP", "effect": "无" },
+            { "level": 1, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "无" },
+            { "level": 8, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "无" },
+            { "level": 13, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "无" },
+            { "level": 18, "bonus": "+5", "cost": "0 EP", "effect": "无" },
+            { "level": 20, "bonus": "+6", "cost": "0 EP", "effect": "无" }
+          ],
+          "prerequisites": null,
+          "keywords": ["潜入", "隐秘", "无声移动", "偷袭"]
+        }
+      ]
     },
     {
       "id": "knowledge",
@@ -16,9 +460,250 @@
       "chapter": "3.2",
       "version_status": "改动",
       "desc": [
-        "占位"
+        "此类专修能力需满足对应前置条件，方可在角色创建阶段选择携带。每项额外专修均设有 1 至 20 级等级上限，部分专修允许以本能专修作为下位替代进行判定。"
       ],
-      "abilities": []
+      "abilities": [
+        {
+          "id": "culture_knowledge",
+          "name": "文化知识",
+          "desc": [
+            "文化知识代表角色对地域风俗、人文习俗、历史典故以及各族群文化风貌等内容的基础认知与学识理解。文书宣传力为领导力规则模式中的专属属性点数，主要用于提升角色在管辖区域内的威望值。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 文书宣传力+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 文书宣传力+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 文书宣传力+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 文书宣传力+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 文书宣传力+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 文书宣传力+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 文书宣传力+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 文书宣传力+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 文书宣传力+9" }
+          ],
+          "prerequisites": "SD(+8), 领导力(L)",
+          "keywords": ["文化", "风俗", "历史", "威望"]
+        },
+        {
+          "id": "religion_knowledge",
+          "name": "宗教知识",
+          "desc": [
+            "宗教知识代表角色对地域宗教体系、神明谱系及各族信仰风貌的基础认知与理解，同时也是研习神术必备的前置基础专修。宗教宣传力为领导力规则模式中的专属属性点数，可用于提升角色在管辖疆域内的威望值。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 宗教宣传力+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 宗教宣传力+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 宗教宣传力+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 宗教宣传力+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 宗教宣传力+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 宗教宣传力+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 宗教宣传力+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 宗教宣传力+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 宗教宣传力+9" }
+          ],
+          "prerequisites": "SD(+12), 领导力(L)",
+          "keywords": ["宗教", "神术", "信仰", "威望"]
+        },
+        {
+          "id": "magic_knowledge",
+          "name": "魔法知识",
+          "desc": [
+            "魔法知识能够帮助角色理解并解析世间各类外在魔法原理与奥秘，是解锁奥法类专修的基础前置资质。角色天赋能力中的奥术源、奥法感应与奥法储备的基础等级，将随自身魔法知识等级同步绑定判定。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7" }
+          ],
+          "prerequisites": "SD(+15)",
+          "keywords": ["魔法", "奥法", "前置", "奥术"]
+        },
+        {
+          "id": "monster_knowledge",
+          "name": "怪物知识",
+          "desc": [
+            "怪物知识是角色对魔物、野兽及各类特殊生物的族群类别、生存习性、行为规律与强弱短板、弱点破绽的认知与辨识学识。威胁探知力为领导力规则模式专属属性点数，用于辨识管辖疆域内潜藏的敌对隐患，以及侦测周边区域潜在的敌方威胁与异动风险。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 威胁探知力+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 威胁探知力+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 威胁探知力+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 威胁探知力+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 威胁探知力+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 威胁探知力+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 威胁探知力+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 威胁探知力+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 威胁探知力+9" }
+          ],
+          "prerequisites": "SD(+13), 领导力(L)",
+          "keywords": ["怪物", "魔物", "辨识", "弱点"]
+        },
+        {
+          "id": "nature_knowledge",
+          "name": "自然知识",
+          "desc": [
+            "自然知识代表角色对地理地貌、自然环境、天气变化、植被分布及草药特性等相关内容的基础认知与理解。自然研究力为领导力规则模式中的专属属性点数，主要用于研究潜在管辖区域内的环境与地质状况，同时也可用于提升管辖范围内植被、野兽的产出数量。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 自然研究力+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 自然研究力+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 自然研究力+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 自然研究力+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 自然研究力+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 自然研究力+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 自然研究力+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 自然研究力+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 自然研究力+9" }
+          ],
+          "prerequisites": "SD(+13), 领导力(L)",
+          "keywords": ["自然", "地理", "草药", "环境"]
+        },
+        {
+          "id": "economy_knowledge",
+          "name": "经济知识",
+          "desc": [
+            "经济知识代表角色对商业运作、物价波动、贸易行情等商事规律的基础认知与专业理解。经济研究力为领导力规则模式专属属性点数，用于研判管辖区域内的经济现状与走势，加快辖区经济发展节奏、提升整体经济增幅。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 经济研究力+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 经济研究力+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 经济研究力+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 经济研究力+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 经济研究力+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 经济研究力+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 经济研究力+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 经济研究力+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 经济研究力+9" }
+          ],
+          "prerequisites": "SD(+15), 领导力(L)",
+          "keywords": ["经济", "商业", "贸易", "发展"]
+        },
+        {
+          "id": "art_knowledge",
+          "name": "艺术知识",
+          "desc": [
+            "艺术知识涵盖角色对美术、音律乐艺、工艺技艺水准等领域的基础认知与鉴赏理解。娱乐研究力为领导力规则模式专属属性点数，可用于提升角色在管辖疆域内的威望数值。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 娱乐研究力+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 娱乐研究力+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 娱乐研究力+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 娱乐研究力+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 娱乐研究力+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 娱乐研究力+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 娱乐研究力+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 娱乐研究力+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 娱乐研究力+9" }
+          ],
+          "prerequisites": "SD(+15), 领导力(L)",
+          "keywords": ["艺术", "美术", "音律", "威望"]
+        },
+        {
+          "id": "technology_knowledge",
+          "name": "科技知识",
+          "desc": [
+            "科技知识代表角色对科技发明、蓝图应用、科技造物相关原理与实操的基础认知与掌握。科技研究力为领导力规则模式专属属性点数，可提升管辖疆域内的生产效率，并强化整体生产成效与品质。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 科技研究力+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 科技研究力+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 科技研究力+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 科技研究力+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 科技研究力+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 科技研究力+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 科技研究力+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 科技研究力+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 科技研究力+9" }
+          ],
+          "prerequisites": "SD(+16), 领导力(L)",
+          "keywords": ["科技", "发明", "蓝图", "生产效率"]
+        },
+        {
+          "id": "law_knowledge",
+          "name": "律法知识",
+          "desc": [
+            "律法知识是角色对地域现行法规、各族律法条例及文明规制体系的基础认知与通晓理解。律法宣传力为领导力规则模式专属属性点数，能够提升管辖疆域内的治安稳定度，降低恶性事件的触发概率。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 律法宣传力+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 律法宣传力+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 律法宣传力+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 律法宣传力+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 律法宣传力+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 律法宣传力+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 律法宣传力+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 律法宣传力+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 律法宣传力+9" }
+          ],
+          "prerequisites": "SD(+13), 领导力(L)",
+          "keywords": ["律法", "法规", "治安", "文明"]
+        },
+        {
+          "id": "command_knowledge",
+          "name": "统御知识",
+          "desc": [
+            "统御知识是角色对人员调度管理、军队编制布防与兵力调配部署等相关事务的基础认知与掌控学识。人力掌控为领导力规则模式专属属性点数，可提升角色可调配、可投入收益事务的人手数量上限。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 人力掌控+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 人力掌控+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 人力掌控+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 人力掌控+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 人力掌控+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 人力掌控+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 人力掌控+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 人力掌控+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 人力掌控+9" }
+          ],
+          "prerequisites": "SD(+13), 领导力(L)",
+          "keywords": ["统御", "调度", "军队", "人力"]
+        },
+        {
+          "id": "medicine_knowledge",
+          "name": "医学知识",
+          "desc": [
+            "医学知识代表角色对病症机理、医疗应用、疫病与毒素研究等领域的基础认知与专业理解。医疗研究力为领导力规则模式专属属性点数，可用于提升角色在管辖疆域内的威望数值。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 医疗研究力+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 医疗研究力+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 医疗研究力+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 医疗研究力+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 医疗研究力+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 医疗研究力+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 医疗研究力+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 医疗研究力+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 医疗研究力+9" }
+          ],
+          "prerequisites": "SD(+13), 领导力(L)",
+          "keywords": ["医学", "病症", "医疗", "威望"]
+        },
+        {
+          "id": "calculation",
+          "name": "计算",
+          "desc": [
+            "计算专精涵盖基础数理运算相关知识的认知与应用，亦是修习部分奥法所必需的核心专修之一。执行效率为领导力规则模式专属属性点数，用于判定各类事务任务所需耗费的时长周期。"
+          ],
+          "level_table": [
+            { "level": 1, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 执行效率+1" },
+            { "level": 3, "bonus": "+1", "cost": "0 EP", "effect": "职业+3, 执行效率+2" },
+            { "level": 5, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 执行效率+3" },
+            { "level": 8, "bonus": "+2", "cost": "0 EP", "effect": "职业+4, 执行效率+4" },
+            { "level": 10, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 执行效率+5" },
+            { "level": 13, "bonus": "+3", "cost": "0 EP", "effect": "职业+5, 执行效率+6" },
+            { "level": 15, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 执行效率+7" },
+            { "level": 18, "bonus": "+4", "cost": "0 EP", "effect": "职业+6, 执行效率+8" },
+            { "level": 20, "bonus": "+5", "cost": "0 EP", "effect": "职业+7, 执行效率+9" }
+          ],
+          "prerequisites": "SD(+8), 领导力(L)",
+          "keywords": ["数理", "计算", "奥法前置", "效率"]
+        }
+      ]
     },
     {
       "id": "communication",
