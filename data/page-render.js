@@ -143,86 +143,509 @@
     el.innerHTML = html;
   }
 
-  // 规则书页面：左侧折叠树 + 右侧内容面板
+  // ============================================================
+  //  规则书阅读器：预渲染所有章节 + 缩略图导航 + IntersectionObserver
+  // ============================================================
   function renderRules(data) {
     var el = document.getElementById('onto-content');
     if (!el || !data.chapters) return;
     var chapters = data.chapters.chapters || [];
+    var chapterIds = [];
 
-    function buildTree(nodes) {
-      if (!nodes || !nodes.length) return '';
-      var html = '<ul>';
-      nodes.forEach(function(node) {
-        if (node.sub_sections && node.sub_sections.length) {
-          html += '<li><details><summary>' + (node.title || node.name || '') + '</summary>';
-          html += buildTree(node.sub_sections);
-          html += '</details></li>';
-        } else {
-          html += '<li><a href="#" class="rules-nav-link" data-chapter="' + (node.id || '') + '">' + (node.title || node.name || '') + '</a></li>';
-        }
-      });
-      html += '</ul>';
-      return html;
-    }
+    // 收集所有顶级章节 ID
+    chapters.forEach(function(ch) { chapterIds.push(ch.id); });
 
-    var html = '<div class="rules-layout">';
-    html += '<nav class="rules-sidebar" id="rules-sidebar">' + buildTree(chapters) + '</nav>';
-    html += '<div id="rules-content" class="rules-content"><p style="color:var(--ash-gold-dim);text-align:center;padding:40px">请从左侧选择一个章节</p></div>';
+    // 构建缩略图导航 HTML
+    var navHTML = '<div class="reader-nav-title">章 节</div>';
+    chapters.forEach(function(ch) {
+      var isEmpty = !hasChapterContent(ch, data);
+      var cls = 'chapter-thumb' + (isEmpty ? ' empty' : '');
+      navHTML += '<div class="' + cls + '" data-target="' + ch.id + '" role="button" tabindex="0">';
+      navHTML += '<span class="thumb-number">' + (ch.number || '') + '</span>';
+      navHTML += '<span class="thumb-title">' + (ch.title || ch.name || '') + '</span>';
+      if (isEmpty) {
+        navHTML += '<span class="thumb-hint">整理中</span>';
+      }
+      navHTML += '</div>';
+    });
+
+    // 构建主阅读区 HTML（预渲染所有章节）
+    var mainHTML = '';
+    chapters.forEach(function(ch, idx) {
+      mainHTML += '<section class="reader-chapter" id="reader-' + ch.id + '" data-chapter="' + ch.id + '">';
+      mainHTML += renderChapterContent(ch, data, chapters, idx);
+      // 下一章按钮（最后一章特殊处理）
+      var isLast = idx === chapters.length - 1;
+      mainHTML += '<div class="next-chapter-sentinel" data-sentinel="' + ch.id + '"></div>';
+      mainHTML += '<button class="next-chapter-btn' + (isLast ? ' last-chapter' : '') + '" ';
+      mainHTML += 'data-next="' + (isLast ? '' : chapters[idx + 1].id) + '"';
+      if (isLast) { mainHTML += ' disabled'; }
+      mainHTML += '>下一章</button>';
+      mainHTML += '</section>';
+    });
+
+    // 组装布局
+    var html = '<div class="reader-layout">';
+    html += '<nav class="reader-nav" id="reader-nav">' + navHTML + '</nav>';
+    html += '<div class="reader-main" id="reader-main">' + mainHTML + '</div>';
     html += '</div>';
     el.innerHTML = html;
 
-    // 点击叶子节点加载内容
-    var links = el.querySelectorAll('.rules-nav-link');
-    links.forEach(function(link) {
-      link.addEventListener('click', function(e) {
-        e.preventDefault();
-        var chapterId = this.getAttribute('data-chapter');
-        loadChapterContent(chapterId, data);
-      });
-    });
+    // ---- 交互绑定 ----
+    setupReaderInteractions(chapterIds);
   }
 
-  function loadChapterContent(chapterId, data) {
-    var contentEl = document.getElementById('rules-content');
-    if (!contentEl) return;
-    // 在 chapters 树中递归查找节点
-    function findNode(nodes, id) {
-      for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i].id === id) return nodes[i];
-        if (nodes[i].sub_sections) {
-          var found = findNode(nodes[i].sub_sections, id);
-          if (found) return found;
+  // 判断章节是否有实质内容
+  function hasChapterContent(ch, data) {
+    // 文本类章节：有 content 文本数组且非空
+    if (ch.type === 'text' && ch.content && ch.content.length > 0) {
+      // content 可能是字符串数组或对象数组
+      for (var i = 0; i < ch.content.length; i++) {
+        var c = ch.content[i];
+        if (typeof c === 'string' && c.trim()) return true;
+        if (typeof c === 'object' && c.content && c.content.length) return true;
+      }
+    }
+    // 数据类章节：检查数据源是否有内容
+    if (ch.type === 'data' && ch.data_source && data) {
+      var src = resolveDataSource(data, ch.data_source);
+      if (!src) return false;
+      if (ch.data_path) {
+        var pathVal = resolveDataPath(src, ch.data_path);
+        if (pathVal && Array.isArray(pathVal) && pathVal.length > 0) return true;
+      }
+      // 检查 sub_sections 是否有内容
+      if (ch.sub_sections && ch.sub_sections.length > 0) {
+        for (var j = 0; j < ch.sub_sections.length; j++) {
+          if (hasChapterContent(ch.sub_sections[j], data)) return true;
         }
       }
-      return null;
     }
-    var node = findNode(data.chapters.chapters, chapterId);
-    if (!node) {
-      contentEl.innerHTML = '<p style="color:var(--ash-danger)">未找到章节：' + chapterId + '</p>';
-      return;
+    if (ch.sub_sections && ch.sub_sections.length > 0) {
+      for (var k = 0; k < ch.sub_sections.length; k++) {
+        if (hasChapterContent(ch.sub_sections[k], data)) return true;
+      }
     }
-    // 根据 data_source + data_path 查找内容
-    var sourceData = null;
-    if (node.data_source) {
-      sourceData = data[node.data_source.replace('.json', '')];
+    return false;
+  }
+
+  // 解析数据源名称（kebab-case → camelCase 兼容）
+  function resolveDataSource(data, sourceName) {
+    var key = sourceName.replace('.json', '');
+    // 直接匹配
+    if (data[key] !== undefined) return data[key];
+    // kebab-case → camelCase（divine-arts → divineArts, story-rules → storyRules）
+    var camelKey = key.replace(/-([a-z])/g, function(m, c) { return c.toUpperCase(); });
+    if (data[camelKey] !== undefined) return data[camelKey];
+    return null;
+  }
+
+  // 解析 data_path（如 "players" 或 "sections[0]"）
+  function resolveDataPath(src, path) {
+    if (!src || !path) return src;
+    var val = src;
+    var parts = path.split(/\.|\[|\]/).filter(function(p) { return p.length > 0; });
+    for (var i = 0; i < parts.length; i++) {
+      if (val == null) return null;
+      var key = parts[i];
+      if (/^\d+$/.test(key)) {
+        val = val[parseInt(key, 10)];
+      } else {
+        val = val[key];
+      }
     }
-    var content = node.content || '';
-    var html = '<h2>' + (node.title || node.name || '') + '</h2>';
-    if (content) {
-      html += '<div class="text-block">' + content + '</div>';
+    return val;
+  }
+
+  // 渲染单个章节的内容
+  function renderChapterContent(ch, data, allChapters, index) {
+    var html = '';
+
+    // 章节标题
+    html += '<div class="chapter-heading">';
+    html += '<span class="chapter-num">' + (ch.number || '') + '</span>';
+    html += '<h2>' + (ch.title || ch.name || '') + '</h2>';
+    html += '<div class="heading-divider"></div>';
+    html += '</div>';
+
+    // 章节正文
+    html += '<div class="chapter-body">';
+
+    var hasContent = false;
+
+    // 文本类内容
+    if (ch.content && ch.content.length > 0) {
+      for (var i = 0; i < ch.content.length; i++) {
+        var c = ch.content[i];
+        if (typeof c === 'string') {
+          html += '<p>' + c + '</p>';
+          hasContent = true;
+        } else if (typeof c === 'object') {
+          html += '<div class="sub-section">';
+          html += '<h3>' + (c.title || '') + '</h3>';
+          if (c.content && c.content.length) {
+            for (var j = 0; j < c.content.length; j++) {
+              html += '<p>' + c.content[j] + '</p>';
+            }
+            hasContent = true;
+          }
+          html += '</div>';
+        }
+      }
     }
-    // 渲染关联表格
-    if (node.tables && node.tables.length) {
-      node.tables.forEach(function(t) {
-        html += '<h3>' + (t.title || '表格') + '</h3>';
-        html += renderLevelTable(t.rows || t.data || []);
+
+    // 数据类内容
+    if (ch.type === 'data' && ch.data_source && data) {
+      var src = resolveDataSource(data, ch.data_source);
+      if (src) {
+        // 根据章节 ID 分发渲染器
+        switch (ch.id) {
+          case 'ch2':
+            var rendered = renderRaceChapter(src, data);
+            html += rendered.html;
+            hasContent = rendered.hasContent || hasContent;
+            break;
+          case 'ch3':
+            var profRendered = renderProfessionChapter(ch, src, data);
+            html += profRendered.html;
+            hasContent = profRendered.hasContent || hasContent;
+            break;
+          case 'ch4':
+            var divineRendered = renderDivineChapter(src, data);
+            html += divineRendered.html;
+            hasContent = divineRendered.hasContent || hasContent;
+            break;
+          case 'ch5':
+            var storyRendered = renderStoryChapter(ch, src, data);
+            html += storyRendered.html;
+            hasContent = storyRendered.hasContent || hasContent;
+            break;
+          default:
+            var pathVal = resolveDataPath(src, ch.data_path);
+            if (pathVal && Array.isArray(pathVal) && pathVal.length > 0) {
+              html += renderGenericList(pathVal, ch);
+              hasContent = true;
+            }
+        }
+      }
+    }
+
+    // 如果没有任何内容，显示占位
+    if (!hasContent) {
+      html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+    }
+
+    html += '</div>'; // .chapter-body
+
+    return html;
+  }
+
+  // ---- ch2: 种族章节渲染 ----
+  function renderRaceChapter(src, data) {
+    var html = '';
+    var hasContent = false;
+    var players = src.players || [];
+
+    if (players.length === 0) {
+      return { html: '', hasContent: false };
+    }
+
+    var attrNames = [
+      { key: 'strength', label: '躯魄' },
+      { key: 'agility', label: '敏韧' },
+      { key: 'constitution', label: '体质' },
+      { key: 'intelligence', label: '心智' },
+      { key: 'wisdom', label: '洞识' },
+      { key: 'charisma', label: '魅力' }
+    ];
+
+    html += '<h3>可选玩家种族（' + players.length + '）</h3>';
+
+    players.forEach(function(player) {
+      var vsTag = '';
+      if (player.version_status) {
+        var vsClass = player.version_status === '新' ? 'new' : 'modified';
+        vsTag = ' <span class="version-tag ' + vsClass + '">' + player.version_status + '</span>';
+      }
+
+      html += '<div class="race-card">';
+      html += '<div class="race-header"><h4>' + player.name + vsTag + '</h4></div>';
+
+      // 属性条
+      var mods = player.attribute_mods || {};
+      html += '<div class="attr-bars-mini">';
+      attrNames.forEach(function(a) {
+        var val = mods[a.key] || 0;
+        var barColor = val > 0 ? 'var(--ash-gold)' : val < 0 ? 'var(--ash-red)' : '#444';
+        var barWidth = Math.abs(val) * 18;
+        var valCls = val > 0 ? 'pos' : val < 0 ? 'neg' : 'zero';
+        html += '<div class="attr-item">';
+        html += '<span class="attr-label">' + a.label + '</span>';
+        html += '<span class="attr-bar" style="width:' + barWidth + 'px;background:' + barColor + '"></span>';
+        html += '<span class="attr-val ' + valCls + '">' + (val >= 0 ? '+' : '') + val + '</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+
+      // 描述截取
+      if (player.desc && player.desc.length) {
+        html += '<div class="race-desc">' + player.desc[0].substring(0, 200) + (player.desc[0].length > 200 ? '…' : '') + '</div>';
+      }
+
+      // 特质标签
+      if (player.traits && player.traits.length) {
+        html += '<div class="trait-tags">';
+        player.traits.slice(0, 4).forEach(function(t) {
+          html += '<span class="trait-tag" title="' + t.desc.substring(0, 80) + '…">' + t.name + '</span>';
+        });
+        if (player.traits.length > 4) {
+          html += '<span class="trait-tag" style="opacity:0.5">+' + (player.traits.length - 4) + '</span>';
+        }
+        html += '</div>';
+      }
+
+      html += '</div>';
+    });
+
+    hasContent = players.length > 0;
+    return { html: html, hasContent: hasContent };
+  }
+
+  // ---- ch3: 专修章节渲染（带子章节） ----
+  function renderProfessionChapter(ch, src, data) {
+    var html = '';
+    var hasContent = false;
+
+    if (ch.sub_sections && ch.sub_sections.length > 0) {
+      ch.sub_sections.forEach(function(sub) {
+        html += '<div class="sub-section">';
+        html += '<h3>' + (sub.title || sub.name || '') + '</h3>';
+        // 尝试解析 data_path 获取具体类别数据
+        if (sub.data_path && src) {
+          var catData = resolveDataPath(src, sub.data_path);
+          if (catData && catData.abilities && catData.abilities.length > 0) {
+            html += renderGenericList(catData.abilities, sub);
+            hasContent = true;
+          } else if (catData && catData.name) {
+            // 有类别名但无内容
+            html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+          } else {
+            html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+          }
+        } else {
+          html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+        }
+        html += '</div>';
+      });
+    } else {
+      html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+    }
+
+    return { html: html, hasContent: hasContent };
+  }
+
+  // ---- ch4: 神术章节渲染 ----
+  function renderDivineChapter(src, data) {
+    var html = '';
+    var hasContent = false;
+    var pantheons = src.pantheons || [];
+
+    if (pantheons.length === 0) {
+      return { html: '', hasContent: false };
+    }
+
+    pantheons.forEach(function(p) {
+      html += '<div class="sub-section">';
+      html += '<h3>' + (p.name || '') + '</h3>';
+      if (p.doctrine && p.doctrine.length > 0) {
+        p.doctrine.forEach(function(d) {
+          html += '<p>' + d + '</p>';
+        });
+        hasContent = true;
+      }
+      if (p.divine_spells && p.divine_spells.length > 0) {
+        html += '<h4>神术列表</h4>';
+        html += renderGenericList(p.divine_spells, p);
+        hasContent = true;
+      }
+      if (!hasContent) {
+        html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+      }
+      html += '</div>';
+    });
+
+    return { html: html, hasContent: hasContent };
+  }
+
+  // ---- ch5: 故事运作章节渲染（带子章节） ----
+  function renderStoryChapter(ch, src, data) {
+    var html = '';
+    var hasContent = false;
+
+    if (ch.sub_sections && ch.sub_sections.length > 0) {
+      ch.sub_sections.forEach(function(sub) {
+        html += '<div class="sub-section">';
+        html += '<h3>' + (sub.title || sub.name || '') + '</h3>';
+        if (sub.data_path && src) {
+          var secData = resolveDataPath(src, sub.data_path);
+          if (secData && secData.rules && secData.rules.length > 0) {
+            html += renderGenericList(secData.rules, sub);
+            hasContent = true;
+          } else {
+            html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+          }
+        } else {
+          html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+        }
+        html += '</div>';
+      });
+    } else {
+      html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+    }
+
+    return { html: html, hasContent: hasContent };
+  }
+
+  // 通用列表渲染（简单键值对）
+  function renderGenericList(items, parent) {
+    var html = '';
+    if (!items || !items.length) return html;
+    items.forEach(function(item) {
+      if (typeof item === 'string') {
+        html += '<p>' + item + '</p>';
+      } else if (typeof item === 'object') {
+        html += '<div class="race-card"><h4>' + (item.name || item.title || '') + '</h4>';
+        if (item.desc) html += '<p>' + item.desc + '</p>';
+        html += '</div>';
+      }
+    });
+    return html;
+  }
+
+  // ---- 交互绑定：缩略图点击、下一章按钮、IntersectionObserver ----
+  function setupReaderInteractions(chapterIds) {
+    var nav = document.getElementById('reader-nav');
+    var main = document.getElementById('reader-main');
+    if (!nav || !main) return;
+
+    var thumbs = nav.querySelectorAll('.chapter-thumb');
+    var chapters = main.querySelectorAll('.reader-chapter');
+    var nextBtns = main.querySelectorAll('.next-chapter-btn');
+    var sentinels = main.querySelectorAll('.next-chapter-sentinel');
+
+    // ---- 缩略图点击 → 平滑滚动 ----
+    thumbs.forEach(function(thumb) {
+      thumb.addEventListener('click', function() {
+        var targetId = this.getAttribute('data-target');
+        var target = document.getElementById('reader-' + targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // ---- 下一章按钮点击 ----
+    nextBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var nextId = this.getAttribute('data-next');
+        if (!nextId) return;
+        var target = document.getElementById('reader-' + nextId);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // ---- IntersectionObserver：当前章节高亮 + 下一章按钮显隐 ----
+    if (typeof IntersectionObserver !== 'undefined') {
+      // Observer 1: 章节进入视口 → 更新左侧高亮
+      var chapterObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var chId = entry.target.getAttribute('data-chapter');
+            // 移除所有 active
+            thumbs.forEach(function(t) { t.classList.remove('active'); });
+            // 给当前添加 active
+            var activeThumb = nav.querySelector('.chapter-thumb[data-target="' + chId + '"]');
+            if (activeThumb) activeThumb.classList.add('active');
+          }
+        });
+      }, {
+        root: main,
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0
+      });
+
+      chapters.forEach(function(ch) { chapterObserver.observe(ch); });
+
+      // Observer 2: 章节底部 sentinel → 显示/隐藏下一章按钮
+      var sentinelObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          var chId = entry.target.getAttribute('data-sentinel');
+          var chapterEl = entry.target.closest('.reader-chapter');
+          if (!chapterEl) return;
+          var btn = chapterEl.querySelector('.next-chapter-btn');
+          if (!btn) return;
+
+          if (entry.isIntersecting) {
+            btn.style.display = 'block';
+          } else {
+            btn.style.display = 'none';
+          }
+        });
+      }, {
+        root: main,
+        rootMargin: '0px 0px -40px 0px',
+        threshold: 0
+      });
+
+      sentinels.forEach(function(s) { sentinelObserver.observe(s); });
+    } else {
+      // 降级：所有按钮始终显示，章节高亮用滚动事件
+      nextBtns.forEach(function(btn) { btn.style.display = 'block'; });
+
+      // 滚动监听降级
+      var scrollTicking = false;
+      main.addEventListener('scroll', function() {
+        if (!scrollTicking) {
+          requestAnimationFrame(function() {
+            updateActiveThumbOnScroll(chapters, thumbs, main);
+            scrollTicking = false;
+          });
+          scrollTicking = true;
+        }
       });
     }
-    // 如果 node 包含 level_table 直接渲染
-    if (node.level_table) {
-      html += renderLevelTable(node.level_table);
+
+    // 初始高亮第一个有内容的章节或第一个章节
+    var firstActive = thumbs[0];
+    for (var i = 0; i < thumbs.length; i++) {
+      if (!thumbs[i].classList.contains('empty')) {
+        firstActive = thumbs[i];
+        break;
+      }
     }
-    contentEl.innerHTML = html;
+    firstActive.classList.add('active');
+  }
+
+  // 降级滚动高亮
+  function updateActiveThumbOnScroll(chapters, thumbs, main) {
+    var scrollTop = main.scrollTop;
+    var containerTop = main.getBoundingClientRect().top;
+    var activeId = null;
+
+    chapters.forEach(function(ch) {
+      var rect = ch.getBoundingClientRect();
+      if (rect.top - containerTop < main.clientHeight * 0.4) {
+        activeId = ch.getAttribute('data-chapter');
+      }
+    });
+
+    if (activeId) {
+      thumbs.forEach(function(t) { t.classList.remove('active'); });
+      var activeThumb = document.querySelector('.chapter-thumb[data-target="' + activeId + '"]');
+      if (activeThumb) activeThumb.classList.add('active');
+    }
   }
 
   // 渲染等级/数据表格

@@ -1,199 +1,492 @@
 /* ============================================
-   rules.css — 规则书双栏布局样式
+   rules.css — 规则书阅读器布局样式
    配合 page-render.js renderRules() 使用
+   暗底（#030508）、金色（#c9a84c）点缀、半透明玻璃面板
    ============================================ */
 
-/* ---- 规则书布局 ---- */
-.rules-layout {
+/* ---- 阅读器布局：左右分栏 1:4 ---- */
+.reader-layout {
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 1fr 4fr;
   min-height: calc(100vh - 200px);
   gap: 0;
-}
-@media (max-width: 768px) {
-  .rules-layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-  }
+  position: relative;
 }
 
-/* ---- 左侧导航 ---- */
-.rules-sidebar {
-  background: var(--ash-gray);
-  border-right: 1px solid var(--ash-light);
-  padding: 16px 12px;
+/* ---- 左侧缩略图导航 ---- */
+.reader-nav {
+  background: linear-gradient(180deg, rgba(3, 5, 8, 0.95) 0%, rgba(8, 12, 16, 0.92) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-right: 1px solid rgba(201, 168, 76, 0.12);
+  padding: 20px 14px;
   overflow-y: auto;
   max-height: calc(100vh - 160px);
-}
-.rules-sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.rules-sidebar li {
-  margin: 2px 0;
-}
-.rules-sidebar a {
-  display: block;
-  color: var(--ash-text);
-  text-decoration: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  font-size: 0.88rem;
-  transition: all 0.15s;
-}
-.rules-sidebar a:hover {
-  color: var(--ash-gold);
-  background: rgba(201,168,76,0.08);
-}
-.rules-sidebar a.active {
-  color: var(--ash-gold);
-  background: rgba(201,168,76,0.12);
-  border-left: 2px solid var(--ash-gold);
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-/* ---- details/summary 折叠 ---- */
-.rules-sidebar details {
-  margin: 2px 0;
-}
-.rules-sidebar summary {
-  cursor: pointer;
-  color: var(--ash-gold);
+/* 导航标题 */
+.reader-nav-title {
   font-family: 'Cinzel', serif;
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
-  padding: 4px 6px;
-  border-radius: 3px;
-  outline: none;
-  transition: all 0.15s;
-}
-.rules-sidebar summary:hover {
-  color: var(--ash-ember);
-  background: rgba(201,168,76,0.06);
-}
-.rules-sidebar details > ul {
-  margin-left: 12px;
-  border-left: 1px solid rgba(201,168,76,0.12);
-  padding-left: 8px;
-}
-
-/* ---- 右侧内容 ---- */
-.rules-content {
-  padding: 24px 32px;
-  overflow-y: auto;
-  max-height: calc(100vh - 160px);
-}
-.rules-content h2 {
-  color: var(--ash-gold);
-  font-family: 'Cinzel', serif;
-  font-size: 1.4rem;
-  margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(201,168,76,0.2);
-}
-.rules-content h3 {
+  font-size: 0.78rem;
   color: var(--ash-gold-dim);
-  font-family: 'Noto Serif SC', serif;
-  font-size: 1.05rem;
-  margin: 20px 0 10px;
-}
-.rules-content p {
-  color: var(--ash-text);
-  line-height: 1.85;
-  font-size: 0.93rem;
-  margin-bottom: 12px;
-}
-
-/* ---- 占位符 ---- */
-.rules-placeholder {
+  letter-spacing: 0.12em;
   text-align: center;
-  padding: 80px 20px;
-  color: var(--ash-gold-dim);
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+  margin-bottom: 4px;
 }
-.rules-placeholder h2 {
+
+/* ---- 缩略图卡片 ---- */
+.chapter-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 10px;
+  border-radius: 6px;
+  background: rgba(10, 14, 20, 0.7);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  min-height: 64px;
+}
+
+/* 缩略图 hover 金色光晕 */
+.chapter-thumb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 6px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201, 168, 76, 0.12), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.chapter-thumb:hover::before {
+  opacity: 1;
+}
+
+.chapter-thumb:hover {
+  border-color: rgba(201, 168, 76, 0.35);
+  background: rgba(15, 20, 28, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(201, 168, 76, 0.08), 0 0 0 1px rgba(201, 168, 76, 0.06);
+}
+
+/* 缩略图内部元素 */
+.chapter-thumb .thumb-number {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  color: var(--ash-gold-dim);
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.chapter-thumb .thumb-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 0.85rem;
+  color: var(--ash-text);
+  line-height: 1.3;
+  transition: color 0.3s ease;
+}
+
+.chapter-thumb:hover .thumb-title {
+  color: var(--ash-gold);
+}
+
+/* 缩略图内容预览提示 */
+.chapter-thumb .thumb-hint {
+  font-size: 0.65rem;
+  color: var(--ash-gold-dim);
+  opacity: 0.5;
+  margin-top: 4px;
+}
+
+/* ---- 当前章节高亮 ---- */
+.chapter-thumb.active {
+  border-color: rgba(201, 168, 76, 0.55);
+  background: rgba(20, 25, 32, 0.9);
+  box-shadow:
+    0 0 16px rgba(201, 168, 76, 0.1),
+    0 0 0 1px rgba(201, 168, 76, 0.15),
+    inset 0 0 24px rgba(201, 168, 76, 0.03);
+}
+
+.chapter-thumb.active::before {
+  opacity: 1;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201, 168, 76, 0.18), transparent 70%);
+}
+
+.chapter-thumb.active .thumb-number,
+.chapter-thumb.active .thumb-title {
+  color: var(--ash-gold);
+}
+
+/* active 带左侧金色标记 */
+.chapter-thumb.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 20%;
+  bottom: 20%;
+  width: 2px;
+  background: var(--ash-gold);
+  border-radius: 1px;
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.3);
+}
+
+/* ---- 占位/空内容 缩略图灰态 ---- */
+.chapter-thumb.empty .thumb-title {
+  color: #555;
+}
+.chapter-thumb.empty:hover .thumb-title {
+  color: #777;
+}
+
+/* ---- 右侧主阅读区 ---- */
+.reader-main {
+  padding: 24px 36px 60px;
+  overflow-y: auto;
+  max-height: calc(100vh - 160px);
+  scroll-behavior: smooth;
+  position: relative;
+}
+
+/* ---- 章节面板 ---- */
+.reader-chapter {
+  margin-bottom: 48px;
+  padding: 32px 36px;
+  background: rgba(10, 14, 20, 0.6);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  border-radius: 8px;
+  position: relative;
+  min-height: 200px;
+  scroll-margin-top: 20px;
+}
+
+/* 章节顶部玻璃微光 */
+.reader-chapter::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.15), transparent);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 章节标题 */
+.reader-chapter .chapter-heading {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.reader-chapter .chapter-heading .chapter-num {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: var(--ash-gold-dim);
+  letter-spacing: 0.15em;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.reader-chapter .chapter-heading h2 {
   font-family: 'Cinzel', serif;
   font-size: 1.6rem;
+  font-weight: 700;
   color: var(--ash-gold);
-  margin-bottom: 12px;
+  letter-spacing: 0.12em;
+  margin: 0 0 12px 0;
   border-bottom: none;
 }
-.rules-placeholder p {
-  font-size: 1rem;
-  color: var(--ash-gold-dim);
+
+.reader-chapter .chapter-heading .heading-divider {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ash-gold-dim), transparent);
+  margin: 0 auto;
 }
 
-/* ---- 等级表格 ---- */
-.level-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 12px 0 20px;
-  font-size: 0.85rem;
-  background: var(--ash-darker);
-  border: 1px solid rgba(201,168,76,0.2);
-}
-.level-table thead th {
-  background: var(--ash-gray);
-  color: var(--ash-gold);
-  padding: 8px 12px;
-  text-align: left;
-  font-family: 'Cinzel', serif;
-  font-size: 0.8rem;
-  letter-spacing: 0.05em;
-  border-bottom: 2px solid var(--ash-gold-dim);
-}
-.level-table tbody td {
-  padding: 6px 12px;
-  color: var(--ash-text);
-  border-bottom: 1px solid rgba(201,168,76,0.08);
-}
-.level-table tbody tr:hover {
-  background: rgba(201,168,76,0.04);
-}
-
-/* ---- 文本块 ---- */
-.text-block {
+/* 章节内容 */
+.reader-chapter .chapter-body {
   color: var(--ash-text);
   line-height: 1.85;
   font-size: 0.93rem;
+}
+
+.reader-chapter .chapter-body p {
   margin-bottom: 14px;
 }
 
-/* ---- 章节层级标题 ---- */
-.chapter-title {
+.reader-chapter .chapter-body h3 {
   color: var(--ash-gold);
   font-family: 'Cinzel', serif;
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--ash-gold-dim);
-}
-.section-title {
-  color: var(--ash-gold);
-  font-family: 'Cinzel', serif;
-  font-size: 1.15rem;
-  margin: 28px 0 12px;
+  font-size: 1.1rem;
+  margin: 24px 0 12px;
   letter-spacing: 0.08em;
+}
+
+.reader-chapter .chapter-body h4 {
+  color: var(--ash-gold-dim);
+  font-family: 'Noto Serif SC', serif;
+  font-size: 0.95rem;
+  margin: 18px 0 8px;
+}
+
+/* 子章节分隔 */
+.reader-chapter .sub-section {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(201, 168, 76, 0.08);
+}
+
+.reader-chapter .sub-section:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* ---- 占位/空内容章节 ---- */
+.chapter-placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  color: #555;
+  font-size: 1rem;
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 0.05em;
+}
+.chapter-placeholder::before {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 1px;
+  background: rgba(201, 168, 76, 0.15);
+  margin: 0 auto 16px;
+}
+
+/* ---- 下一章按钮 ---- */
+.next-chapter-btn {
+  display: block;
+  margin: 0 auto;
+  padding: 12px 36px;
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  border-radius: 4px;
+  color: var(--ash-gold);
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.next-chapter-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201, 168, 76, 0.1), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.next-chapter-btn:hover::before {
+  opacity: 1;
+}
+
+.next-chapter-btn:hover {
+  border-color: rgba(201, 168, 76, 0.6);
+  box-shadow:
+    0 0 24px rgba(201, 168, 76, 0.1),
+    0 0 0 1px rgba(201, 168, 76, 0.1);
+  color: #e0cc80;
+  transform: translateY(-1px);
+}
+
+.next-chapter-btn:active {
+  transform: translateY(0);
+}
+
+/* 最后章节的下一章按钮隐藏 */
+.next-chapter-btn.last-chapter {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.next-chapter-btn.last-chapter::after {
+  content: '（已到末章）';
+  font-size: 0.65rem;
+  opacity: 0.5;
+  margin-left: 8px;
+}
+
+/* 兼容降级：IntersectionObserver 不支持时始终显示按钮 */
+@supports not (selector(:has(*))) {
+  .next-chapter-btn {
+    display: block !important;
+  }
+}
+
+/* ---- 种族卡片（ch2 内部） ---- */
+.race-card {
+  background: rgba(8, 12, 16, 0.7);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  border-radius: 6px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+
+.race-card:hover {
+  border-color: rgba(201, 168, 76, 0.2);
+}
+
+.race-card .race-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.race-card .race-header h4 {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--ash-gold);
+  margin: 0;
+}
+
+.race-card .race-desc {
+  color: var(--ash-text);
+  font-size: 0.85rem;
+  line-height: 1.75;
+  margin-bottom: 10px;
+  max-height: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 属性条 (种族卡片内) */
+.attr-bars-mini {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 10px 0;
+}
+
+.attr-bars-mini .attr-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.72rem;
+}
+
+.attr-bars-mini .attr-item .attr-label {
+  color: var(--ash-gold-dim);
+  width: 24px;
+  text-align: right;
+}
+
+.attr-bars-mini .attr-item .attr-bar {
+  display: inline-block;
+  height: 6px;
+  border-radius: 3px;
+  min-width: 4px;
+}
+
+.attr-bars-mini .attr-item .attr-val {
+  font-size: 0.68rem;
+}
+
+.attr-val.pos { color: var(--ash-gold); }
+.attr-val.neg { color: var(--ash-red); }
+.attr-val.zero { color: #555; }
+
+/* 特质标签列表 */
+.trait-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.trait-tag {
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  background: rgba(201, 168, 76, 0.08);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 12px;
+  color: var(--ash-gold-dim);
+  cursor: default;
+}
+
+/* ---- 等级表格（保留现有样式，新增玻璃底） ---- */
+.level-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.85rem;
+  background: rgba(3, 5, 8, 0.4);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.level-table thead th {
+  background: rgba(201, 168, 76, 0.12);
+  color: var(--ash-gold);
+  padding: 10px 14px;
+  text-align: left;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  border-bottom: 2px solid rgba(201, 168, 76, 0.2);
+}
+
+.level-table tbody td {
+  padding: 8px 14px;
+  color: var(--ash-text);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.05);
+}
+
+.level-table tbody tr:hover td {
+  background: rgba(201, 168, 76, 0.03);
 }
 
 /* ---- 版本标签 ---- */
 .version-tag {
-  font-size: 0.65rem;
-  padding: 1px 6px;
-  border-radius: 8px;
+  font-size: 0.62rem;
+  padding: 2px 8px;
+  border-radius: 10px;
   vertical-align: middle;
-  margin-left: 8px;
   font-family: 'Noto Serif SC', serif;
   letter-spacing: 0;
+  display: inline-block;
 }
 .version-tag.new {
-  background: rgba(0,200,100,0.12);
+  background: rgba(0, 200, 100, 0.1);
   color: #0c8;
-  border: 1px solid rgba(0,200,100,0.2);
+  border: 1px solid rgba(0, 200, 100, 0.2);
 }
 .version-tag.modified {
-  background: rgba(201,168,76,0.1);
+  background: rgba(201, 168, 76, 0.1);
   color: var(--ash-gold);
-  border: 1px solid rgba(201,168,76,0.2);
+  border: 1px solid rgba(201, 168, 76, 0.2);
 }
 
 /* ---- 防御表格（攻击形态） ---- */
@@ -225,3 +518,118 @@
 .tag-avail { color: #6bba6b; font-size: 0.78rem; }
 .tag-unavail { color: #ba6b6b; font-size: 0.78rem; }
 .tag-special { color: #c9a84c; font-size: 0.78rem; }
+
+/* ---- 占位符（初始加载用，JS 填充前展示） ---- */
+.rules-placeholder {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--ash-gold-dim);
+}
+.rules-placeholder h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  color: var(--ash-gold);
+  margin-bottom: 12px;
+  border-bottom: none;
+}
+.rules-placeholder p {
+  font-size: 1rem;
+  color: var(--ash-gold-dim);
+}
+
+/* ---- 响应式 ---- */
+@media (max-width: 768px) {
+  .reader-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .reader-nav {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    max-height: none;
+    padding: 12px 10px;
+    gap: 8px;
+    border-right: none;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(3, 5, 8, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .reader-nav-title {
+    display: none;
+  }
+
+  .chapter-thumb {
+    flex-shrink: 0;
+    min-width: 80px;
+    min-height: 56px;
+    padding: 10px 12px;
+  }
+
+  .chapter-thumb .thumb-number {
+    font-size: 0.65rem;
+  }
+
+  .chapter-thumb .thumb-title {
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .chapter-thumb .thumb-hint {
+    display: none;
+  }
+
+  .reader-main {
+    padding: 20px 16px 40px;
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .reader-chapter {
+    padding: 20px 16px;
+    margin-bottom: 32px;
+  }
+
+  .reader-chapter .chapter-heading h2 {
+    font-size: 1.3rem;
+  }
+
+  .race-card {
+    padding: 14px 16px;
+  }
+
+  .next-chapter-btn {
+    padding: 10px 28px;
+    font-size: 0.78rem;
+  }
+}
+
+/* 极小屏（≤480px）导航项更紧凑 */
+@media (max-width: 480px) {
+  .reader-nav {
+    padding: 8px 6px;
+    gap: 6px;
+  }
+
+  .chapter-thumb {
+    min-width: 64px;
+    min-height: 44px;
+    padding: 8px 8px;
+  }
+
+  .chapter-thumb .thumb-title {
+    font-size: 0.7rem;
+  }
+
+  .reader-chapter {
+    padding: 16px 12px;
+    border-radius: 4px;
+  }
+}
