@@ -1,0 +1,87 @@
+import json
+
+entries = [
+    # === 核心系统 ===
+    {'key':'hp','term':'生命值 (HP)','category':'战斗规则','definition':'生命值代表角色的生存能力。HP归零进入濒死状态；战斗轮濒死额外拥有一条等于躯魄值的缓冲条。','aliases':['HP','生命'],'related_keys':['ep','mp','vp','躯魄']},
+    {'key':'mp','term':'精神值 (MP)','category':'战斗规则','definition':'精神值是释放术法烬能的核心消耗资源。无法像EP一样自然回复，仅能通过休憩、特制补给或魔力药剂恢复。','aliases':['MP','精神'],'related_keys':['hp','ep','vp','心智','术法烬能']},
+    {'key':'ep','term':'耐力值 (EP)','category':'战斗规则','definition':'耐力值仅在战斗轮中生效。施展专精行为、使用道具技能均需消耗EP。每回合开局恢复固定基础EP，亦可放弃行动喘息回满。','aliases':['EP','耐力'],'related_keys':['hp','mp','vp','敏韧','耐力行动']},
+    {'key':'vp','term':'专注值 (VP)','category':'战斗规则','definition':'专注值是极具战略价值的数值。任意鉴定投骰前可消耗VP为本次鉴定提供额外加成。VP恢复极为有限，满一小时睡眠仅恢复1点。','aliases':['VP','专注'],'related_keys':['绝对专注','洞识']},
+    {'key':'nutrition','term':'营养值','category':'属性系统','definition':'角色维持生存的基础数值，仅在角色创建阶段核定固定数值，后续通过食物摄取与维生专精维持。','aliases':[],'related_keys':['维生','专修']},
+    {'key':'body_attr','term':'躯魄','category':'属性系统','definition':'四大核心主属性之一。代表角色肉身体魄与基础身体素质，决定肉身强度、肌肉韧度与新陈代谢能力。每1点躯魄提升2点生命值HP上限。','aliases':['躯'],'related_keys':['hp','核心属性','主属性']},
+    {'key':'agility_attr','term':'敏韧','category':'属性系统','definition':'四大核心主属性之一。体现角色行动天赋与体态灵动素质，影响移动速度、身体柔韧度与应急应变能力。每1点敏韧提升2点耐力值EP上限。','aliases':['敏'],'related_keys':['ep','核心属性','主属性']},
+    {'key':'intellect_attr','term':'心智','category':'属性系统','definition':'四大核心主属性之一。指代角色精神禀赋与思维素养，关乎逻辑思考、灵感顿悟与心性定力。每1点心智提升2点精神值MP上限。','aliases':['心'],'related_keys':['mp','核心属性','主属性']},
+    {'key':'perception_attr','term':'洞识','category':'属性系统','definition':'四大核心主属性之一。角色先天直觉、洞察力与灵悟禀赋的具象体现。每1点洞识提升2点专注值VP上限。','aliases':['洞'],'related_keys':['vp','核心属性','主属性']},
+    {'key':'core_attr','term':'主属性','category':'属性系统','definition':'角色拥有的四项核心属性：躯魄、敏韧、心智、洞识。初始分配有两种方式：掷五次1d4选四组分配，或直接持有10点自由分配。','aliases':['核心属性','属性'],'related_keys':['躯魄','敏韧','心智','洞识']},
+    {'key':'absolute_focus','term':'绝对专注','category':'属性系统','definition':'任何鉴定投骰前可消耗不超过自身绝对专注的VP点数，为本次鉴定提供额外加成，足以突破高难度检定壁垒。','aliases':[],'related_keys':['vp','鉴定']},
+    {'key':'dmg_resist','term':'伤害抗性','category':'战斗规则','definition':'角色对特定伤害类型的减免能力。躯魄选为核心时可额外获得3点抗性点数，自由分配至挥砍、刺击、钝击三类基础碰撞抗性。','aliases':['抗性'],'related_keys':['豁免','护甲','躯魄']},
+    {'key':'crit_threshold','term':'暴击阈值','category':'战斗规则','definition':'角色攻击触发暴击的最低检定值。敏韧为核心属性时，暴击判定数值可直接减免自身敏韧等值，降低暴击门槛。','aliases':['暴击'],'related_keys':['敏韧','鉴定']},
+    {'key':'arcane_energy','term':'术法烬能','category':'战斗规则','definition':'EW世界中的法术施放能量形式。释放术法烬能需消耗MP，是奥法专修与神术施展的基础能量资源。','aliases':['烬能','法术能量'],'related_keys':['mp','奥法','神术']},
+    {'key':'skill','term':'专修','category':'属性系统','definition':'EW世界中角色的能力培养系统，共分为本能、知识、交流、艺术、生存、特殊、专业、武器、战斗造诣、武技、奥法十一大类，每项设有0至20级等级区间。','aliases':['专修能力'],'related_keys':['等级','本能专修']},
+    {'key':'skill_level','term':'等级','category':'属性系统','definition':'专修能力的成长阶段，从0级到20级。每提升一级可获得额外加值与效果增益，不同能力有不同的等级培育路径。','aliases':['等级区间'],'related_keys':['专修']},
+    {'key':'eb','term':'耐力行动 (EB)','category':'战斗规则','definition':'Endurance Behavior，角色在战斗轮中执行体力消耗类行为的行动单位。每回合默认2次，施展专精行为、使用道具技能均需消耗EB。','aliases':['EB','耐力行动点'],'related_keys':['ep','mb','战斗轮']},
+    {'key':'mb','term':'施法行动 (MB)','category':'战斗规则','definition':'Magic Behavior，角色在战斗轮中执行法术释放类行为的行动单位。每回合默认1次，释放术法烬能消耗MB配额。','aliases':['MB','施法行动点'],'related_keys':['mp','eb','奥法']},
+    {'key':'combat_round','term':'战斗轮','category':'战斗规则','definition':'EW采用轮次制结算整场战斗。单轮折合约十秒现实时长，所有参战单位按行动顺位依次走完个人回合。','aliases':['战斗回合'],'related_keys':['行动顺位','耐力行动','施法行动']},
+    {'key':'initiative','term':'行动顺位','category':'战斗规则','definition':'战斗轮中各单位的行动先后顺序。开启战斗后所有参战单位投掷3枚d8检定骰，结果叠加速度属性，从高至低排列。','aliases':['顺位','行动次序'],'related_keys':['战斗轮','速度属性']},
+    {'key':'move_speed','term':'移动速度','category':'战斗规则','definition':'角色在自身回合内可自由移动的距离，单位以米计量，数值等于自身速度属性。战场采用多边形格位，单格间距等于1米。','aliases':['速度','SP'],'related_keys':['行动顺位','敏韧']},
+    {'key':'appraisal','term':'鉴定','category':'战斗规则','definition':'EW中判定角色行动成败的核心机制。投掷专属骰子叠加相关属性与专修加值，结果与难度标准对比以判定成功与否。','aliases':['检定','判定'],'related_keys':['掷骰','绝对专注']},
+    {'key':'dice_roll','term':'掷骰','category':'战斗规则','definition':'EW使用多面骰系统进行随机判定。基础属性采用1d4投掷，角色创建掷五次1d4从中选四组分配属性。战斗检定使用d8为主骰。','aliases':['投骰','骰子'],'related_keys':['鉴定']},
+    {'key':'dodge','term':'闪避','category':'战斗规则','definition':'本能专修能力之一。战斗中可消耗耐力EP进行闪避鉴定，对抗敌方攻击命中。闪避成功则完全规避本次伤害。','aliases':[],'related_keys':['本能专修','耐力行动','鉴定']},
+    {'key':'immunity','term':'豁免','category':'战斗规则','definition':'角色对抗特定负面效应（如毒素、诅咒、恐惧等）时的抵抗能力。豁免数值由相关主属性与专修等级共同决定。','aliases':['豁免鉴定'],'related_keys':['伤害抗性','鉴定']},
+    {'key':'armor','term':'护甲','category':'装备物品','definition':'角色穿戴的防护装备，可减免物理伤害。不同护甲有躯魄需求限制门槛，躯魄选为核心属性时可无视3点限制门槛。','aliases':['防具'],'related_keys':['伤害抗性','躯魄']},
+    {'key':'weapon','term':'武器','category':'装备物品','definition':'角色进行攻击行为的装备。根据尺寸分为短柄、中柄、长柄、重柄四类，不同武器关联不同的武技等级与使用速率。','aliases':[],'related_keys':['武技','短柄','中柄','长柄','重柄']},
+    {'key':'fatigue','term':'疲劳','category':'状态词缀','definition':'角色因长时间战斗、负重或特殊环境累积的负面状态。疲劳会降低行动效率与移动速度，需通过休憩恢复。','aliases':[],'related_keys':['维生','恢复']},
+    {'key':'durability','term':'耐久','category':'装备物品','definition':'装备的道具寿命数值。每次使用或承受打击降低耐久，耐久归零则装备损坏无法使用，需通过修理恢复。','aliases':['装备耐久'],'related_keys':['护甲','武器']},
+
+    # === 种族 ===
+    {'key':'racial_trait','term':'种族特质','category':'种族','definition':'每个玩家种族拥有的先天特殊能力，包括属性加成、特殊技能与被动效应。种族特质是角色创建的基石，决定角色的核心优势与玩法倾向。','aliases':['种族特性'],'related_keys':['种族灵涅','主属性']},
+    {'key':'racial_essence','term':'种族灵涅','category':'种族','definition':'EW世界中种族的灵魂本质特征。每个种族拥有专属的灵涅特质，给予角色独特的被动能力或主动技能选择权。','aliases':['灵涅特质'],'related_keys':['种族特质']},
+    {'key':'ash_world','term':'灰烬世界','category':'世界设定','definition':'EW（Ember World）的核心世界观。终焉之火之后、余烬之中的奇幻世界格维恩大陆，是玩家将要探索的冒险舞台。','aliases':['EW','Ash World'],'related_keys':['格维恩']},
+    {'key':'naluan_human','term':'纳露安人类','category':'种族','definition':'格维恩大陆分布最广的智慧种族。源自远古阿西纳人，在纳露安之地扎根繁衍。寿命有限但具备极强的环境适应力与求生本能。','aliases':['人类'],'related_keys':['父神系','母神系']},
+    {'key':'elf','term':'精灵','category':'种族','definition':'格维恩大陆的古老长寿种族。与自然和奥术能量有着深厚的亲和力，拥有敏锐的感知能力与优雅的身姿。','aliases':[],'related_keys':['种族灵涅']},
+    {'key':'dwarf','term':'矮人','category':'种族','definition':'格维恩大陆的工匠种族。身材矮小但体格坚韧，是大陆最精湛的锻造者与矿业大师，对金属加工有着天生的直觉。','aliases':[],'related_keys':['种族灵涅']},
+    {'key':'gnome','term':'侏儒','category':'种族','definition':'格维恩大陆的发明种族。身材娇小、思维敏捷，对机械与符文缔造有着独特的天赋，是大陆最富创造力与好奇心的族群。','aliases':[],'related_keys':['种族灵涅']},
+    {'key':'vilas','term':'维拉斯人','category':'种族','definition':'格维恩大陆的游牧种族。以出色的骑术和野外生存能力闻名，与各类坐骑有着深厚的羁绊，是天生的游荡者与斥候。','aliases':[],'related_keys':['种族灵涅']},
+    {'key':'orc','term':'兽人','category':'种族','definition':'格维恩大陆的战士种族。体格魁梧、力量惊人，以强悍的战斗本能和部落荣誉感著称，是天生的前线战士。','aliases':[],'related_keys':['种族灵涅']},
+    {'key':'goblin','term':'哥布林','category':'种族','definition':'格维恩大陆的狡黠种族。体型矮小、动作敏捷，以出色的交流手腕和商业头脑闻名，擅长在各方势力间灵活游走。','aliases':[],'related_keys':['种族灵涅']},
+    {'key':'dragon_race','term':'龙族','category':'种族','definition':'格维恩大陆的神秘种族。继承了远古龙族的部分血统力量，拥有独特的龙裔形态与能量亲和，是最稀有的玩家可选种族之一。','aliases':['龙裔'],'related_keys':['种族灵涅','远古龙族']},
+    {'key':'spiderfolk','term':'蛛灵','category':'种族','definition':'格维恩大陆的隐秘种族。拥有蜘蛛形态的敏捷与毒素抗性，精通蛛丝编织与暗影潜行，生活在洞穴与密林深处。','aliases':['蜘蛛人'],'related_keys':['种族灵涅']},
+    {'key':'undead','term':'亡灵','category':'种族','definition':'格维恩大陆的不朽种族。介于生死之间的存在，拥有对诅咒与负面效应的天然抗性，以灵魂能量维持身体机能。','aliases':['不死族'],'related_keys':['种族灵涅']},
+    {'key':'northerner','term':'北地人','category':'种族','definition':'格维恩大陆的冰原种族。以极寒环境中磨炼出的顽强体魄和冰霜抗性著称，是天生的生存专家与猎人。','aliases':['北方人'],'related_keys':['种族灵涅','冰霜抗']},
+    {'key':'gnoll','term':'豺狼人','category':'种族','definition':'格维恩大陆的掠食种族。拥有野兽般的敏捷与追踪本能，以部族猎手文化闻名，行动迅猛且团队协作默契。','aliases':[],'related_keys':['种族灵涅']},
+    {'key':'minotaur','term':'牛头人','category':'种族','definition':'格维恩大陆的巨力种族。体型庞大、力量惊人，以迷宫守护者的传说闻名，是天生的重装战士与防御者。','aliases':[],'related_keys':['种族灵涅']},
+    {'key':'wood_sprite','term':'木林精','category':'种族','definition':'格维恩大陆的自然精灵种族。与森林生态深度共生，拥有与植物和动物交流的能力，是天生的自然守护者。','aliases':['森精'],'related_keys':['种族灵涅','远古精魄']},
+    {'key':'boarman','term':'猪人','category':'种族','definition':'格维恩大陆的农耕种族。以勤勉与坚韧著称，拥有出色的种植与培育天赋，是大陆最重要的食物供应者与家园守护者。','aliases':[],'related_keys':['种族灵涅']},
+    {'key':'mixed_blood','term':'混血者','category':'种族','definition':'格维恩大陆的特殊自定义种族席位。玩家可混合两个种族的血脉创造独特的混血角色，属性跟随所选父辈或母辈种族。','aliases':['混血'],'related_keys':['种族灵涅','有家之人']},
+    {'key':'orneth_blood','term':'奥恩涅斯血民','category':'种族','definition':'源自远古奥恩涅斯血脉的稀有亚种。拥有独特的血液特质与历史传承，是格维恩大陆最古老的活血脉之一。','aliases':[],'related_keys':['种族灵涅']},
+
+    # === 神术信仰 ===
+    {'key':'divine_art','term':'神术','category':'神术','definition':'EW中通过信仰神力施展的术法体系。分父神系与母神系两大系统，信徒通过虔信点与教条戒律获取神术能力。','aliases':['神力','神术体系'],'related_keys':['父神系','母神系','虔信点']},
+    {'key':'father_pantheon','term':'父神系','category':'神术','definition':'纳露安人类主要信仰系统之一。以父神德米乌尔格斯为首，掌管创造、秩序与工匠之道。信徒恪守工匠精神以荣耀神明。','aliases':[],'related_keys':['德米乌尔格斯','神术','纺锤法典']},
+    {'key':'mother_pantheon','term':'母神系','category':'神术','definition':'纳露安人类主要信仰系统之一。以母神为首，掌管生命、丰饶与编织之道。信徒通过抚育与照护践行教义。','aliases':[],'related_keys':['神术','尼娅编织']},
+    {'key':'demiurge','term':'德米乌尔格斯','category':'神术','definition':'纳露安人类父神系的至高神明，匠神之父。掌管创造与秩序，其巨锤落下混沌初开。信徒以精湛技艺与工匠精神荣耀其名。','aliases':['父神','匠神'],'related_keys':['父神系','纺锤法典']},
+    {'key':'divine_office','term':'神职','category':'神术','definition':'信仰者在神系中的身份与职责。神职等级决定可获取的神术列表、祷告点数与教条义务等级。','aliases':[],'related_keys':['神术','虔信点']},
+    {'key':'devotion','term':'虔信点','category':'神术','definition':'信徒对神明虔诚度的量化数值。通过完成教条仪式积累虔信点，用于解锁更高等级神术与祷告能力。','aliases':['信仰点','虔诚点数'],'related_keys':['神术','神职']},
+    {'key':'spindle_codex','term':'纺锤法典','category':'神术','definition':'父神系核心圣典之一。记载父神德米乌尔格斯的教条戒律与工匠圣仪，信徒通过研习法典获取神圣锻造能力。','aliases':[],'related_keys':['德米乌尔格斯','父神系','圣炎裁决']},
+    {'key':'holy_flame','term':'圣炎裁决','category':'神术','definition':'父神系高阶神术。召唤父神圣火清扫污秽，对亡灵与黑暗造物造成额外伤害，是德米乌尔格斯信徒的标志性力量。','aliases':[],'related_keys':['德米乌尔格斯','神矢']},
+    {'key':'divine_arrow','term':'神矢','category':'神术','definition':'父神系基础神术。召唤神力化为箭矢远距离攻击敌人，是父神系信徒最常用的战斗神术之一。','aliases':['德米乌尔格斯神矢'],'related_keys':['德米乌尔格斯','圣炎裁决']},
+    {'key':'doctrine_flow','term':'顺流','category':'神术','definition':'父神系第一教条。世界如奔流不息的河，应当顺应其势，让水流磨去棱角，洞悉走向再借力抵达。行事僵硬只会让世界变得固执。','aliases':['教条一'],'related_keys':['未塑','弦动','聆听']},
+    {'key':'doctrine_unshaped','term':'未塑','category':'神术','definition':'父神系第二教条。在被雕刻之前，顽石首先是完整的——未塑不是缺憾，而是无限可能。','aliases':['教条二'],'related_keys':['顺流','弦动','聆听']},
+    {'key':'doctrine_resonance','term':'弦动','category':'神术','definition':'父神系第三教条。一个无视连锁反应的行为，如同拨动琴弦却假装听不见和弦——因果必定共振而来。','aliases':['教条三'],'related_keys':['顺流','未塑','聆听']},
+    {'key':'doctrine_listen','term':'聆听','category':'神术','definition':'父神系第四教条。在动手塑造之前，先学会聆听。物有其声，匠有其心，唯有聆听万物的低语，方能塑就真正的造物。','aliases':['教条四'],'related_keys':['顺流','未塑','弦动']},
+]
+
+glossary = {'entries': entries, 'categories': [
+    {'id':'combat','name':'战斗规则'},
+    {'id':'attribute','name':'属性系统'},
+    {'id':'race','name':'种族'},
+    {'id':'profession','name':'专修'},
+    {'id':'divine','name':'神术'},
+    {'id':'status','name':'状态词缀'},
+    {'id':'equipment','name':'装备物品'},
+    {'id':'world','name':'世界设定'}
+]}
+
+with open('data/glossary.json', 'w', encoding='utf-8') as f:
+    json.dump(glossary, f, ensure_ascii=False, indent=2)
+
+print(f'Written {len(entries)} entries to data/glossary.json')
