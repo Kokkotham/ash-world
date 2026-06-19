@@ -6,6 +6,7 @@
     --ash-gray: #1a1a1a;
     --ash-medium: #2d2d2d;
     --ash-light: #4a4a4a;
+    --ash-dim: #8a8a8a;
     --ash-text: #c9c5b8;
     --ash-gold: #c9a84c;
     --ash-gold-dim: #8a7340;
@@ -298,7 +299,7 @@ body::before {
 
 .page-header .subtitle {
     font-size: 1rem;
-    color: var(--ash-light);
+    color: var(--ash-dim);
     letter-spacing: 0.3em;
 }
 
@@ -367,15 +368,14 @@ body::before {
 
 .card p {
     font-size: 0.9rem;
-    color: var(--ash-light);
+    color: var(--ash-dim);
     line-height: 1.8;
 }
 
 .card .meta {
     margin-top: 16px;
     font-size: 0.8rem;
-    color: var(--ash-light);
-    opacity: 0.7;
+    color: var(--ash-dim);
 }
 
 /* 时间线 */
@@ -427,7 +427,7 @@ body::before {
 
 .timeline-item p {
     font-size: 0.9rem;
-    color: var(--ash-light);
+    color: var(--ash-dim);
 }
 
 /* 章节标题 */
@@ -456,7 +456,7 @@ body::before {
     margin: 24px 0;
     background: rgba(201, 168, 76, 0.05);
     font-style: italic;
-    color: var(--ash-light);
+    color: var(--ash-dim);
 }
 
 /* 底部导航 */
@@ -473,7 +473,7 @@ body::before {
 
 .bottom-nav a {
     padding: 8px 16px;
-    color: var(--ash-light);
+    color: var(--ash-dim);
     text-decoration: none;
     font-size: 0.85rem;
     letter-spacing: 0.05em;
@@ -493,7 +493,7 @@ body::before {
     z-index: 5;
     text-align: center;
     padding: 30px 20px;
-    color: var(--ash-light);
+    color: var(--ash-dim);
     font-size: 0.8rem;
     border-top: 1px solid rgba(201, 168, 76, 0.08);
 }

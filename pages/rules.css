@@ -147,10 +147,10 @@
 
 /* ---- 占位/空内容 缩略图灰态 ---- */
 .chapter-thumb.empty .thumb-title {
-  color: #555;
+  color: #777;
 }
 .chapter-thumb.empty:hover .thumb-title {
-  color: #777;
+  color: #999;
 }
 
 /* ---- 右侧主阅读区 ---- */
@@ -262,7 +262,7 @@
 .chapter-placeholder {
   text-align: center;
   padding: 60px 20px;
-  color: #555;
+  color: #777;
   font-size: 1rem;
   font-family: 'Noto Serif SC', serif;
   letter-spacing: 0.05em;
@@ -415,7 +415,7 @@
 
 .attr-val.pos { color: var(--ash-gold); }
 .attr-val.neg { color: var(--ash-red); }
-.attr-val.zero { color: #555; }
+.attr-val.zero { color: #777; }
 
 /* 特质标签列表 */
 .trait-tags {
