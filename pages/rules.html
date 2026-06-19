@@ -97,7 +97,22 @@
     <script src="../data/ash-data.js"></script>
     <script src="../data/keyword-tooltip.js"></script>
     <script src="../data/page-render.js"></script>
-    <script>PageRender.init('rules');</script>
+    <script>
+      // 加错误处理，便于诊断 JS 异常
+      try {
+        PageRender.init('rules').catch(function(e) {
+          console.error('[rules] PageRender.init failed:', e);
+          document.getElementById('onto-content').innerHTML =
+            '<div style="text-align:center;padding:60px 20px;color:var(--ash-gold-dim)">' +
+            '<h2 style="color:var(--ash-gold);margin-bottom:12px">内容加载失败</h2>' +
+            '<p>规则书数据加载过程出现错误，请刷新页面重试。</p>' +
+            '<p style="font-size:0.78rem;margin-top:8px;opacity:0.5">' +
+            (e ? '错误信息：' + e.message : '未知错误') + '</p></div>';
+        });
+      } catch(e) {
+        console.error('[rules] Sync error in init:', e);
+      }
+    </script>
 
 <script>
 (function(){

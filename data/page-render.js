@@ -2,7 +2,12 @@
 // 所有子页面引用此文件，即可从 data/ 读取内容并显示关联
 (function() {
   async function init(pageName) {
-    await window.AshData.loadAll();
+    try {
+      await window.AshData.loadAll();
+    } catch(e) {
+      console.error('[PageRender] loadAll failed:', e);
+      return;
+    }
     const data = window.AshData;
     if (!data.loaded) return;
 
