@@ -18,6 +18,23 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* 移动端防止文字缩放 */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* 触控优化：移除默认 tap highlight */
+a, button, [role="button"], .nav-item, .cat-btn, .chapter-thumb {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 确保交互元素触控目标足够大（44px 最小） */
+.nav-toggle,
+.mobile-link,
+.bottom-nav a,
+.cat-btn,
+.next-chapter-btn {
+    min-height: 44px;
 }
 
 body {
@@ -26,6 +43,26 @@ body {
     color: var(--ash-text);
     line-height: 1.8;
     min-height: 100vh;
+    /* 移动端平滑滚动 */
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+}
+
+/* 横向滚动包装器（表格等宽内容用） */
+.scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+/* 横向滚动时显示滚动条提示阴影 */
+.scroll-x::-webkit-scrollbar {
+    height: 4px;
+}
+.scroll-x::-webkit-scrollbar-thumb {
+    background: rgba(201,168,76,0.25);
+    border-radius: 2px;
+}
+.scroll-x::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 /* 背景纹理 */
@@ -556,23 +593,298 @@ body::before {
 .rules-content { padding: 32px 40px; overflow-y: auto; }
 .rules-placeholder { text-align: center; padding: 80px 0; color: var(--ash-gold-dim); }
 
-/* 响应式 */
-@media (max-width: 768px) {
+/* =====================================================
+   响应式断点系统 — Mobile First
+   Breakpoints:
+     xs: ≤ 480px  (极小屏，手机竖屏)
+     sm: ≤ 640px  (小屏手机)
+     md: ≤ 768px  (中屏手机 / 旧小平板)
+     nav: ≤ 900px (导航切换点)
+     lg: ≤ 1024px (平板)
+   ===================================================== */
+
+/* ── 导航切换点 (≤900px) ── */
+@media (max-width: 900px) {
     .top-nav {
-        padding: 16px 20px;
-        flex-direction: column;
+        padding: 0 16px;
         gap: 12px;
+        justify-content: space-between;
+    }
+    .top-nav .nav-links { display: none; }
+    .top-nav .nav-toggle { display: flex; }
+}
+
+/* ── 中屏 (≤768px) ── */
+@media (max-width: 768px) {
+    /* --- 导航栏 --- */
+    .top-nav {
+        height: 54px;
+        padding: 0 14px;
+    }
+    .top-nav .nav-brand {
+        font-size: 1.3rem;
+        letter-spacing: 0.1em;
+    }
+    .nav-mobile {
+        top: 54px;
+        padding: 16px 20px 32px;
+    }
+    .nav-mobile .mobile-link {
+        padding: 14px 16px;  /* 更大触控区域 */
+        font-size: 1rem;
+    }
+    .nav-mobile .mobile-group-title {
+        font-size: 1rem;
+        padding-bottom: 12px;
+        margin-bottom: 8px;
     }
 
+    /* --- 页面头部 --- */
+    .page-header {
+        padding: 40px 16px 28px;
+    }
     .page-header h1 {
-        font-size: 1.8rem;
+        font-size: 1.9rem;
+        letter-spacing: 0.18em;
+    }
+    .page-header .subtitle {
+        font-size: 0.88rem;
+        letter-spacing: 0.22em;
+    }
+    .page-header .divider {
+        width: 100px;
+        margin: 18px auto;
     }
 
+    /* --- 内容容器 --- */
     .content {
-        padding: 0 20px 40px;
+        padding: 0 16px 48px;
     }
 
+    /* --- 卡片网格 --- */
     .card-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 24px;
+    }
+    .card {
+        padding: 20px 18px;
+    }
+    .card h3 {
+        font-size: 1rem;
+    }
+
+    /* --- 章节标题 --- */
+    .section-title {
+        font-size: 1.2rem;
+        margin: 32px 0 18px;
+    }
+
+    /* --- 文本 --- */
+    .text-block {
+        font-size: 0.93rem;
+        line-height: 1.9;
+    }
+    .quote-block {
+        padding: 12px 16px;
+        margin: 16px 0;
+    }
+
+    /* --- 数据表格 — 允许横向滚动 --- */
+    .data-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 4px;
+        margin-top: 16px;
+    }
+    .data-table {
+        min-width: 480px;
+        margin-top: 0;
+    }
+    .data-table th,
+    .data-table td {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+
+    /* --- 等级表格 — 横向滚动 --- */
+    .level-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+    }
+    .level-table th,
+    .level-table td {
+        white-space: normal;
+        min-width: 60px;
+    }
+
+    /* --- 时间线 --- */
+    .timeline {
+        padding-left: 20px;
+        margin-top: 24px;
+    }
+    .timeline-item::before {
+        left: -26px;
+    }
+
+    /* --- 底部导航 --- */
+    .bottom-nav {
+        padding: 20px 12px;
+        gap: 6px;
+    }
+    .bottom-nav a {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+
+    /* --- 标签 --- */
+    .tag {
+        padding: 5px 10px;
+        font-size: 0.72rem;
+        margin-bottom: 6px;
+    }
+
+    /* --- tooltip 适配 --- */
+    #ash-tooltip {
+        max-width: min(300px, calc(100vw - 24px));
+        font-size: 0.83rem;
+    }
+
+    /* --- 规则书布局 (pages 内 rules-layout) --- */
+    .rules-layout {
+        grid-template-columns: 1fr;
+        margin-top: 54px;
+        min-height: auto;
+    }
+    .rules-sidebar {
+        border-right: none;
+        border-bottom: 1px solid rgba(201,168,76,0.1);
+        padding: 12px;
+    }
+    .rules-content {
+        padding: 20px 16px;
+    }
+}
+
+/* ── 小屏 (≤640px) ── */
+@media (max-width: 640px) {
+    /* --- 页面头部 --- */
+    .page-header h1 {
+        font-size: 1.65rem;
+        letter-spacing: 0.14em;
+    }
+
+    /* --- 卡片 --- */
+    .card {
+        padding: 16px 14px;
+    }
+
+    /* --- 搜索框（全宽） --- */
+    .search-box {
+        max-width: 100%;
+    }
+
+    /* --- 底部导航换行处理 --- */
+    .bottom-nav {
+        justify-content: flex-start;
+        padding: 16px 10px;
+    }
+}
+
+/* ── 极小屏 (≤480px) ── */
+@media (max-width: 480px) {
+    /* --- 导航栏 --- */
+    .top-nav {
+        height: 50px;
+        padding: 0 12px;
+    }
+    .top-nav .nav-brand {
+        font-size: 1.15rem;
+        gap: 6px;
+    }
+    .nav-toggle {
+        width: 28px;
+        height: 28px;
+    }
+    .nav-mobile {
+        top: 50px;
+        padding: 12px 16px 28px;
+    }
+    .nav-mobile .mobile-link {
+        padding: 12px 14px;
+    }
+
+    /* --- 页面头部 --- */
+    .page-header {
+        padding: 32px 14px 22px;
+    }
+    .page-header h1 {
+        font-size: 1.45rem;
+        letter-spacing: 0.1em;
+    }
+
+    /* --- 内容容器 --- */
+    .content {
+        padding: 0 12px 36px;
+    }
+
+    /* --- 章节标题 --- */
+    .section-title {
+        font-size: 1.1rem;
+        letter-spacing: 0.1em;
+        margin: 24px 0 14px;
+    }
+
+    /* --- 文本 --- */
+    .text-block {
+        font-size: 0.9rem;
+        text-align: left; /* 极小屏不做两端对齐，避免字间距过宽 */
+    }
+
+    /* --- 卡片网格 --- */
+    .card-grid {
+        gap: 12px;
+    }
+    .card {
+        padding: 14px 12px;
+    }
+    .card h3 {
+        font-size: 0.95rem;
+    }
+    .card p {
+        font-size: 0.85rem;
+    }
+
+    /* --- 底部导航隐藏部分链接（保留核心） --- */
+    .bottom-nav {
+        padding: 14px 8px;
+    }
+    .bottom-nav a {
+        padding: 7px 10px;
+        font-size: 0.75rem;
+    }
+
+    /* --- 表格 --- */
+    .data-table th,
+    .data-table td {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+
+    /* --- tooltip 占满宽度 --- */
+    #ash-tooltip {
+        max-width: calc(100vw - 20px);
+        left: 10px !important;
+        right: 10px !important;
+        font-size: 0.8rem;
+        padding: 10px 12px;
+    }
+
+    /* --- 引用块 --- */
+    .quote-block {
+        padding: 10px 12px;
+        font-size: 0.88rem;
     }
 }

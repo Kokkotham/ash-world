@@ -411,6 +411,17 @@
             .nav-links { display: none; }
             .nav-toggle { display: flex; }
             .top-nav { justify-content: space-between; }
+            /* 移动端禁用鼠标拖尾（触屏无意义，节省性能） */
+            #cursor-trail { display: none; }
+            /* 粒子开关按钮下移避免被底部栏遮挡 */
+            .particle-toggle { bottom: 16px; right: 12px; padding: 8px 12px; font-size: 0.68rem; }
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.55rem; letter-spacing: 0.16em; }
+            .face-info { bottom: 60px; }
+            .face-info .enter-btn { padding: 9px 20px; font-size: 0.78rem; min-height: 44px; } /* 触控目标 */
+            .nav-mobile { padding: 14px 18px 32px; }
+            .nav-mobile .mobile-link { padding: 14px 14px; font-size: 0.92rem; }
         }
     </style>
 </head>

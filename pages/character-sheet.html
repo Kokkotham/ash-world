@@ -646,14 +646,16 @@
             margin: 0 auto;
         }
 
-        /* ===== Responsive ===== */
         @media (max-width: 768px) {
             .sheet-wrapper {
-                padding-top: 80px;
+                padding-top: 72px;  /* 适配缩小后的导航栏高度(54px) */
                 padding-left: 12px;
                 padding-right: 12px;
                 gap: 16px;
             }
+            .sheet-hero h1 { font-size: 1.6rem; }
+            .sheet-hero { padding: 28px 16px 16px; }
+            .glass-panel { padding: 20px 14px; }
             .attr-four-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
@@ -662,34 +664,32 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
             }
-            .core-select-grid {
-                gap: 8px;
-            }
-            .core-btn {
-                padding: 10px 14px;
-                font-size: 0.78rem;
-            }
-            .derived-grid {
-                gap: 10px;
-            }
-            .derived-item {
-                padding: 12px 16px;
-                min-width: 70px;
-            }
-            .derived-item .dv-value {
-                font-size: 1.4rem;
-            }
-            .dice-result {
-                width: 46px;
-                height: 46px;
-                font-size: 1.3rem;
-            }
-            .sheet-hero h1 {
-                font-size: 1.6rem;
-            }
-            .glass-panel {
-                padding: 20px 14px;
-            }
+            .core-select-grid { gap: 8px; }
+            .core-btn { padding: 10px 14px; font-size: 0.78rem; }
+            .derived-grid { gap: 10px; }
+            .derived-item { padding: 12px 16px; min-width: 70px; }
+            .derived-item .dv-value { font-size: 1.4rem; }
+            .dice-result { width: 46px; height: 46px; font-size: 1.3rem; }
+            /* 方法切换按钮全宽 */
+            .method-toggle { display: flex; width: 100%; }
+            .method-toggle .method-opt { flex: 1; padding: 10px 8px; font-size: 0.82rem; }
+            /* 分配行 */
+            .assign-row { gap: 10px; }
+            .assign-slot select { min-width: 88px; font-size: 0.8rem; }
+            /* pb 按钮触控加大 */
+            .pb-btn { width: 32px; height: 32px; font-size: 1.1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .sheet-wrapper { padding-top: 62px; } /* 适配50px导航+过渡 */
+            .sheet-hero h1 { font-size: 1.3rem; }
+            .sheet-hero .hero-emoji { font-size: 2.2rem; }
+            .attr-four-grid { gap: 6px; }
+            .attr-card { padding: 10px 6px 8px; }
+            .attr-card .attr-card-value { font-size: 1.6rem; }
+            .dice-row-wrap { gap: 8px; }
+            .dice-result { width: 40px; height: 40px; font-size: 1.1rem; border-radius: 8px; }
+            .roll-btn { padding: 11px 24px; font-size: 0.82rem; letter-spacing: 0.1em; }
         }
 
         @media (max-width: 400px) {

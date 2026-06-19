@@ -66,7 +66,7 @@
   // ============================================================
   // 导出
   // ============================================================
-  window.ashTransition = { out, in };
+  window.ashTransition = { out, ['in']: in_ };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', in_);

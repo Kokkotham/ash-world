@@ -544,23 +544,28 @@
     grid-template-rows: auto 1fr;
   }
 
+  /* 移动端：章节导航横向条 */
   .reader-nav {
     flex-direction: row;
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
     max-height: none;
-    padding: 12px 10px;
+    padding: 10px 8px;
     gap: 8px;
     border-right: none;
     border-bottom: 1px solid rgba(201, 168, 76, 0.12);
     position: sticky;
     top: 0;
     z-index: 10;
-    background: rgba(3, 5, 8, 0.95);
+    background: rgba(3, 5, 8, 0.97);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    /* 隐藏横向滚动条 */
+    scrollbar-width: none;
   }
+  .reader-nav::-webkit-scrollbar { display: none; }
 
   .reader-nav-title {
     display: none;
@@ -568,46 +573,86 @@
 
   .chapter-thumb {
     flex-shrink: 0;
-    min-width: 80px;
-    min-height: 56px;
-    padding: 10px 12px;
+    min-width: 76px;
+    max-width: 100px;
+    min-height: 52px;
+    padding: 9px 10px;
+    /* 确保触控目标 */
+    touch-action: manipulation;
   }
 
   .chapter-thumb .thumb-number {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
   }
 
   .chapter-thumb .thumb-title {
     font-size: 0.75rem;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
   }
 
   .chapter-thumb .thumb-hint {
     display: none;
   }
 
+  /* 阅读区：去除 max-height 限制 */
   .reader-main {
-    padding: 20px 16px 40px;
+    padding: 16px 14px 48px;
     max-height: none;
     overflow-y: visible;
   }
 
   .reader-chapter {
-    padding: 20px 16px;
-    margin-bottom: 32px;
+    padding: 18px 14px;
+    margin-bottom: 24px;
+    border-radius: 6px;
   }
 
   .reader-chapter .chapter-heading h2 {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
+    letter-spacing: 0.08em;
   }
 
+  .reader-chapter .chapter-body {
+    font-size: 0.9rem;
+    line-height: 1.88;
+  }
+
+  /* 种族卡片 */
   .race-card {
-    padding: 14px 16px;
+    padding: 14px 14px;
+  }
+
+  /* 等级表格横向滚动 */
+  .level-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    font-size: 0.82rem;
+  }
+  .level-table thead th,
+  .level-table tbody td {
+    padding: 8px 10px;
+    white-space: normal;
+    min-width: 56px;
+  }
+
+  /* 攻击形态网格 */
+  .attack-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .next-chapter-btn {
-    padding: 10px 28px;
-    font-size: 0.78rem;
+    padding: 12px 28px;
+    font-size: 0.82rem;
+    min-height: 44px;
+    width: 100%;
+    max-width: 260px;
+    display: block;
   }
 }
 
@@ -619,17 +664,42 @@
   }
 
   .chapter-thumb {
-    min-width: 64px;
+    min-width: 62px;
     min-height: 44px;
-    padding: 8px 8px;
+    padding: 7px 7px;
   }
 
   .chapter-thumb .thumb-title {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
+    max-width: 58px;
   }
 
   .reader-chapter {
-    padding: 16px 12px;
+    padding: 14px 10px;
     border-radius: 4px;
+  }
+
+  .reader-chapter .chapter-heading h2 {
+    font-size: 1.1rem;
+  }
+
+  .reader-chapter .chapter-body {
+    font-size: 0.88rem;
+  }
+
+  .reader-main {
+    padding: 12px 10px 40px;
+  }
+
+  /* 属性条标签 */
+  .attr-bars-mini .attr-item .attr-label {
+    width: 20px;
+    font-size: 0.68rem;
+  }
+
+  /* 特质标签 */
+  .trait-tag {
+    font-size: 0.68rem;
+    padding: 2px 8px;
   }
 }

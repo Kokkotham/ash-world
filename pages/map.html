@@ -38,6 +38,28 @@
             fill: none;
             opacity: 0.6;
         }
+
+        /* ── 地图移动端适配 ── */
+        @media (max-width: 768px) {
+            .map-container {
+                margin: 16px auto;
+                padding: 12px;
+                /* 允许用户双指缩放地图SVG */
+                touch-action: pan-x pan-y;
+                overflow: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .map-svg {
+                min-width: 480px; /* 防止SVG过小变形 */
+            }
+        }
+        @media (max-width: 480px) {
+            .map-container {
+                margin: 10px 0;
+                padding: 10px 8px;
+                border-radius: 0; /* 全宽铺满 */
+            }
+        }
     </style>
 </head>
 <body>
