@@ -278,15 +278,6 @@ body::before {
     background: rgba(201,168,76,0.05);
 }
 
-@media (max-width: 900px) {
-    .top-nav {
-        padding: 0 16px; gap: 12px;
-        justify-content: space-between;
-    }
-    .top-nav .nav-links { display: none; }
-    .top-nav .nav-toggle { display: flex; }
-}
-
 /* 页面头部 */
 .page-header {
     position: relative;
@@ -690,14 +681,8 @@ body::before {
         margin: 16px 0;
     }
 
-    /* --- 数据表格 — 允许横向滚动 --- */
-    .data-table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        border-radius: 4px;
-        margin-top: 16px;
-    }
-    .data-table {
+    /* --- 数据表格 — 横向滚动 --- */
+    .scroll-x .data-table {
         min-width: 480px;
         margin-top: 0;
     }
@@ -867,8 +852,8 @@ body::before {
     }
 
     /* --- 表格 --- */
-    .data-table th,
-    .data-table td {
+    .scroll-x .data-table th,
+    .scroll-x .data-table td {
         padding: 8px 10px;
         font-size: 0.8rem;
     }

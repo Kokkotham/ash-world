@@ -124,11 +124,11 @@
   if (AshData.races.nature_psionic) html += renderRaceSection('自然灵能种族', AshData.races.nature_psionic);
 
   if (AshData.races.human_branches) {
-    html += '<h2 class="section-title">其他人类分支</h2><table class="data-table"><thead><tr><th>分支</th><th>文化原型</th><th>位置</th><th>特征</th></tr></thead><tbody>';
+    html += '<h2 class="section-title">其他人类分支</h2><div class="scroll-x"><table class="data-table"><thead><tr><th>分支</th><th>文化原型</th><th>位置</th><th>特征</th></tr></thead><tbody>';
     AshData.races.human_branches.forEach(h => {
       html += '<tr><td>' + h.name + '</td><td>' + h.prototype + '</td><td>' + h.region + '</td><td>' + h.features + '</td></tr>';
     });
-    html += '</tbody></table>';
+    html += '</tbody></table></div>';
   }
 
   // 新增：玩家种族区块
