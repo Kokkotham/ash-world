@@ -333,6 +333,39 @@
   text-align: justify;
 }
 
+/* ---- 子分类前言区域（点击子pill后显示） ---- */
+.sub-section-preface {
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  background: rgba(10, 14, 20, 0.45);
+  border: 1px solid rgba(201, 168, 76, 0.06);
+  border-radius: 8px;
+  border-left: 3px solid rgba(201, 168, 76, 0.2);
+}
+
+.sub-preface-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  color: var(--ash-gold);
+  margin: 0 0 12px;
+  letter-spacing: 0.05em;
+}
+
+.sub-section-preface .overview-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  color: var(--ash-gold-dim);
+  margin: 16px 0 8px;
+}
+
+.sub-section-preface p {
+  font-size: 0.92rem;
+  line-height: 1.85;
+  color: var(--ash-text);
+  margin-bottom: 10px;
+  text-align: justify;
+}
+
 /* ---- 子分类快速目录（章节概览模式下的分类卡片列表） ---- */
 .sub-category-list {
   margin-top: 8px;
@@ -464,6 +497,31 @@
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* 技能主标题（选中技能时替代章节标题位置） */
+.ability-main-title {
+  text-align: center;
+  padding: 24px 20px 12px;
+}
+.ability-main-title h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  color: var(--ash-gold);
+  margin: 0 0 6px;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+.ability-main-title .detail-eb {
+  font-size: 0.9rem;
+  color: var(--ash-gold-dim);
+  font-family: 'Noto Serif SC', serif;
+}
+.ability-main-title .heading-divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ash-gold), transparent);
+  margin: 10px auto 0;
 }
 
 .ability-detail .detail-header {

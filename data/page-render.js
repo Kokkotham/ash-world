@@ -253,7 +253,7 @@
     var contentHTML = '';
     contentHTML += '<section class="reader-chapter" data-chapter="' + ch.id + '">';
 
-    // 如果有章节概述文字，先展示概述 + 子分类列表（概览模式）
+    // 如果有章节概述文字，展示概述后自动进入第一个子分类（无中间目录页）
     if (ch.content && ch.content.length > 0) {
       contentHTML += '<div class="chapter-heading">';
       contentHTML += '<span class="chapter-num">' + (ch.number || '') + '</span>';
@@ -274,33 +274,6 @@
         }
       });
       contentHTML += '</div>';
-
-      // 子分类快速导航列表（卡片式）
-      if (ch.sub_sections && ch.sub_sections.length > 0) {
-        contentHTML += '<div class="sub-category-list">';
-        contentHTML += '<h3 class="sub-cat-list-title">分类目录</h3>';
-        ch.sub_sections.forEach(function(sub) {
-          var subId = 'reader-' + (sub.id || (ch.id + '-sub-' + 0));
-          // 统计该子分类下的能力数量（仅对有 data_path 的）
-          var itemCount = '';
-          var itemData = resolveSubCategoryData(sub, data);
-          if (itemData && itemData.abilities) {
-            itemCount = '<span class="sub-cat-count">' + itemData.abilities.length + '项</span>';
-          } else if (itemData && Array.isArray(itemData)) {
-            itemCount = '<span class="sub-cat-count">' + itemData.length + '项</span>';
-          } else if (sub.sub_sections && sub.sub_sections.length > 0) {
-            itemCount = '<span class="sub-cat-count">' + sub.sub_sections.length + '个子类</span>';
-          } else {
-            itemCount = '<span class="sub-cat-count">整理中</span>';
-          }
-          contentHTML += '<div class="sub-category-card" data-target="' + subId + '" role="button" tabindex="0">';
-          contentHTML += '<span class="sub-cat-name">' + (sub.title || sub.name || '') + '</span>';
-          contentHTML += itemCount;
-          contentHTML += '</div>';
-        });
-        contentHTML += '</div>';
-      }
-
       contentHTML += '</div>'; // end .chapter-body
     } else {
       // 无概述文字：直接渲染完整内容（原有的 renderChapterContent 逻辑）
@@ -329,76 +302,40 @@
     if (detailBar) { detailBar.classList.remove('visible'); detailBar.innerHTML = ''; }
     window.__currentAbilities = null;
 
-    // 记录当前状态
+    // 记录当前状态（不自动进入子分类，停在章节前言页）
     window.__rulesCurrentChapter = chId;
     window.__rulesCurrentSub = null;
-
-    // 绑定子分类卡片的点击事件 → 调用 switchSubSection
-    bindSubCategoryCards(chapters, data);
+    window.__rulesCurrentSubData = null; // 存储当前子分类引用，用于反选时重绘前言
   }
 
-  // ---- 解析子分类的数据源 ----
-  function resolveSubCategoryData(sub, data) {
-    if (!sub || !data) return null;
-    if (!sub.data_source) return null;
-    var src = resolveDataSource(data, sub.data_source);
-    if (!src) return null;
-
-    // 如果是 professions 数据源，按 data_path 查找
-    if (sub.data_source === 'professions' && src.categories && sub.data_path) {
-      for (var i = 0; i < src.categories.length; i++) {
-        if (src.categories[i].id === sub.data_path || src.categories[i].name === sub.data_path) {
-          return src.categories[i];
-        }
-      }
-      return null;
-    }
-
-    // divine-arts pantheons
-    if (sub.data_source === 'divine-arts' && src.pantheons && sub.data_path) {
-      var idx = parseInt(sub.data_path.match(/\d+/));
-      if (!isNaN(idx) && src.pantheons[idx]) return src.pantheons[idx];
-      // also try string match
-      for (var j = 0; j < src.pantheons.length; j++) {
-        if (src.pantheons[j].name === sub.data_path || src.pantheons[j].id === sub.data_path) {
-          return src.pantheons[j];
-        }
-      }
-    }
-
-    // story-rules sections
-    if (sub.data_source === 'story-rules' && src.sections && sub.data_path) {
-      for (var k = 0; k < src.sections.length; k++) {
-        if (src.sections[k].title === sub.data_path || src.sections[k].id === sub.data_path) {
-          return src.sections[k];
-        }
-      }
-    }
-
-    return null;
-  }
-
-  // ---- 绑定子分类卡片点击事件 ----
-  function bindSubCategoryCards(chapters, data) {
-    var cards = document.querySelectorAll('.sub-category-card');
-    cards.forEach(function(card) {
-      card.addEventListener('click', function() {
-        var targetId = this.getAttribute('data-target');
-        if (targetId) switchSubSection(targetId, chapters, data);
-      });
-      card.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
-      });
-    });
-  }
-
-  // ---- 切换到子章节（仅渲染该子项内容） ----
+  // ---- 切换到子章节（显示子分类前言，不自动选技能） ----
   function switchSubSection(subId, chapters, data) {
     var main = document.getElementById('reader-main');
     if (!main) return;
 
+    // 反选检测：如果点击的是当前已激活的子pill → 回退到章节前言
+    if (window.__rulesCurrentSub === subId) {
+      window.__rulesCurrentSub = null;
+      window.__rulesCurrentSubData = null;
+      // 重新渲染当前章节的前言
+      var currentCh = null;
+      for (var ci = 0; ci < chapters.length; ci++) {
+        if (chapters[ci].id === window.__rulesCurrentChapter) { currentCh = chapters[ci]; break; }
+      }
+      if (currentCh) {
+        // 复用 switchChapter 的内容渲染逻辑（只更新内容区，不重置导航）
+        renderChapterPreface(currentCh);
+      }
+      // 去除所有sub-pill激活态
+      var subNavBar = document.getElementById('sub-nav-bar');
+      if (subNavBar) subNavBar.querySelectorAll('.sub-pill').forEach(function(p) { p.classList.remove('active'); });
+      // 隐藏第三层导航
+      var detailBar = document.getElementById('detail-nav-bar');
+      if (detailBar) { detailBar.classList.remove('visible'); detailBar.innerHTML = ''; }
+      return;
+    }
+
     // 从 subId 解析出所属章节和子索引：格式 "reader-ch3_instinct"
-    // 需要在 chapters 中找到对应的 sub_section
     var targetSub = null;
     var parentCh = null;
 
@@ -419,11 +356,14 @@
 
     if (!targetSub || !parentCh) return;
 
-    // 渲染仅该子章节内容
+    // 存储当前子分类引用（用于反选时重绘前言）
+    window.__rulesCurrentSubData = { sub: targetSub, parent: parentCh };
+
+    // 渲染子分类前言视图
     var contentHTML = '';
     contentHTML += '<section class="reader-chapter" data-chapter="' + parentCh.id + '">';
 
-    // 章节标题头（简化）
+    // 章节标题头
     contentHTML += '<div class="chapter-heading">';
     contentHTML += '<span class="chapter-num">' + (parentCh.number || '') + '</span>';
     contentHTML += '<h2>' + (parentCh.title || parentCh.name || '') + '</h2>';
@@ -431,7 +371,24 @@
     contentHTML += '</div>';
 
     contentHTML += '<div class="chapter-body">';
-    contentHTML += renderSingleSubSection(targetSub, parentCh, data);
+
+    // 如果子分类有前言文字 → 显示子分类前言
+    if (targetSub.content && targetSub.content.length > 0) {
+      contentHTML += '<div class="sub-section-preface" id="sub-section-preface">';
+      contentHTML += '<h3 class="sub-preface-title">' + (targetSub.title || targetSub.name || '') + '</h3>';
+      targetSub.content.forEach(function(p) {
+        if (/^[A-Za-z]/.test(p.trim()) && !/[\u4e00-\u9fff]/.test(p)) {
+          contentHTML += '<h4 class="overview-title">' + p + '</h4>';
+        } else {
+          contentHTML += '<p>' + p + '</p>';
+        }
+      });
+      contentHTML += '</div>';
+    }
+
+    // 技能详情占位容器（由 switchAbility 填充，或保持空白等待用户选择）
+    contentHTML += '<div class="ability-detail" id="ability-detail"></div>';
+
     contentHTML += '</div></section>';
 
     main.innerHTML = contentHTML;
@@ -467,7 +424,41 @@
     }
   }
 
-  // 初始化第三层导航（技能条目 pills）+ 绑定技能卡片点击
+  // ---- 渲染章节前言（反选子pill时调用，只更新内容区） ----
+  function renderChapterPreface(ch) {
+    var main = document.getElementById('reader-main');
+    if (!main || !ch) return;
+
+    var contentHTML = '';
+    contentHTML += '<section class="reader-chapter" data-chapter="' + ch.id + '">';
+
+    if (ch.content && ch.content.length > 0) {
+      contentHTML += '<div class="chapter-heading">';
+      contentHTML += '<span class="chapter-num">' + (ch.number || '') + '</span>';
+      contentHTML += '<h2>' + (ch.title || ch.name || '') + '</h2>';
+      contentHTML += '<div class="heading-divider"></div>';
+      contentHTML += '</div>';
+      contentHTML += '<div class="chapter-body">';
+      contentHTML += '<div class="chapter-overview">';
+      ch.content.forEach(function(p) {
+        if (/^[^\s]+（[ABCL]）$/.test(p.trim()) || /^[^\s]+\([ABCL]\)$/.test(p.trim())) {
+          contentHTML += '<h4 class="overview-subtitle">' + p + '</h4>';
+        } else if (p.match(/^[A-Za-z]/)) {
+          contentHTML += '<h3 class="overview-title">' + p + '</h3>';
+        } else {
+          contentHTML += '<p>' + p + '</p>';
+        }
+      });
+      contentHTML += '</div>';
+      contentHTML += '</div>';
+    }
+
+    contentHTML += '</section>';
+    main.innerHTML = contentHTML;
+    main.scrollTop = 0;
+  }
+
+  // 初始化第三层导航（技能条目 pills），不自动选中任何一个
   function initThirdLevelNav(sub, parentCh, data) {
     var src = resolveDataSource(data, parentCh.data_source);
     if (!src || !src.categories) return;
@@ -484,30 +475,10 @@
 
     // 存储当前技能列表供第三层导航使用
     window.__currentAbilities = abilities;
+    window.__rulesCurrentAbilityName = null; // 记录当前选中的技能名（用于反选检测）
 
-    // 填充第三层导航条
-    updateDetailNav(abilities, abilities.length > 0 ? abilities[0].name : null);
-
-    // 自动展示第一个技能的详情
-    if (abilities.length > 0) {
-      switchAbility(abilities[0], abilities);
-    }
-
-    // 绑定 .ability-item 卡片点击事件
-    var main = document.getElementById('reader-main');
-    if (main) {
-      main.querySelectorAll('.ability-item').forEach(function(item) {
-        item.addEventListener('click', function() {
-          var idx = parseInt(this.getAttribute('data-ab-index'), 10);
-          if (!isNaN(idx) && abilities[idx]) {
-            switchAbility(abilities[idx], abilities);
-          }
-        });
-        item.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
-        });
-      });
-    }
+    // 填充第三层导航条（不预选中任何一项）
+    updateDetailNav(abilities, null);
   }
 
   // ---- 渲染单个子章节的内容 ----
@@ -955,22 +926,10 @@
   }
 
   // ---- 技能条目列表渲染（ch3 专用，可点击卡片） ----
+  // 渲染技能列表（仅输出详情容器，不再渲染卡片网格——与 detail-pills 重复）
   function renderAbilityList(abilities) {
     var html = '';
     if (!abilities || !abilities.length) return html;
-    html += '<div class="ability-list">';
-    abilities.forEach(function(ab, idx) {
-      var hint = '';
-      if (ab.keywords && ab.keywords.length > 0) {
-        hint = '<span class="ability-tag-hint">' + ab.keywords[0] + '</span>';
-      }
-      var activeCls = idx === 0 ? ' active' : '';
-      html += '<span class="ability-item' + activeCls + '" data-ab-index="' + idx + '" data-ab-name="' + (ab.name || ab.id || '') + '" role="button" tabindex="0">';
-      html += (ab.name || ab.id || '未命名');
-      html += hint;
-      html += '</span>';
-    });
-    html += '</div>';
     // 详情占位容器（由 switchAbility 填充）
     html += '<div class="ability-detail" id="ability-detail"></div>';
     return html;
@@ -981,20 +940,36 @@
     var detailEl = document.getElementById('ability-detail');
     if (!detailEl) return;
 
+    // 记录当前选中的技能（用于反选检测）
+    window.__rulesCurrentAbilityName = ability.name || ability.id || null;
+
+    // 隐藏子分类前言（选了技能详情后不再显示前言，避免拥挤）
+    var prefaceEl = document.getElementById('sub-section-preface');
+    if (prefaceEl) prefaceEl.style.display = 'none';
+
+    // 隐藏章节大标题头（"第3章 专修"），用技能名替换
+    var chHeading = document.querySelector('.reader-chapter .chapter-heading');
+    if (chHeading) chHeading.style.display = 'none';
+
+    // 确保详情容器可见
+    detailEl.style.display = '';
+
     var html = '';
 
-    // ---- 标题行 ----
-    html += '<div class="detail-header">';
-    // 尝试从名称中解析 EB 标注，如 "奔跑：（1EB）"
+    // 解析名称和EB
     var ebMatch = null;
     if (ability.name && /（(\d*EB)/.test(ability.name)) {
       ebMatch = ability.name.match(/（(\d+EB)/);
     }
     var displayName = ability.name ? ability.name.replace(/（[^）]+）/g, '').trim() : (ability.id || '');
-    html += '<h4>' + displayName + '</h4>';
+
+    // ---- 技能主标题（替代原章节标题位置） ----
+    html += '<div class="ability-main-title">';
+    html += '<h2>' + displayName + '</h2>';
     if (ebMatch) {
       html += '<span class="detail-eb">（' + ebMatch[1] + '）</span>';
     }
+    html += '<div class="heading-divider"></div>';
     html += '</div>';
 
     // ---- 关键词标签 ----
@@ -1088,15 +1063,34 @@
     detailBar.innerHTML = pillsHTML;
     detailBar.classList.add('visible');
 
-    // 绑定点击事件
+    // 绑定点击事件（支持反选：再点一次回到子分类前言）
     detailBar.querySelectorAll('.detail-pill').forEach(function(pill) {
       pill.addEventListener('click', function() {
         var targetName = this.getAttribute('data-ab-name');
-        // 从当前子分类的 abilities 中找到目标
+
+        // 反选检测：点击已激活的detail-pill → 回到子分类前言
+        if (window.__rulesCurrentAbilityName === targetName) {
+          window.__rulesCurrentAbilityName = null;
+          // 去除所有detail-pill激活态
+          detailBar.querySelectorAll('.detail-pill').forEach(function(p) { p.classList.remove('active'); });
+          // 清空技能详情区
+          var detailEl = document.getElementById('ability-detail');
+          if (detailEl) { detailEl.innerHTML = ''; detailEl.style.display = 'none'; }
+          // 恢复子分类前言显示
+          var prefaceEl = document.getElementById('sub-section-preface');
+          if (prefaceEl) prefaceEl.style.display = '';
+          // 恢复章节大标题头
+          var chHeading = document.querySelector('.reader-chapter .chapter-heading');
+          if (chHeading) chHeading.style.display = '';
+          return;
+        }
+
+        // 正常选择技能
         if (window.__currentAbilities) {
           for (var i = 0; i < window.__currentAbilities.length; i++) {
             if (window.__currentAbilities[i].name === targetName ||
                 window.__currentAbilities[i].id === targetName) {
+              window.__rulesCurrentAbilityName = targetName;
               switchAbility(window.__currentAbilities[i], window.__currentAbilities);
               break;
             }
