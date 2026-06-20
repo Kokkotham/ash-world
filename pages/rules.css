@@ -62,66 +62,63 @@
   opacity: 0.5;
 }
 
-/* ---- 章节标签（替代原 .chapter-thumb） ---- */
+/* ---- 章节标签（替代原 .chapter-thumb）— 柔和标签风格 ---- */
 .chapter-tab {
   flex-shrink: 0;
-  padding: 8px 18px;
-  border-radius: 4px;
-  background: rgba(10, 14, 20, 0.7);
-  border: 1px solid rgba(201, 168, 76, 0.1);
+  padding: 6px 16px;
+  border-radius: 20px;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   white-space: nowrap;
   font-family: 'Noto Serif SC', serif;
   font-size: 0.84rem;
-  color: var(--ash-text);
+  color: var(--ash-text-muted);
   text-align: center;
   position: relative;
   overflow: hidden;
-  min-height: 36px;
+  min-height: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 1px;
 }
 
-/* 标签 hover 金色光晕 */
 .chapter-tab::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 4px;
-  background: radial-gradient(ellipse at 50% 100%, rgba(201, 168, 76, 0.1), transparent 70%);
+  border-radius: 20px;
+  background: var(--ash-gold);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.25s ease;
   pointer-events: none;
 }
 
-.chapter-tab:hover::before {
-  opacity: 1;
-}
-
 .chapter-tab:hover {
-  border-color: rgba(201, 168, 76, 0.35);
-  color: var(--ash-gold);
-  transform: translateY(-1px);
+  color: var(--ash-text);
+}
+.chapter-tab:hover::before {
+  opacity: 0.06;
 }
 
 /* 标签内部：章节号 + 标题 */
 .chapter-tab .tab-num {
   font-family: 'Cinzel', serif;
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   color: var(--ash-gold-dim);
   letter-spacing: 0.1em;
-  transition: color 0.3s ease;
+  transition: color 0.25s ease;
   line-height: 1;
 }
 
 .chapter-tab .tab-title {
   font-size: 0.84rem;
   line-height: 1.2;
-  transition: color 0.3s ease;
+  transition: color 0.25s ease;
+  font-weight: 400;
 }
 
 .chapter-tab:hover .tab-num,
@@ -129,55 +126,45 @@
   color: var(--ash-gold);
 }
 
-/* 当前章节高亮 */
+/* 当前章节高亮 — 柔和金色填充 */
 .chapter-tab.active {
-  border-color: rgba(201, 168, 76, 0.55);
-  background: rgba(20, 25, 32, 0.9);
   color: var(--ash-gold);
-  box-shadow:
-    0 0 16px rgba(201, 168, 76, 0.08),
-    0 0 0 1px rgba(201, 168, 76, 0.1),
-    inset 0 0 24px rgba(201, 168, 76, 0.03);
+  background: transparent;
 }
-
 .chapter-tab.active::before {
-  opacity: 1;
-  background: radial-gradient(ellipse at 50% 100%, rgba(201, 168, 76, 0.15), transparent 70%);
+  opacity: 0.12;
 }
-
 .chapter-tab.active .tab-num,
 .chapter-tab.active .tab-title {
   color: var(--ash-gold);
+  font-weight: 600;
 }
-
-/* active 底部金色横线 */
+/* active 下划线指示（轻柔） */
 .chapter-tab.active::after {
   content: '';
   position: absolute;
-  bottom: -1px;
-  left: 20%;
-  right: 20%;
-  height: 2px;
+  bottom: 2px;
+  left: 30%;
+  right: 30%;
+  height: 1.5px;
   background: var(--ash-gold);
   border-radius: 1px;
-  box-shadow: 0 0 8px rgba(201, 168, 76, 0.3);
+  opacity: 0.6;
 }
 
 /* 空内容标签灰态 */
 .chapter-tab.empty {
-  color: #666;
+  color: #555;
   cursor: default;
 }
 
 .chapter-tab.empty .tab-num,
 .chapter-tab.empty .tab-title {
-  color: #666;
+  color: #555;
 }
 
 .chapter-tab.empty:hover {
-  color: #888;
-  border-color: rgba(201, 168, 76, 0.08);
-  transform: none;
+  color: #666;
 }
 
 /* ---- 子章节导航条 ---- */
@@ -270,32 +257,46 @@
 .scroll-arrow-btn.left  { left: 6px; }
 .scroll-arrow-btn.right { right: 6px; }
 
-/* 子章节 pill */
+/* 子章节 pill — 柔和标签风格 */
 .sub-pill {
   flex-shrink: 0;
   padding: 3px 14px;
-  border-radius: 12px;
-  background: rgba(201, 168, 76, 0.06);
-  border: 1px solid rgba(201, 168, 76, 0.1);
-  color: var(--ash-gold-dim);
+  border-radius: 16px;
+  background: transparent;
+  border: none;
+  color: var(--ash-text-muted);
   font-size: 0.73rem;
   font-family: 'Noto Serif SC', serif;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
   line-height: 1.6;
+  position: relative;
+}
+.sub-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: var(--ash-gold);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
 }
 
 .sub-pill:hover {
-  background: rgba(201, 168, 76, 0.12);
-  border-color: rgba(201, 168, 76, 0.25);
-  color: var(--ash-gold);
+  color: var(--ash-text);
+}
+.sub-pill:hover::before {
+  opacity: 0.08;
 }
 
 .sub-pill.active {
-  background: rgba(201, 168, 76, 0.15);
-  border-color: rgba(201, 168, 76, 0.4);
   color: var(--ash-gold);
+  font-weight: 500;
+}
+.sub-pill.active::before {
+  opacity: 0.15;
 }
 
 /* ---- 第三层导航：技能条目 pills ---- */
@@ -337,31 +338,47 @@
 .detail-nav-bar::-webkit-scrollbar { display: none; }
 .detail-nav-bar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* 技能条目 pill（第三层） */
+/* 技能条目 pill（第三层）— 柔和标签风格 */
 .detail-pill {
   flex-shrink: 0;
   padding: 2px 12px;
-  border-radius: 10px;
-  background: rgba(200, 180, 100, 0.05);
-  border: 1px solid rgba(201, 168, 76, 0.08);
-  color: var(--ash-text);
+  border-radius: 14px;
+  background: transparent;
+  border: none;
+  color: var(--ash-text-muted);
   font-size: 0.72rem;
   font-family: 'Noto Sans SC', sans-serif;
   cursor: pointer;
   transition: all 0.18s ease;
   white-space: nowrap;
   line-height: 1.7;
+  position: relative;
+}
+.detail-pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  background: var(--ash-gold);
+  opacity: 0;
+  transition: opacity 0.18s ease;
+  pointer-events: none;
 }
 
 .detail-pill:hover {
-  background: rgba(201, 168, 76, 0.1);
-  border-color: rgba(201, 168, 76, 0.22);
-  color: var(--ash-gold);
+  color: var(--ash-text);
+}
+.detail-pill:hover::before {
+  opacity: 0.08;
 }
 
 .detail-pill.active {
-  background: rgba(201, 168, 76, 0.14);
-  border-color: rgba(201, 168, 76, 0.38);
+  color: var(--ash-gold);
+  font-weight: 500;
+}
+.detail-pill.active::before {
+  opacity: 0.15;
+}
   color: var(--ash-gold);
   font-weight: 500;
 }
