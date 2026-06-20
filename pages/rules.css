@@ -183,7 +183,7 @@
 /* ---- 子章节导航条 ---- */
 .sub-nav-bar {
   display: flex;
-  flex-wrap: nowrap;       /* 不换行，优先横向滚动 */
+  flex-wrap: nowrap;
   align-items: center;
   gap: 6px;
   padding: 0 16px;
@@ -194,35 +194,81 @@
   overflow: hidden;
   transition: all 0.3s ease;
   opacity:0;
+  /* 拖拽时禁用文字选中 */
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .sub-nav-bar.visible {
   min-height: 36px;
-  max-height: 80px;        /* 足够显示一行pills */
+  max-height: 80px;
   opacity: 1;
-  padding: 8px 16px;
-  overflow-x: auto;        /* 横向滚动 */
+  padding: 8px 40px;       /* 左右留出箭头空间 */
+  overflow-x: auto;
   overflow-y: hidden;
-  -webkit-overflow-scrolling: touch; /* iOS平滑滚动 */
-  /* 渐变遮罩：右侧提示还有更多 */
-  mask-image: linear-gradient(to right, transparent 0, black 12px, calc(100% - 20px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0, black 12px, calc(100% - 20px), transparent 100%);
+  -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  /* 右侧渐变提示 */
+  mask-image: linear-gradient(to right, transparent 0, black 20px, calc(100% - 40px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 20px, calc(100% - 40px), transparent 100%);
 }
 
-/* 细滚动条样式（不再完全隐藏） */
-.sub-nav-bar::-webkit-scrollbar {
-  height: 3px;
+.sub-nav-bar.visible:active {
+  cursor: grabbing;
 }
-.sub-nav-bar::-webkit-scrollbar-track {
-  background: transparent;
+
+/* 彻底隐藏滚动条 */
+.sub-nav-bar::-webkit-scrollbar { display: none; }
+.sub-nav-bar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ---- 左右滚动箭头 ---- */
+.scroll-arrows {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  pointer-events: none;
+  z-index: 2;
 }
-.sub-nav-bar::-webkit-scrollbar-thumb {
-  background: rgba(201, 168, 76, 0.25);
-  border-radius: 2px;
+
+.scroll-arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  color: var(--ash-gold);
+  font-size: 14px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+  opacity: 0;
+  visibility: hidden;
 }
-.sub-nav-bar::-webkit-scrollbar-thumb:hover {
-  background: rgba(201, 168, 76, 0.45);
+
+.scroll-arrow-btn.visible {
+  opacity: 1;
+  visibility: visible;
 }
+
+.scroll-arrow-btn:hover {
+  background: rgba(201, 168, 76, 0.22);
+  border-color: rgba(201, 168, 76, 0.5);
+  transform: translateY(-50%) scale(1.1);
+}
+.scroll-arrow-btn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.scroll-arrow-btn.left  { left: 6px; }
+.scroll-arrow-btn.right { right: 6px; }
 
 /* 子章节 pill */
 .sub-pill {
@@ -255,7 +301,7 @@
 /* ---- 第三层导航：技能条目 pills ---- */
 .detail-nav-bar {
   display: flex;
-  flex-wrap: nowrap;       /* 不换行，优先横向滚动 */
+  flex-wrap: nowrap;
   align-items: center;
   gap: 5px;
   padding: 0 16px;
@@ -266,34 +312,30 @@
   overflow: hidden;
   transition: all 0.25s ease;
   opacity:0;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .detail-nav-bar.visible {
   min-height: 32px;
-  max-height: 70px;        /* 足够显示一行pills */
+  max-height: 70px;
   opacity: 1;
-  padding: 6px 16px;
-  overflow-x: auto;        /* 横向滚动 */
+  padding: 6px 40px;
+  overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(to right, transparent 0, black 12px, calc(100% - 20px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0, black 12px, calc(100% - 20px), transparent 100%);
+  cursor: grab;
+  mask-image: linear-gradient(to right, transparent 0, black 20px, calc(100% - 40px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 20px, calc(100% - 40px), transparent 100%);
 }
 
-/* 细滚动条样式 */
-.detail-nav-bar::-webkit-scrollbar {
-  height: 3px;
+.detail-nav-bar.visible:active {
+  cursor: grabbing;
 }
-.detail-nav-bar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.detail-nav-bar::-webkit-scrollbar-thumb {
-  background: rgba(201, 168, 76, 0.2);
-  border-radius: 2px;
-}
-.detail-nav-bar::-webkit-scrollbar-thumb:hover {
-  background: rgba(201, 168, 76, 0.4);
-}
+
+/* 彻底隐藏滚动条 */
+.detail-nav-bar::-webkit-scrollbar { display: none; }
+.detail-nav-bar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* 技能条目 pill（第三层） */
 .detail-pill {
