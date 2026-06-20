@@ -414,11 +414,13 @@
     window.__rulesCurrentChapter = parentCh.id;
     window.__rulesCurrentSub = subId;
 
-    // ---- 第三层导航：ch3 专修子分类有技能条目时，初始化 ----
+    // ---- 第三层导航：按章节类型初始化 ----
     if (parentCh.id === 'ch3' && targetSub.data_path && data) {
       initThirdLevelNav(targetSub, parentCh, data);
+    } else if (parentCh.id === 'ch2' && targetSub.data_path && data) {
+      initRaceNav(targetSub, parentCh, data);
     } else {
-      // 非 ch3：隐藏第三层导航
+      // 非 ch2/ch3：隐藏第三层导航
       var detailBar = document.getElementById('detail-nav-bar');
       if (detailBar) { detailBar.classList.remove('visible'); detailBar.innerHTML = ''; }
     }
@@ -1322,6 +1324,105 @@
     html += '<div style="text-align:center;margin-top:20px;font-size:0.8rem;color:var(--ash-gold-dim);opacity:0.6">' +
       '以上内容通过 ' + linkCount + ' 条设定关联相互连接</div>';
     el.innerHTML = html;
+  }
+
+  // ---- ch2 种族：初始化第三层种族导航 ----
+  function initRaceNav(sub, parentCh, data) {
+    var src = resolveDataSource(data, parentCh.data_source);
+    if (!src) return;
+    var raceList = src[sub.data_path] || [];
+    if (!Array.isArray(raceList)) return;
+    window.__currentRaces = raceList;
+    window.__rulesCurrentRaceName = null;
+    updateRaceNav(raceList, null);
+  }
+
+  function updateRaceNav(races, selectedName) {
+    var detailBar = document.getElementById('detail-nav-bar');
+    if (!detailBar) return;
+    detailBar.classList.add('visible');
+    detailBar.innerHTML = '';
+    if (!races || races.length === 0) return;
+    races.forEach(function(race) {
+      var name = race.name || race.id || '';
+      var active = (name === selectedName) ? ' active' : '';
+      var pill = document.createElement('span');
+      pill.className = 'detail-pill' + active;
+      pill.setAttribute('data-race-name', name);
+      pill.textContent = name;
+      pill.addEventListener('click', function() {
+        var targetName = this.getAttribute('data-race-name');
+        if (window.__rulesCurrentRaceName === targetName) {
+          window.__rulesCurrentRaceName = null;
+          detailBar.querySelectorAll('.detail-pill').forEach(function(p) { p.classList.remove('active'); });
+          var detailEl = document.getElementById('ability-detail');
+          if (detailEl) { detailEl.innerHTML = ''; detailEl.style.display = 'none'; }
+          var prefaceEl = document.getElementById('sub-section-preface');
+          if (prefaceEl) prefaceEl.style.display = '';
+          return;
+        }
+        var targetRace = null;
+        if (window.__currentRaces) {
+          for (var i = 0; i < window.__currentRaces.length; i++) {
+            if ((window.__currentRaces[i].name || window.__currentRaces[i].id) === targetName) {
+              targetRace = window.__currentRaces[i];
+              break;
+            }
+          }
+        }
+        if (targetRace) switchRace(targetRace);
+      });
+      detailBar.appendChild(pill);
+    });
+  }
+
+  function switchRace(race) {
+    var detailEl = document.getElementById('ability-detail');
+    if (!detailEl) return;
+    window.__rulesCurrentRaceName = race.name || race.id || null;
+    var prefaceEl = document.getElementById('sub-section-preface');
+    if (prefaceEl) prefaceEl.style.display = 'none';
+    detailEl.style.display = '';
+    var html = '';
+    html += '<div class="race-detail">';
+    html += '<div class="detail-header"><h2>' + (race.name || '') + '</h2>';
+    if (race.version_status) {
+      var vsCls = race.version_status === '新' ? 'new' : 'modified';
+      html += ' <span class="version-tag ' + vsCls + '">' + race.version_status + '</span>';
+    }
+    html += '</div>';
+    if (race.attribute_mods) {
+      var attrNames = [
+        { key: 'strength', label: '躯魄' },
+        { key: 'agility', label: '敏韧' },
+        { key: 'constitution', label: '体质' },
+        { key: 'intelligence', label: '心智' },
+        { key: 'wisdom', label: '洞识' },
+        { key: 'charisma', label: '魅力' }
+      ];
+      html += '<div class="attr-bars-mini">';
+      attrNames.forEach(function(a) {
+        var val = race.attribute_mods[a.key] || 0;
+        var barColor = val > 0 ? 'var(--ash-gold)' : val < 0 ? 'var(--ash-red)' : '#444';
+        var barWidth = Math.abs(val) * 18;
+        var valCls = val > 0 ? 'pos' : val < 0 ? 'neg' : 'zero';
+        html += '<div class="attr-item">';
+        html += '<span class="attr-label">' + a.label + '</span>';
+        html += '<span class="attr-bar" style="width:' + barWidth + 'px;background:' + barColor + '"></span>';
+        html += '<span class="attr-val ' + valCls + '">' + (val >= 0 ? '+' : '') + val + '</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+    }
+    if (race.detail && race.detail.length > 0) {
+      html += '<div class="race-detail-body">';
+      race.detail.forEach(function(p) {
+        html += '<p>' + p + '</p>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+    detailEl.innerHTML = html;
   }
 
   window.PageRender = { init };

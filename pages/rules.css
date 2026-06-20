@@ -568,6 +568,31 @@
   background: rgba(201, 168, 76, 0.02);
 }
 
+/* 种族详情样式 */
+.race-detail {
+  padding: 20px;
+}
+
+.race-detail .detail-header h2 {
+  font-size: 1.4rem;
+  color: var(--ash-gold);
+  margin-bottom: 12px;
+}
+
+.race-detail .attr-bars-mini {
+  margin: 16px 0;
+}
+
+.race-detail-body {
+  margin-top: 16px;
+  line-height: 1.8;
+}
+
+.race-detail-body p {
+  margin-bottom: 10px;
+  text-align: justify;
+}
+
 /* 技能关键词标签 */
 .ability-keywords {
   display: flex;
