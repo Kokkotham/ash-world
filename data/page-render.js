@@ -243,19 +243,73 @@
     if (!main) return;
 
     var ch = null;
+    var chIdx = 0;
     for (var i = 0; i < chapters.length; i++) {
-      if (chapters[i].id === chId) { ch = chapters[i]; break; }
+      if (chapters[i].id === chId) { ch = chapters[i]; chIdx = i; break; }
     }
     if (!ch) return;
 
-    // 渲染该章节完整内容（包含所有子章节）
+    // 渲染内容
     var contentHTML = '';
     contentHTML += '<section class="reader-chapter" data-chapter="' + ch.id + '">';
-    contentHTML += renderChapterContent(ch, data, chapters, i);
+
+    // 如果有章节概述文字，先展示概述 + 子分类列表（概览模式）
+    if (ch.content && ch.content.length > 0) {
+      contentHTML += '<div class="chapter-heading">';
+      contentHTML += '<span class="chapter-num">' + (ch.number || '') + '</span>';
+      contentHTML += '<h2>' + (ch.title || ch.name || '') + '</h2>';
+      contentHTML += '<div class="heading-divider"></div>';
+      contentHTML += '</div>';
+      contentHTML += '<div class="chapter-body">';
+      contentHTML += '<div class="chapter-overview">';
+      ch.content.forEach(function(p) {
+        // 以 "XXX专修（X）" 格式的是小标题
+        if (/^[^\s]+（[ABCL]）$/.test(p.trim()) || /^[^\s]+\([ABCL]\)$/.test(p.trim())) {
+          contentHTML += '<h4 class="overview-subtitle">' + p + '</h4>';
+        } else if (p.match(/^[A-Za-z]/)) {
+          // 英文开头的行作为副标题
+          contentHTML += '<h3 class="overview-title">' + p + '</h3>';
+        } else {
+          contentHTML += '<p>' + p + '</p>';
+        }
+      });
+      contentHTML += '</div>';
+
+      // 子分类快速导航列表（卡片式）
+      if (ch.sub_sections && ch.sub_sections.length > 0) {
+        contentHTML += '<div class="sub-category-list">';
+        contentHTML += '<h3 class="sub-cat-list-title">分类目录</h3>';
+        ch.sub_sections.forEach(function(sub) {
+          var subId = 'reader-' + (sub.id || (ch.id + '-sub-' + 0));
+          // 统计该子分类下的能力数量（仅对有 data_path 的）
+          var itemCount = '';
+          var itemData = resolveSubCategoryData(sub, data);
+          if (itemData && itemData.abilities) {
+            itemCount = '<span class="sub-cat-count">' + itemData.abilities.length + '项</span>';
+          } else if (itemData && Array.isArray(itemData)) {
+            itemCount = '<span class="sub-cat-count">' + itemData.length + '项</span>';
+          } else if (sub.sub_sections && sub.sub_sections.length > 0) {
+            itemCount = '<span class="sub-cat-count">' + sub.sub_sections.length + '个子类</span>';
+          } else {
+            itemCount = '<span class="sub-cat-count">整理中</span>';
+          }
+          contentHTML += '<div class="sub-category-card" data-target="' + subId + '" role="button" tabindex="0">';
+          contentHTML += '<span class="sub-cat-name">' + (sub.title || sub.name || '') + '</span>';
+          contentHTML += itemCount;
+          contentHTML += '</div>';
+        });
+        contentHTML += '</div>';
+      }
+
+      contentHTML += '</div>'; // end .chapter-body
+    } else {
+      // 无概述文字：直接渲染完整内容（原有的 renderChapterContent 逻辑）
+      contentHTML += renderChapterContent(ch, data, chapters, chIdx);
+    }
+
     contentHTML += '</section>';
 
     main.innerHTML = contentHTML;
-    // 滚动到顶部
     main.scrollTop = 0;
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -278,6 +332,64 @@
     // 记录当前状态
     window.__rulesCurrentChapter = chId;
     window.__rulesCurrentSub = null;
+
+    // 绑定子分类卡片的点击事件 → 调用 switchSubSection
+    bindSubCategoryCards(chapters, data);
+  }
+
+  // ---- 解析子分类的数据源 ----
+  function resolveSubCategoryData(sub, data) {
+    if (!sub || !data) return null;
+    if (!sub.data_source) return null;
+    var src = resolveDataSource(data, sub.data_source);
+    if (!src) return null;
+
+    // 如果是 professions 数据源，按 data_path 查找
+    if (sub.data_source === 'professions' && src.categories && sub.data_path) {
+      for (var i = 0; i < src.categories.length; i++) {
+        if (src.categories[i].id === sub.data_path || src.categories[i].name === sub.data_path) {
+          return src.categories[i];
+        }
+      }
+      return null;
+    }
+
+    // divine-arts pantheons
+    if (sub.data_source === 'divine-arts' && src.pantheons && sub.data_path) {
+      var idx = parseInt(sub.data_path.match(/\d+/));
+      if (!isNaN(idx) && src.pantheons[idx]) return src.pantheons[idx];
+      // also try string match
+      for (var j = 0; j < src.pantheons.length; j++) {
+        if (src.pantheons[j].name === sub.data_path || src.pantheons[j].id === sub.data_path) {
+          return src.pantheons[j];
+        }
+      }
+    }
+
+    // story-rules sections
+    if (sub.data_source === 'story-rules' && src.sections && sub.data_path) {
+      for (var k = 0; k < src.sections.length; k++) {
+        if (src.sections[k].title === sub.data_path || src.sections[k].id === sub.data_path) {
+          return src.sections[k];
+        }
+      }
+    }
+
+    return null;
+  }
+
+  // ---- 绑定子分类卡片点击事件 ----
+  function bindSubCategoryCards(chapters, data) {
+    var cards = document.querySelectorAll('.sub-category-card');
+    cards.forEach(function(card) {
+      card.addEventListener('click', function() {
+        var targetId = this.getAttribute('data-target');
+        if (targetId) switchSubSection(targetId, chapters, data);
+      });
+      card.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
+      });
+    });
   }
 
   // ---- 切换到子章节（仅渲染该子项内容） ----
