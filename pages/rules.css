@@ -237,25 +237,22 @@
   color: var(--ash-gold);
 }
 
-/* ---- 右侧主阅读区 ---- */
+/* ---- 内容面板（速查模式：单章节展示，内容区可滚动） ---- */
 .reader-main {
-  padding: 24px 36px 60px;
+  padding: 24px 36px 80px;
   overflow-y: auto;
-  max-height: calc(100vh - 160px);
-  scroll-behavior: smooth;
   flex: 1;
+  /* 不限制最大高度：让内容自然撑开，超出时自身滚动 */
 }
 
 /* ---- 章节面板 ---- */
 .reader-chapter {
-  margin-bottom: 48px;
   padding: 32px 36px;
   background: rgba(10, 14, 20, 0.6);
   border: 1px solid rgba(201, 168, 76, 0.1);
   border-radius: 8px;
   position: relative;
   min-height: 200px;
-  scroll-margin-top: 20px;
 }
 
 /* 章节顶部玻璃微光 */
@@ -360,9 +357,10 @@
   margin: 0 auto 16px;
 }
 
-/* ---- 下一章按钮 ---- */
+/* ---- 下一章按钮（速查模式已禁用，保留样式以防回退） ---- */
 .next-chapter-btn {
-  display: block;
+  display: none;
+}
   margin: 0 auto;
   padding: 12px 36px;
   background: transparent;
@@ -672,8 +670,6 @@
   /* 阅读区 */
   .reader-main {
     padding: 16px 14px 48px;
-    max-height: none;
-    overflow-y: visible;
   }
 
   .reader-chapter {
@@ -716,15 +712,6 @@
   .attack-grid {
     grid-template-columns: 1fr;
     gap: 10px;
-  }
-
-  .next-chapter-btn {
-    padding: 12px 28px;
-    font-size: 0.82rem;
-    min-height: 44px;
-    width: 100%;
-    max-width: 260px;
-    display: block;
   }
 }
 

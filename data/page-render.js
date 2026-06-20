@@ -178,7 +178,8 @@
   }
 
   // ============================================================
-  //  规则书阅读器：预渲染所有章节 + 缩略图导航 + IntersectionObserver
+  //  规则书速查版：Tab 切换面板（非滚动阅读器）
+  //  点击章节标签 → 切换内容区 | 点击子章节 pill → 切换子内容
   // ============================================================
   function renderRules(data) {
     var el = document.getElementById('onto-content');
@@ -193,10 +194,6 @@
       return;
     }
     var chapters = data.chapters.chapters || [];
-    var chapterIds = [];
-
-    // 收集所有顶级章节 ID
-    chapters.forEach(function(ch) { chapterIds.push(ch.id); });
 
     // 构建横向章节标签导航 HTML
     var navHTML = '';
@@ -223,33 +220,204 @@
     });
     subNavHTML += '</div>';
 
-    // 构建主阅读区 HTML（预渲染所有章节，子章节加锚点 ID）
-    var mainHTML = '';
-    chapters.forEach(function(ch, idx) {
-      mainHTML += '<section class="reader-chapter" id="reader-' + ch.id + '" data-chapter="' + ch.id + '">';
-      mainHTML += renderChapterContent(ch, data, chapters, idx);
-      // 下一章按钮（最后一章特殊处理）
-      var isLast = idx === chapters.length - 1;
-      mainHTML += '<div class="next-chapter-sentinel" data-sentinel="' + ch.id + '"></div>';
-      mainHTML += '<button class="next-chapter-btn' + (isLast ? ' last-chapter' : '') + '" ';
-      mainHTML += 'data-next="' + (isLast ? '' : chapters[idx + 1].id) + '"';
-      if (isLast) { mainHTML += ' disabled'; }
-      mainHTML += '>下一章</button>';
-      mainHTML += '</section>';
-    });
-
-    // 组装布局（nav + sub-nav 包裹在 sticky wrapper 内）
+    // 组装布局：导航区 + 空内容区（由 switchChapter 填充）
     var html = '<div class="reader-layout">';
     html += '<div class="reader-nav-wrapper">';
     html += '<nav class="reader-nav" id="reader-nav">' + navHTML + '</nav>';
     html += subNavHTML;
     html += '</div>';
-    html += '<div class="reader-main" id="reader-main">' + mainHTML + '</div>';
+    html += '<div class="reader-main" id="reader-main"></div>';
     html += '</div>';
     el.innerHTML = html;
 
-    // ---- 交互绑定 ----
-    setupReaderInteractions(chapterIds);
+    // ---- 交互绑定（Tab 切换，非滚动） ----
+    setupLookupInteractions(chapters, data);
+  }
+
+  // ---- 切换到大章节 ----
+  function switchChapter(chId, chapters, data) {
+    var main = document.getElementById('reader-main');
+    if (!main) return;
+
+    var ch = null;
+    for (var i = 0; i < chapters.length; i++) {
+      if (chapters[i].id === chId) { ch = chapters[i]; break; }
+    }
+    if (!ch) return;
+
+    // 渲染该章节完整内容（包含所有子章节）
+    var contentHTML = '';
+    contentHTML += '<section class="reader-chapter" data-chapter="' + ch.id + '">';
+    contentHTML += renderChapterContent(ch, data, chapters, i);
+    contentHTML += '</section>';
+
+    main.innerHTML = contentHTML;
+    // 滚动到顶部
+    main.scrollTop = 0;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // 更新标签激活状态
+    var nav = document.getElementById('reader-nav');
+    if (nav) {
+      nav.querySelectorAll('.chapter-tab').forEach(function(t) { t.classList.remove('active'); });
+      var activeTab = nav.querySelector('.chapter-tab[data-target="' + chId + '"]');
+      if (activeTab) activeTab.classList.add('active');
+    }
+
+    // 更新子章节导航条显示
+    updateSubNavVisibility(chId);
+
+    // 记录当前状态
+    window.__rulesCurrentChapter = chId;
+    window.__rulesCurrentSub = null;
+  }
+
+  // ---- 切换到子章节（仅渲染该子项内容） ----
+  function switchSubSection(subId, chapters, data) {
+    var main = document.getElementById('reader-main');
+    if (!main) return;
+
+    // 从 subId 解析出所属章节和子索引：格式 "reader-ch3_instinct"
+    // 需要在 chapters 中找到对应的 sub_section
+    var targetSub = null;
+    var parentCh = null;
+
+    for (var ci = 0; ci < chapters.length; ci++) {
+      var ch = chapters[ci];
+      if (!ch.sub_sections) continue;
+      for (var si = 0; si < ch.sub_sections.length; si++) {
+        var sub = ch.sub_sections[si];
+        var expectedId = 'reader-' + (sub.id || (ch.id + '-sub-' + si));
+        if (expectedId === subId) {
+          targetSub = sub;
+          parentCh = ch;
+          break;
+        }
+      }
+      if (targetSub) break;
+    }
+
+    if (!targetSub || !parentCh) return;
+
+    // 渲染仅该子章节内容
+    var contentHTML = '';
+    contentHTML += '<section class="reader-chapter" data-chapter="' + parentCh.id + '">';
+
+    // 章节标题头（简化）
+    contentHTML += '<div class="chapter-heading">';
+    contentHTML += '<span class="chapter-num">' + (parentCh.number || '') + '</span>';
+    contentHTML += '<h2>' + (parentCh.title || parentCh.name || '') + '</h2>';
+    contentHTML += '<div class="heading-divider"></div>';
+    contentHTML += '</div>';
+
+    contentHTML += '<div class="chapter-body">';
+    contentHTML += renderSingleSubSection(targetSub, parentCh, data);
+    contentHTML += '</div></section>';
+
+    main.innerHTML = contentHTML;
+    main.scrollTop = 0;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // 确保父章节 tab 高亮
+    var nav = document.getElementById('reader-nav');
+    if (nav) {
+      nav.querySelectorAll('.chapter-tab').forEach(function(t) { t.classList.remove('active'); });
+      var activeTab = nav.querySelector('.chapter-tab[data-target="' + parentCh.id + '"]');
+      if (activeTab) activeTab.classList.add('active');
+    }
+
+    // 高亮当前 pill
+    var subNavBar = document.getElementById('sub-nav-bar');
+    if (subNavBar) {
+      subNavBar.querySelectorAll('.sub-pill').forEach(function(p) { p.classList.remove('active'); });
+      var activePill = subNavBar.querySelector('.sub-pill[data-target="' + subId + '"]');
+      if (activePill) activePill.classList.add('active');
+    }
+
+    window.__rulesCurrentChapter = parentCh.id;
+    window.__rulesCurrentSub = subId;
+  }
+
+  // ---- 渲染单个子章节的内容 ----
+  function renderSingleSubSection(sub, parentCh, data) {
+    var html = '';
+    html += '<div class="sub-section">';
+    html += '<h3>' + (sub.title || sub.name || '') + '</h3>';
+
+    // 根据父章节数据源类型查找数据
+    if (parentCh.data_source && data) {
+      var src = resolveDataSource(data, parentCh.data_source);
+      if (src) {
+        var catData = null;
+
+        // ch3 专修：从 categories 数组查找
+        if (parentCh.id === 'ch3' && src.categories) {
+          for (var i = 0; i < src.categories.length; i++) {
+            if (src.categories[i].id === sub.data_path) {
+              catData = src.categories[i];
+              break;
+            }
+          }
+          if (catData && catData.abilities && catData.abilities.length > 0) {
+            html += renderGenericList(catData.abilities, sub);
+          } else {
+            html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+          }
+        }
+        // ch4 神术：从 pantheons 查找
+        else if (parentCh.id === 'ch4') {
+          var pantheon = null;
+          if (sub.data_path && src) {
+            try { pantheon = resolveDataPath(src, sub.data_path); } catch(e) {}
+          }
+          // fallback: 按 pantheons 数组索引或 name 匹配
+          if (!pantheon && src.pantheons) {
+            for (var pi = 0; pi < src.pantheons.length; pi++) {
+              if (src.pantheons[pi].name === sub.data_path || src.pantheons[pi].id === sub.data_path) {
+                pantheon = src.pantheons[pi];
+                break;
+              }
+            }
+          }
+          if (pantheon) {
+            if (pantheon.doctrine) {
+              pantheon.doctrine.forEach(function(d) { html += '<p>' + d + '</p>'; });
+            }
+            if (pantheon.divine_spells && pantheon.divine_spells.length > 0) {
+              html += '<h4>神术列表</h4>';
+              html += renderGenericList(pantheon.divine_spells, pantheon);
+            }
+          } else {
+            html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+          }
+        }
+        // ch5 故事运作：从 sections 查找
+        else if (parentCh.id === 'ch5' && src.sections) {
+          var secData = null;
+          for (var j = 0; j < src.sections.length; j++) {
+            if (src.sections[j].name === sub.data_path || src.sections[j].id === sub.data_path) {
+              secData = src.sections[j];
+              break;
+            }
+          }
+          if (secData && secData.rules && secData.rules.length > 0) {
+            html += renderGenericList(secData.rules, sub);
+          } else {
+            html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+          }
+        }
+        else {
+          html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+        }
+      } else {
+        html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+      }
+    } else {
+      html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+    }
+
+    html += '</div>';
+    return html;
   }
 
   // 判断章节是否有实质内容
@@ -614,161 +782,78 @@
     return html;
   }
 
-  // ---- 交互绑定：章节标签点击、子章节 pill 点击、下一章按钮、IntersectionObserver ----
-  function setupReaderInteractions(chapterIds) {
+  // ---- 速查版交互绑定：Tab 切换 + 子章节 Pill 切换 ----
+  function setupLookupInteractions(chapters, data) {
     var nav = document.getElementById('reader-nav');
     var subNavBar = document.getElementById('sub-nav-bar');
-    var main = document.getElementById('reader-main');
-    if (!nav || !main) return;
+    if (!nav) return;
 
     var tabs = nav.querySelectorAll('.chapter-tab');
-    var chapters = main.querySelectorAll('.reader-chapter');
-    var nextBtns = main.querySelectorAll('.next-chapter-btn');
-    var sentinels = main.querySelectorAll('.next-chapter-sentinel');
 
-    // ---- 章节标签点击 → 平滑滚动 ----
+    // 找到第一个有内容的章节作为默认显示
+    var firstChId = chapters[0] ? chapters[0].id : null;
+    for (var i = 0; i < tabs.length; i++) {
+      if (!tabs[i].classList.contains('empty')) {
+        firstChId = tabs[i].getAttribute('data-target');
+        break;
+      }
+    }
+
+    // ---- 章节标签点击 → 切换内容 ----
     tabs.forEach(function(tab) {
       tab.addEventListener('click', function() {
         var targetId = this.getAttribute('data-target');
-        var target = document.getElementById('reader-' + targetId);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        if (targetId) switchChapter(targetId, chapters, data);
+      });
+      // 键盘支持
+      tab.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
       });
     });
 
-    // ---- 子章节 pill 点击 → 平滑滚动到对应子章节 ----
+    // ---- 子章节 pill 点击 → 切换子内容 ----
     if (subNavBar) {
       subNavBar.querySelectorAll('.sub-pill').forEach(function(pill) {
         pill.addEventListener('click', function() {
           var targetId = this.getAttribute('data-target');
-          if (!targetId) return;
-          var target = document.getElementById(targetId);
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-          subNavBar.querySelectorAll('.sub-pill').forEach(function(p) { p.classList.remove('active'); });
-          this.classList.add('active');
+          if (targetId) switchSubSection(targetId, chapters, data);
         });
-        // 键盘无障碍
         pill.addEventListener('keydown', function(e) {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
         });
       });
     }
 
-    // ---- 下一章按钮点击 ----
-    nextBtns.forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var nextId = this.getAttribute('data-next');
-        if (!nextId) return;
-        var target = document.getElementById('reader-' + nextId);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-
-    // ---- 更新子章节导航条（根据当前章节显示对应 pills） ----
-    function updateSubNav(chId) {
-      if (!subNavBar) return;
-      var allGroups = subNavBar.querySelectorAll('.sub-pills-group');
-      allGroups.forEach(function(g) { g.style.display = 'none'; });
-      var activeGroup = subNavBar.querySelector('.sub-pills-group[data-chapter="' + chId + '"]');
-      if (activeGroup) {
-        activeGroup.style.display = 'flex';
-        subNavBar.classList.add('visible');
-      } else {
-        subNavBar.classList.remove('visible');
-      }
-      subNavBar.querySelectorAll('.sub-pill').forEach(function(p) { p.classList.remove('active'); });
+    // ---- 初始加载：显示第一个有内容的章节 ----
+    if (firstChId) {
+      switchChapter(firstChId, chapters, data);
     }
 
-    // ---- IntersectionObserver：当前章节高亮 + 子章节导航更新 ----
-    if (typeof IntersectionObserver !== 'undefined') {
-      var chapterObserver = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            var chId = entry.target.getAttribute('data-chapter');
-            tabs.forEach(function(t) { t.classList.remove('active'); });
-            var activeTab = nav.querySelector('.chapter-tab[data-target="' + chId + '"]');
-            if (activeTab) activeTab.classList.add('active');
-            updateSubNav(chId);
-          }
-        });
-      }, {
-        root: main,
-        rootMargin: '-20% 0px -60% 0px',
-        threshold: 0
-      });
-
-      chapters.forEach(function(ch) { chapterObserver.observe(ch); });
-
-      var sentinelObserver = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          var chId = entry.target.getAttribute('data-sentinel');
-          var chapterEl = entry.target.closest('.reader-chapter');
-          if (!chapterEl) return;
-          var btn = chapterEl.querySelector('.next-chapter-btn');
-          if (!btn) return;
-          if (entry.isIntersecting) {
-            btn.style.display = 'block';
-          } else {
-            btn.style.display = 'none';
-          }
-        });
-      }, {
-        root: main,
-        rootMargin: '0px 0px -40px 0px',
-        threshold: 0
-      });
-
-      sentinels.forEach(function(s) { sentinelObserver.observe(s); });
-    } else {
-      nextBtns.forEach(function(btn) { btn.style.display = 'block'; });
-      var scrollTicking = false;
-      main.addEventListener('scroll', function() {
-        if (!scrollTicking) {
-          requestAnimationFrame(function() {
-            updateActiveTabOnScroll(chapters, tabs, main);
-            scrollTicking = false;
-          });
-          scrollTicking = true;
-        }
-      });
-    }
-
-    // 初始高亮
-    var firstActive = tabs[0];
-    for (var i = 0; i < tabs.length; i++) {
-      if (!tabs[i].classList.contains('empty')) {
-        firstActive = tabs[i];
-        break;
-      }
-    }
-    firstActive.classList.add('active');
-    var firstChId = firstActive.getAttribute('data-target');
-    if (firstChId) updateSubNav(firstChId);
+    // 高亮第一个标签
+    var firstActive = nav.querySelector('.chapter-tab[data-target="' + firstChId + '"]');
+    if (firstActive) firstActive.classList.add('active');
   }
 
-  // 降级滚动高亮
-  function updateActiveTabOnScroll(chapters, tabs, main) {
-    var scrollTop = main.scrollTop;
-    var containerTop = main.getBoundingClientRect().top;
-    var activeId = null;
+  // ---- 更新子章节导航条可见性 ----
+  function updateSubNavVisibility(chId) {
+    var subNavBar = document.getElementById('sub-nav-bar');
+    if (!subNavBar) return;
 
-    chapters.forEach(function(ch) {
-      var rect = ch.getBoundingClientRect();
-      if (rect.top - containerTop < main.clientHeight * 0.4) {
-        activeId = ch.getAttribute('data-chapter');
-      }
-    });
+    // 隐藏所有 pill 组
+    var allGroups = subNavBar.querySelectorAll('.sub-pills-group');
+    allGroups.forEach(function(g) { g.style.display = 'none'; });
 
-    if (activeId) {
-      tabs.forEach(function(t) { t.classList.remove('active'); });
-      var activeTab = document.querySelector('.chapter-tab[data-target="' + activeId + '"]');
-      if (activeTab) activeTab.classList.add('active');
+    // 显示当前章节的 pill 组
+    var activeGroup = subNavBar.querySelector('.sub-pills-group[data-chapter="' + chId + '"]');
+    if (activeGroup) {
+      activeGroup.style.display = 'flex';
+      subNavBar.classList.add('visible');
+    } else {
+      subNavBar.classList.remove('visible');
     }
+
+    // 清除所有 pill 激活状态
+    subNavBar.querySelectorAll('.sub-pill').forEach(function(p) { p.classList.remove('active'); });
   }
 
   // 检测标题行：数字+点开头、纯英文标题、以"教条"开头等
