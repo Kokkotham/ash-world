@@ -295,6 +295,28 @@ body::before {
     margin: 24px auto;
 }
 
+/* 规则书页面：紧凑型页面标题（因为已有章节导航，不需要大标题占空间） */
+.page-header--compact {
+    padding: 24px 20px 12px;
+}
+.page-header--compact h1 {
+    font-size: 1.3rem;
+    letter-spacing: 0.15em;
+    text-shadow: none;
+    margin-bottom: 2px;
+}
+.page-header--compact .subtitle {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    opacity: 0.5;
+}
+.page-header--compact .divider {
+    width: 60px;
+    height: 1px;
+    margin: 8px auto 0;
+    opacity: 0.4;
+}
+
 /* 内容容器 */
 .content {
     position: relative;
