@@ -198,21 +198,32 @@
     // 收集所有顶级章节 ID
     chapters.forEach(function(ch) { chapterIds.push(ch.id); });
 
-    // 构建缩略图导航 HTML
-    var navHTML = '<div class="reader-nav-title">章 节</div>';
+    // 构建横向章节标签导航 HTML
+    var navHTML = '';
     chapters.forEach(function(ch) {
       var isEmpty = !hasChapterContent(ch, data);
-      var cls = 'chapter-thumb' + (isEmpty ? ' empty' : '');
+      var cls = 'chapter-tab' + (isEmpty ? ' empty' : '');
       navHTML += '<div class="' + cls + '" data-target="' + ch.id + '" role="button" tabindex="0">';
-      navHTML += '<span class="thumb-number">' + (ch.number || '') + '</span>';
-      navHTML += '<span class="thumb-title">' + (ch.title || ch.name || '') + '</span>';
-      if (isEmpty) {
-        navHTML += '<span class="thumb-hint">整理中</span>';
-      }
+      navHTML += '<span class="tab-num">' + (ch.number || '') + '</span>';
+      navHTML += '<span class="tab-title">' + (ch.title || ch.name || '') + '</span>';
       navHTML += '</div>';
     });
 
-    // 构建主阅读区 HTML（预渲染所有章节）
+    // 构建子章节导航条 HTML（每个有 sub_sections 的章节对应一组 pills）
+    var subNavHTML = '<div class="sub-nav-bar" id="sub-nav-bar">';
+    chapters.forEach(function(ch) {
+      if (ch.sub_sections && ch.sub_sections.length > 0) {
+        subNavHTML += '<div class="sub-pills-group" data-chapter="' + ch.id + '" style="display:none">';
+        ch.sub_sections.forEach(function(sub, sidx) {
+          var subId = 'reader-' + (sub.id || (ch.id + '-sub-' + sidx));
+          subNavHTML += '<span class="sub-pill" data-target="' + subId + '" role="button" tabindex="0">' + (sub.title || sub.name || '子章节') + '</span>';
+        });
+        subNavHTML += '</div>';
+      }
+    });
+    subNavHTML += '</div>';
+
+    // 构建主阅读区 HTML（预渲染所有章节，子章节加锚点 ID）
     var mainHTML = '';
     chapters.forEach(function(ch, idx) {
       mainHTML += '<section class="reader-chapter" id="reader-' + ch.id + '" data-chapter="' + ch.id + '">';
@@ -227,9 +238,12 @@
       mainHTML += '</section>';
     });
 
-    // 组装布局
+    // 组装布局（nav + sub-nav 包裹在 sticky wrapper 内）
     var html = '<div class="reader-layout">';
+    html += '<div class="reader-nav-wrapper">';
     html += '<nav class="reader-nav" id="reader-nav">' + navHTML + '</nav>';
+    html += subNavHTML;
+    html += '</div>';
     html += '<div class="reader-main" id="reader-main">' + mainHTML + '</div>';
     html += '</div>';
     el.innerHTML = html;
@@ -361,7 +375,7 @@
             hasContent = profRendered.hasContent || hasContent;
             break;
           case 'ch4':
-            var divineRendered = renderDivineChapter(src, data);
+            var divineRendered = renderDivineChapter(ch, src, data);
             html += divineRendered.html;
             hasContent = divineRendered.hasContent || hasContent;
             break;
@@ -467,8 +481,8 @@
     var hasContent = false;
 
     if (ch.sub_sections && ch.sub_sections.length > 0) {
-      ch.sub_sections.forEach(function(sub) {
-        html += '<div class="sub-section">';
+      ch.sub_sections.forEach(function(sub, sidx) {
+        html += '<div class="sub-section" id="reader-' + (sub.id || (ch.id + '-sub-' + sidx)) + '">';
         html += '<h3>' + (sub.title || sub.name || '') + '</h3>';
         // 从 src.categories 数组里按 id 查找分类数据
         var catData = null;
@@ -498,27 +512,48 @@
   }
 
   // ---- ch4: 神术章节渲染 ----
-  function renderDivineChapter(src, data) {
+  function renderDivineChapter(ch, src, data) {
     var html = '';
     var hasContent = false;
-    var pantheons = src.pantheons || [];
-
-    if (pantheons.length === 0) {
-      return { html: '', hasContent: false };
+    var sections = (ch && ch.sub_sections) || [];
+    if (sections.length === 0) {
+      // fallback：直接渲染 pantheons
+      var pantheons = (src && src.pantheons) || [];
+      if (pantheons.length === 0) return { html: '', hasContent: false };
+      pantheons.forEach(function(p, idx) {
+        html += '<div class="sub-section" id="reader-' + (ch ? ch.id : 'ch4') + '-sub-' + idx + '">';
+        html += '<h3>' + (p.name || '') + '</h3>';
+        if (p.doctrine && p.doctrine.length > 0) {
+          p.doctrine.forEach(function(d) { html += '<p>' + d + '</p>'; });
+          hasContent = true;
+        }
+        if (p.divine_spells && p.divine_spells.length > 0) {
+          html += '<h4>神术列表</h4>';
+          html += renderGenericList(p.divine_spells, p);
+          hasContent = true;
+        }
+        if (!hasContent) {
+          html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+        }
+        html += '</div>';
+      });
+      return { html: html, hasContent: hasContent };
     }
-
-    pantheons.forEach(function(p) {
-      html += '<div class="sub-section">';
-      html += '<h3>' + (p.name || '') + '</h3>';
-      if (p.doctrine && p.doctrine.length > 0) {
-        p.doctrine.forEach(function(d) {
-          html += '<p>' + d + '</p>';
-        });
+    // 按 sub_sections 渲染
+    sections.forEach(function(sub, sidx) {
+      html += '<div class="sub-section" id="reader-' + sub.id + '">';
+      html += '<h3>' + (sub.title || sub.name || '') + '</h3>';
+      var pantheon = null;
+      if (sub.data_path && src) {
+        try { pantheon = resolveDataPath(src, sub.data_path); } catch(e) {}
+      }
+      if (pantheon && pantheon.doctrine) {
+        pantheon.doctrine.forEach(function(d) { html += '<p>' + d + '</p>'; });
         hasContent = true;
       }
-      if (p.divine_spells && p.divine_spells.length > 0) {
+      if (pantheon && pantheon.divine_spells && pantheon.divine_spells.length > 0) {
         html += '<h4>神术列表</h4>';
-        html += renderGenericList(p.divine_spells, p);
+        html += renderGenericList(pantheon.divine_spells, pantheon);
         hasContent = true;
       }
       if (!hasContent) {
@@ -526,7 +561,6 @@
       }
       html += '</div>';
     });
-
     return { html: html, hasContent: hasContent };
   }
 
@@ -536,8 +570,8 @@
     var hasContent = false;
 
     if (ch.sub_sections && ch.sub_sections.length > 0) {
-      ch.sub_sections.forEach(function(sub) {
-        html += '<div class="sub-section">';
+      ch.sub_sections.forEach(function(sub, sidx) {
+        html += '<div class="sub-section" id="reader-' + (sub.id || (ch.id + '-sub-' + sidx)) + '">';
         html += '<h3>' + (sub.title || sub.name || '') + '</h3>';
         // 从 src.sections 数组里按 name 或 id 查找章节数据
         var secData = null;
@@ -580,20 +614,21 @@
     return html;
   }
 
-  // ---- 交互绑定：缩略图点击、下一章按钮、IntersectionObserver ----
+  // ---- 交互绑定：章节标签点击、子章节 pill 点击、下一章按钮、IntersectionObserver ----
   function setupReaderInteractions(chapterIds) {
     var nav = document.getElementById('reader-nav');
+    var subNavBar = document.getElementById('sub-nav-bar');
     var main = document.getElementById('reader-main');
     if (!nav || !main) return;
 
-    var thumbs = nav.querySelectorAll('.chapter-thumb');
+    var tabs = nav.querySelectorAll('.chapter-tab');
     var chapters = main.querySelectorAll('.reader-chapter');
     var nextBtns = main.querySelectorAll('.next-chapter-btn');
     var sentinels = main.querySelectorAll('.next-chapter-sentinel');
 
-    // ---- 缩略图点击 → 平滑滚动 ----
-    thumbs.forEach(function(thumb) {
-      thumb.addEventListener('click', function() {
+    // ---- 章节标签点击 → 平滑滚动 ----
+    tabs.forEach(function(tab) {
+      tab.addEventListener('click', function() {
         var targetId = this.getAttribute('data-target');
         var target = document.getElementById('reader-' + targetId);
         if (target) {
@@ -601,6 +636,26 @@
         }
       });
     });
+
+    // ---- 子章节 pill 点击 → 平滑滚动到对应子章节 ----
+    if (subNavBar) {
+      subNavBar.querySelectorAll('.sub-pill').forEach(function(pill) {
+        pill.addEventListener('click', function() {
+          var targetId = this.getAttribute('data-target');
+          if (!targetId) return;
+          var target = document.getElementById(targetId);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          subNavBar.querySelectorAll('.sub-pill').forEach(function(p) { p.classList.remove('active'); });
+          this.classList.add('active');
+        });
+        // 键盘无障碍
+        pill.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
+        });
+      });
+    }
 
     // ---- 下一章按钮点击 ----
     nextBtns.forEach(function(btn) {
@@ -614,18 +669,31 @@
       });
     });
 
-    // ---- IntersectionObserver：当前章节高亮 + 下一章按钮显隐 ----
+    // ---- 更新子章节导航条（根据当前章节显示对应 pills） ----
+    function updateSubNav(chId) {
+      if (!subNavBar) return;
+      var allGroups = subNavBar.querySelectorAll('.sub-pills-group');
+      allGroups.forEach(function(g) { g.style.display = 'none'; });
+      var activeGroup = subNavBar.querySelector('.sub-pills-group[data-chapter="' + chId + '"]');
+      if (activeGroup) {
+        activeGroup.style.display = 'flex';
+        subNavBar.classList.add('visible');
+      } else {
+        subNavBar.classList.remove('visible');
+      }
+      subNavBar.querySelectorAll('.sub-pill').forEach(function(p) { p.classList.remove('active'); });
+    }
+
+    // ---- IntersectionObserver：当前章节高亮 + 子章节导航更新 ----
     if (typeof IntersectionObserver !== 'undefined') {
-      // Observer 1: 章节进入视口 → 更新左侧高亮
       var chapterObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
             var chId = entry.target.getAttribute('data-chapter');
-            // 移除所有 active
-            thumbs.forEach(function(t) { t.classList.remove('active'); });
-            // 给当前添加 active
-            var activeThumb = nav.querySelector('.chapter-thumb[data-target="' + chId + '"]');
-            if (activeThumb) activeThumb.classList.add('active');
+            tabs.forEach(function(t) { t.classList.remove('active'); });
+            var activeTab = nav.querySelector('.chapter-tab[data-target="' + chId + '"]');
+            if (activeTab) activeTab.classList.add('active');
+            updateSubNav(chId);
           }
         });
       }, {
@@ -636,7 +704,6 @@
 
       chapters.forEach(function(ch) { chapterObserver.observe(ch); });
 
-      // Observer 2: 章节底部 sentinel → 显示/隐藏下一章按钮
       var sentinelObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           var chId = entry.target.getAttribute('data-sentinel');
@@ -644,7 +711,6 @@
           if (!chapterEl) return;
           var btn = chapterEl.querySelector('.next-chapter-btn');
           if (!btn) return;
-
           if (entry.isIntersecting) {
             btn.style.display = 'block';
           } else {
@@ -659,15 +725,12 @@
 
       sentinels.forEach(function(s) { sentinelObserver.observe(s); });
     } else {
-      // 降级：所有按钮始终显示，章节高亮用滚动事件
       nextBtns.forEach(function(btn) { btn.style.display = 'block'; });
-
-      // 滚动监听降级
       var scrollTicking = false;
       main.addEventListener('scroll', function() {
         if (!scrollTicking) {
           requestAnimationFrame(function() {
-            updateActiveThumbOnScroll(chapters, thumbs, main);
+            updateActiveTabOnScroll(chapters, tabs, main);
             scrollTicking = false;
           });
           scrollTicking = true;
@@ -675,19 +738,21 @@
       });
     }
 
-    // 初始高亮第一个有内容的章节或第一个章节
-    var firstActive = thumbs[0];
-    for (var i = 0; i < thumbs.length; i++) {
-      if (!thumbs[i].classList.contains('empty')) {
-        firstActive = thumbs[i];
+    // 初始高亮
+    var firstActive = tabs[0];
+    for (var i = 0; i < tabs.length; i++) {
+      if (!tabs[i].classList.contains('empty')) {
+        firstActive = tabs[i];
         break;
       }
     }
     firstActive.classList.add('active');
+    var firstChId = firstActive.getAttribute('data-target');
+    if (firstChId) updateSubNav(firstChId);
   }
 
   // 降级滚动高亮
-  function updateActiveThumbOnScroll(chapters, thumbs, main) {
+  function updateActiveTabOnScroll(chapters, tabs, main) {
     var scrollTop = main.scrollTop;
     var containerTop = main.getBoundingClientRect().top;
     var activeId = null;
@@ -700,9 +765,9 @@
     });
 
     if (activeId) {
-      thumbs.forEach(function(t) { t.classList.remove('active'); });
-      var activeThumb = document.querySelector('.chapter-thumb[data-target="' + activeId + '"]');
-      if (activeThumb) activeThumb.classList.add('active');
+      tabs.forEach(function(t) { t.classList.remove('active'); });
+      var activeTab = document.querySelector('.chapter-tab[data-target="' + activeId + '"]');
+      if (activeTab) activeTab.classList.add('active');
     }
   }
 

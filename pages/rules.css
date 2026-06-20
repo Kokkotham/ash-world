@@ -2,155 +2,239 @@
    rules.css — 规则书阅读器布局样式
    配合 page-render.js renderRules() 使用
    暗底（#030508）、金色（#c9a84c）点缀、半透明玻璃面板
+
+   布局结构：
+   .reader-layout (flex column)
+     ├── .reader-nav-wrapper (sticky top)
+     │     ├── .reader-nav (横向章节标签)
+     │     └── .sub-nav-bar (子章节 pills，按需显示)
+     └── .reader-main (正文区)
    ============================================ */
 
-/* ---- 阅读器布局：左右分栏 1:4 ---- */
+/* ---- 阅读器整体布局：上下堆叠 ---- */
 .reader-layout {
-  display: grid;
-  grid-template-columns: 1fr 4fr;
+  display: flex;
+  flex-direction: column;
   min-height: calc(100vh - 200px);
-  gap: 0;
   position: relative;
 }
 
-/* ---- 左侧缩略图导航 ---- */
-.reader-nav {
-  background: linear-gradient(180deg, rgba(3, 5, 8, 0.95) 0%, rgba(8, 12, 16, 0.92) 100%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-right: 1px solid rgba(201, 168, 76, 0.12);
-  padding: 20px 14px;
-  overflow-y: auto;
-  max-height: calc(100vh - 160px);
+/* ---- 顶部导航包裹层（sticky） ---- */
+.reader-nav-wrapper {
   position: sticky;
   top: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  z-index: 100;
+  background: linear-gradient(180deg, rgba(3, 5, 8, 0.99) 0%, rgba(3, 5, 8, 0.97) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
 }
 
-/* 导航标题 */
+/* ---- 横向章节标签导航（始终横向） ---- */
+.reader-nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 16px;
+  gap: 8px;
+  /* 隐藏横向滚动条 */
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+
+.reader-nav::-webkit-scrollbar {
+  display: none;
+}
+
+/* 导航标题（桌面端显示在左侧） */
 .reader-nav-title {
   font-family: 'Cinzel', serif;
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   color: var(--ash-gold-dim);
   letter-spacing: 0.12em;
-  text-align: center;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
-  margin-bottom: 4px;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  flex-shrink: 0;
+  display: none; /* 桌面端也隐藏，空间留给标签 */
+  align-self: center;
+  opacity: 0.5;
 }
 
-/* ---- 缩略图卡片 ---- */
-.chapter-thumb {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 10px;
-  border-radius: 6px;
+/* ---- 章节标签（替代原 .chapter-thumb） ---- */
+.chapter-tab {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border-radius: 4px;
   background: rgba(10, 14, 20, 0.7);
   border: 1px solid rgba(201, 168, 76, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
+  white-space: nowrap;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 0.84rem;
+  color: var(--ash-text);
+  text-align: center;
   position: relative;
   overflow: hidden;
-  text-align: center;
-  min-height: 64px;
+  min-height: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
 }
 
-/* 缩略图 hover 金色光晕 */
-.chapter-thumb::before {
+/* 标签 hover 金色光晕 */
+.chapter-tab::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 6px;
-  background: radial-gradient(ellipse at 50% 0%, rgba(201, 168, 76, 0.12), transparent 70%);
+  border-radius: 4px;
+  background: radial-gradient(ellipse at 50% 100%, rgba(201, 168, 76, 0.1), transparent 70%);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
 
-.chapter-thumb:hover::before {
+.chapter-tab:hover::before {
   opacity: 1;
 }
 
-.chapter-thumb:hover {
+.chapter-tab:hover {
   border-color: rgba(201, 168, 76, 0.35);
-  background: rgba(15, 20, 28, 0.85);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(201, 168, 76, 0.08), 0 0 0 1px rgba(201, 168, 76, 0.06);
+  color: var(--ash-gold);
+  transform: translateY(-1px);
 }
 
-/* 缩略图内部元素 */
-.chapter-thumb .thumb-number {
+/* 标签内部：章节号 + 标题 */
+.chapter-tab .tab-num {
   font-family: 'Cinzel', serif;
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   color: var(--ash-gold-dim);
   letter-spacing: 0.1em;
-  margin-bottom: 4px;
+  transition: color 0.3s ease;
+  line-height: 1;
+}
+
+.chapter-tab .tab-title {
+  font-size: 0.84rem;
+  line-height: 1.2;
   transition: color 0.3s ease;
 }
 
-.chapter-thumb .thumb-title {
-  font-family: 'Noto Serif SC', serif;
-  font-size: 0.85rem;
-  color: var(--ash-text);
-  line-height: 1.3;
-  transition: color 0.3s ease;
-}
-
-.chapter-thumb:hover .thumb-title {
+.chapter-tab:hover .tab-num,
+.chapter-tab:hover .tab-title {
   color: var(--ash-gold);
 }
 
-/* 缩略图内容预览提示 */
-.chapter-thumb .thumb-hint {
-  font-size: 0.65rem;
-  color: var(--ash-gold-dim);
-  opacity: 0.5;
-  margin-top: 4px;
-}
-
-/* ---- 当前章节高亮 ---- */
-.chapter-thumb.active {
+/* 当前章节高亮 */
+.chapter-tab.active {
   border-color: rgba(201, 168, 76, 0.55);
   background: rgba(20, 25, 32, 0.9);
+  color: var(--ash-gold);
   box-shadow:
-    0 0 16px rgba(201, 168, 76, 0.1),
-    0 0 0 1px rgba(201, 168, 76, 0.15),
+    0 0 16px rgba(201, 168, 76, 0.08),
+    0 0 0 1px rgba(201, 168, 76, 0.1),
     inset 0 0 24px rgba(201, 168, 76, 0.03);
 }
 
-.chapter-thumb.active::before {
+.chapter-tab.active::before {
   opacity: 1;
-  background: radial-gradient(ellipse at 50% 0%, rgba(201, 168, 76, 0.18), transparent 70%);
+  background: radial-gradient(ellipse at 50% 100%, rgba(201, 168, 76, 0.15), transparent 70%);
 }
 
-.chapter-thumb.active .thumb-number,
-.chapter-thumb.active .thumb-title {
+.chapter-tab.active .tab-num,
+.chapter-tab.active .tab-title {
   color: var(--ash-gold);
 }
 
-/* active 带左侧金色标记 */
-.chapter-thumb.active::after {
+/* active 底部金色横线 */
+.chapter-tab.active::after {
   content: '';
   position: absolute;
-  left: 0;
-  top: 20%;
-  bottom: 20%;
-  width: 2px;
+  bottom: -1px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
   background: var(--ash-gold);
   border-radius: 1px;
   box-shadow: 0 0 8px rgba(201, 168, 76, 0.3);
 }
 
-/* ---- 占位/空内容 缩略图灰态 ---- */
-.chapter-thumb.empty .thumb-title {
-  color: #777;
+/* 空内容标签灰态 */
+.chapter-tab.empty {
+  color: #666;
+  cursor: default;
 }
-.chapter-thumb.empty:hover .thumb-title {
-  color: #999;
+
+.chapter-tab.empty .tab-num,
+.chapter-tab.empty .tab-title {
+  color: #666;
+}
+
+.chapter-tab.empty:hover {
+  color: #888;
+  border-color: rgba(201, 168, 76, 0.08);
+  transform: none;
+}
+
+/* ---- 子章节导航条 ---- */
+.sub-nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 0 16px;
+  background: rgba(3, 5, 8, 0.95);
+  border-top: 1px solid rgba(201, 168, 76, 0.06);
+  min-height: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.sub-nav-bar.visible {
+  min-height: 36px;
+  max-height: 120px;
+  opacity: 1;
+  padding: 6px 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sub-nav-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* 子章节 pill */
+.sub-pill {
+  flex-shrink: 0;
+  padding: 3px 14px;
+  border-radius: 12px;
+  background: rgba(201, 168, 76, 0.06);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  color: var(--ash-gold-dim);
+  font-size: 0.73rem;
+  font-family: 'Noto Serif SC', serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+.sub-pill:hover {
+  background: rgba(201, 168, 76, 0.12);
+  border-color: rgba(201, 168, 76, 0.25);
+  color: var(--ash-gold);
+}
+
+.sub-pill.active {
+  background: rgba(201, 168, 76, 0.15);
+  border-color: rgba(201, 168, 76, 0.4);
+  color: var(--ash-gold);
 }
 
 /* ---- 右侧主阅读区 ---- */
@@ -159,7 +243,7 @@
   overflow-y: auto;
   max-height: calc(100vh - 160px);
   scroll-behavior: smooth;
-  position: relative;
+  flex: 1;
 }
 
 /* ---- 章节面板 ---- */
@@ -537,67 +621,55 @@
   color: var(--ash-gold-dim);
 }
 
-/* ---- 响应式 ---- */
+/* ---- 响应式：桌面端保持横向，移动端压缩尺寸 ---- */
+
+/* 中等屏幕（≤1024px）：收窄阅读区 */
+@media (max-width: 1024px) {
+  .reader-main {
+    padding: 20px 24px 60px;
+  }
+  .reader-chapter {
+    padding: 24px 28px;
+  }
+}
+
+/* 移动端（≤768px）：导航更紧凑，阅读区收窄 */
 @media (max-width: 768px) {
-  .reader-layout {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-  }
-
-  /* 移动端：章节导航横向条 */
-  .reader-nav {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    max-height: none;
-    padding: 10px 8px;
-    gap: 8px;
-    border-right: none;
-    border-bottom: 1px solid rgba(201, 168, 76, 0.12);
-    position: sticky;
+  .reader-nav-wrapper {
     top: 0;
-    z-index: 10;
-    background: rgba(3, 5, 8, 0.97);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    /* 隐藏横向滚动条 */
-    scrollbar-width: none;
-  }
-  .reader-nav::-webkit-scrollbar { display: none; }
-
-  .reader-nav-title {
-    display: none;
   }
 
-  .chapter-thumb {
-    flex-shrink: 0;
-    min-width: 76px;
-    max-width: 100px;
-    min-height: 52px;
-    padding: 9px 10px;
-    /* 确保触控目标 */
-    touch-action: manipulation;
+  .reader-nav {
+    padding: 8px 10px;
+    gap: 6px;
   }
 
-  .chapter-thumb .thumb-number {
-    font-size: 0.62rem;
+  .chapter-tab {
+    padding: 7px 14px;
+    min-height: 32px;
+    font-size: 0.78rem;
   }
 
-  .chapter-thumb .thumb-title {
-    font-size: 0.75rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 80px;
+  .chapter-tab .tab-num {
+    font-size: 0.58rem;
   }
 
-  .chapter-thumb .thumb-hint {
-    display: none;
+  .chapter-tab .tab-title {
+    font-size: 0.78rem;
   }
 
-  /* 阅读区：去除 max-height 限制 */
+  /* 子章节 pills 移动端 */
+  .sub-nav-bar.visible {
+    padding: 5px 10px;
+    gap: 5px;
+  }
+
+  .sub-pill {
+    padding: 3px 10px;
+    font-size: 0.68rem;
+  }
+
+  /* 阅读区 */
   .reader-main {
     padding: 16px 14px 48px;
     max-height: none;
@@ -659,19 +731,27 @@
 /* 极小屏（≤480px）导航项更紧凑 */
 @media (max-width: 480px) {
   .reader-nav {
-    padding: 8px 6px;
-    gap: 6px;
+    padding: 6px 8px;
+    gap: 5px;
   }
 
-  .chapter-thumb {
-    min-width: 62px;
-    min-height: 44px;
-    padding: 7px 7px;
+  .chapter-tab {
+    padding: 6px 10px;
+    font-size: 0.72rem;
+    min-height: 28px;
   }
 
-  .chapter-thumb .thumb-title {
-    font-size: 0.68rem;
-    max-width: 58px;
+  .chapter-tab .tab-num {
+    font-size: 0.55rem;
+  }
+
+  .chapter-tab .tab-title {
+    font-size: 0.72rem;
+  }
+
+  .sub-pill {
+    padding: 2px 8px;
+    font-size: 0.65rem;
   }
 
   .reader-chapter {
