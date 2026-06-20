@@ -83,19 +83,8 @@
           this.loadErrors.push(names[i]);
         }
       }
-      // 关键文件缺失时抛出错误
-      if (successCount === 0) {
-        throw new Error(
-          '所有数据文件均无法加载。\n\n' +
-          '可能原因：\n' +
-          '1. 你正在通过 file:// 协议直接打开页面，浏览器限制了数据访问\n' +
-          '2. 数据文件不存在或路径不正确\n\n' +
-          '建议：通过 HTTP 服务器访问（如 python -m http.server）'
-        );
-      }
-      if (!this.chapters && this.loadErrors.indexOf('chapters') >= 0) {
-        throw new Error('核心文件 chapters.json 加载失败（缺失文件：' + this.loadErrors.join(', ') + '）。');
-      }
+      // 不再抛出错误 —— 即使全部失败也标记 loaded=true
+      // 由各页面自行决定如何处理缺失数据
       this.loaded = true;
       console.log('[AshData] 加载完成: ' + successCount + '/' + names.length + ' 个文件成功');
       if (this.loadErrors.length > 0) {

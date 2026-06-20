@@ -2,29 +2,37 @@
 // 所有子页面引用此文件，即可从 data/ 读取内容并显示关联
 (function() {
 
-  // 用户可见的错误提示（替代静默 return）
+  // 用户可见的错误提示（仅在需要数据的页面上显示）
   function showError(msg) {
     var el = document.getElementById('onto-content');
     if (!el) return;
+    // 如果内容区已经有实质内容（如"敬请期待"），不要覆盖它
+    if (el.children.length > 0 && el.innerText.trim().length > 20) {
+      console.warn('[PageRender] 数据加载失败但页面有静态内容，跳过错误覆盖:', msg);
+      return;
+    }
     el.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--ash-dim)">' +
       '<h2 style="color:var(--ash-gold);margin-bottom:12px">⚠ 内容加载异常</h2>' +
       '<p style="margin-bottom:8px">' + msg + '</p>' +
       '<p style="font-size:0.78rem;opacity:0.6">请按 Ctrl+F5 强制刷新，或稍后重试</p></div>';
   }
 
+  // 需要动态数据渲染的页面列表（这些页面缺失数据时才显示错误）
+  var DATA_REQUIRED_PAGES = ['rules', 'races', 'pantheon', 'glossary', 'modules'];
+
   async function init(pageName) {
     try {
       await window.AshData.loadAll();
     } catch(e) {
       console.error('[PageRender] loadAll failed:', e);
-      showError('数据加载异常：' + (e.message || e));
-      throw e;
-    }
-    var data = window.AshData;
-    if (!data.loaded) {
-      showError('数据未完成加载');
+      // 只在需要数据的页面才显示错误
+      if (DATA_REQUIRED_PAGES.indexOf(pageName) >= 0) {
+        showError('数据加载异常：' + (e.message || e));
+      }
       return;
     }
+    var data = window.AshData;
+    if (!data.loaded) return;
 
     // 检查关键文件是否缺失
     if (data.loadErrors && data.loadErrors.length > 0) {
