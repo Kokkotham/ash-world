@@ -60,33 +60,37 @@
 
     async loadAll() {
       if (this.loaded) return;
-      var results = await Promise.all([
-        loadJSON('races.json').catch(null),
-        loadJSON('deities.json').catch(null),
-        loadJSON('regions.json').catch(null),
-        loadJSON('modules.json').catch(null),
-        loadJSON('links.json').catch(null),
-        loadJSON('professions.json').catch(null),
-        loadJSON('divine-arts.json').catch(null),
-        loadJSON('story-rules.json').catch(null),
-        loadJSON('glossary.json').catch(null),
-        loadJSON('chapters.json').catch(null)
-      ]);
       var names = ['races','deities','regions','modules','links','professions','divineArts','storyRules','glossary','chapters'];
       this.loadErrors = [];
       var successCount = 0;
+
+      // 优先从内联数据读取（通过 <script> 标签加载，兼容 file:// 协议）
+      var inline = window.__AshDataInline || null;
+
       for (var i = 0; i < names.length; i++) {
-        if (results[i]) {
-          this[names[i]] = results[i];
+        if (inline && inline[names[i]] !== undefined) {
+          this[names[i]] = inline[names[i]];
           successCount++;
         } else {
-          this.loadErrors.push(names[i]);
+          // 内联数据不可用，尝试网络/文件加载
+          try {
+            var result = await loadJSON(names[i] + '.json');
+            if (result) {
+              this[names[i]] = result;
+              successCount++;
+            } else {
+              this.loadErrors.push(names[i]);
+            }
+          } catch(e) {
+            this.loadErrors.push(names[i]);
+          }
         }
       }
-      // 不再抛出错误 —— 即使全部失败也标记 loaded=true
-      // 由各页面自行决定如何处理缺失数据
+
+      // 即使全部失败也标记 loaded=true，由各页面自行决定如何处理缺失数据
       this.loaded = true;
-      console.log('[AshData] 加载完成: ' + successCount + '/' + names.length + ' 个文件成功');
+      console.log('[AshData] 加载完成: ' + successCount + '/' + names.length + ' 个文件成功' +
+        (inline ? ' (内联模式)' : ' (网络模式)'));
       if (this.loadErrors.length > 0) {
         console.warn('[AshData] 部分文件加载失败:', this.loadErrors);
       }
