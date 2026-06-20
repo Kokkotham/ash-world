@@ -4,17 +4,44 @@
 (function() {
   var DATA_PATH = '../data/';
 
-  // 安全fetch：单个文件失败不阻断其他
-  function safeFetch(name) {
-    return fetch(DATA_PATH + name)
-      .then(function(r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + name);
-        return r.json();
-      })
-      .catch(function(err) {
-        console.error('[AshData] 加载失败: ' + name, err);
-        return null;
-      });
+  // 通用加载函数：优先用 fetch，失败时自动回退到 XHR
+  // XHR 在 file:// 协议下的兼容性比 fetch 更好
+  function loadJSON(name) {
+    var url = DATA_PATH + name;
+
+    // 方式1：fetch（现代浏览器首选）
+    if (typeof fetch === 'function') {
+      return fetch(url)
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .catch(function(err) {
+          console.warn('[AshData] fetch 失败，尝试 XHR 回退:', name, err.message || err);
+          return loadJSON_XHR(name);  // 回退到 XHR
+        });
+    }
+
+    // 方式2：直接用 XHR
+    return loadJSON_XHR(name);
+  }
+
+  // XHR 回退加载器
+  function loadJSON_XHR(name) {
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', DATA_PATH + name, true);
+      xhr.responseType = 'json';
+      xhr.onload = function() {
+        if (xhr.status === 200 && xhr.response) {
+          resolve(xhr.response);
+        } else {
+          reject(new Error('XHR 状态 ' + xhr.status + ': ' + name));
+        }
+      };
+      xhr.onerror = function() { reject(new Error('XHR 网络错误: ' + name)); };
+      xhr.send();
+    });
   }
 
   window.AshData = {
@@ -29,32 +56,48 @@
     glossary: null,
     chapters: null,
     loaded: false,
-    loadErrors: [], // 记录哪些文件失败了
+    loadErrors: [],
 
     async loadAll() {
       if (this.loaded) return;
       var results = await Promise.all([
-        safeFetch('races.json'),
-        safeFetch('deities.json'),
-        safeFetch('regions.json'),
-        safeFetch('modules.json'),
-        safeFetch('links.json'),
-        safeFetch('professions.json'),
-        safeFetch('divine-arts.json'),
-        safeFetch('story-rules.json'),
-        safeFetch('glossary.json'),
-        safeFetch('chapters.json')
+        loadJSON('races.json').catch(null),
+        loadJSON('deities.json').catch(null),
+        loadJSON('regions.json').catch(null),
+        loadJSON('modules.json').catch(null),
+        loadJSON('links.json').catch(null),
+        loadJSON('professions.json').catch(null),
+        loadJSON('divine-arts.json').catch(null),
+        loadJSON('story-rules.json').catch(null),
+        loadJSON('glossary.json').catch(null),
+        loadJSON('chapters.json').catch(null)
       ]);
       var names = ['races','deities','regions','modules','links','professions','divineArts','storyRules','glossary','chapters'];
       this.loadErrors = [];
+      var successCount = 0;
       for (var i = 0; i < names.length; i++) {
         if (results[i]) {
           this[names[i]] = results[i];
+          successCount++;
         } else {
           this.loadErrors.push(names[i]);
         }
       }
+      // 关键文件缺失时抛出错误
+      if (successCount === 0) {
+        throw new Error(
+          '所有数据文件均无法加载。\n\n' +
+          '可能原因：\n' +
+          '1. 你正在通过 file:// 协议直接打开页面，浏览器限制了数据访问\n' +
+          '2. 数据文件不存在或路径不正确\n\n' +
+          '建议：通过 HTTP 服务器访问（如 python -m http.server）'
+        );
+      }
+      if (!this.chapters && this.loadErrors.indexOf('chapters') >= 0) {
+        throw new Error('核心文件 chapters.json 加载失败（缺失文件：' + this.loadErrors.join(', ') + '）。');
+      }
       this.loaded = true;
+      console.log('[AshData] 加载完成: ' + successCount + '/' + names.length + ' 个文件成功');
       if (this.loadErrors.length > 0) {
         console.warn('[AshData] 部分文件加载失败:', this.loadErrors);
       }

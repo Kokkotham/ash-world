@@ -174,7 +174,16 @@
   // ============================================================
   function renderRules(data) {
     var el = document.getElementById('onto-content');
-    if (!el || !data.chapters) return;
+    if (!el) return;
+    if (!data.chapters) {
+      el.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--ash-dim)">' +
+        '<h2 style="color:var(--ash-gold);margin-bottom:12px">⚠ 规则书数据不可用</h2>' +
+        '<p style="margin-bottom:8px">章节索引文件（chapters.json）未能加载。</p>' +
+        (data.loadErrors && data.loadErrors.length > 0 ?
+          '<p style="font-size:0.82rem;opacity:0.7">缺失文件：' + data.loadErrors.join('、') + '</p>' : '') +
+        '<p style="font-size:0.78rem;margin-top:16px;opacity:0.5">请尝试 Ctrl+F5 强制刷新</p></div>';
+      return;
+    }
     var chapters = data.chapters.chapters || [];
     var chapterIds = [];
 
