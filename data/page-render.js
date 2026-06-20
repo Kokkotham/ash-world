@@ -219,12 +219,15 @@
       }
     });
     subNavHTML += '</div>';
+    // 第三层导航：技能条目 pills（动态填充）
+    var detailNavHTML = '<div class="detail-nav-bar" id="detail-nav-bar"></div>';
 
     // 组装布局：导航区 + 空内容区（由 switchChapter 填充）
     var html = '<div class="reader-layout">';
     html += '<div class="reader-nav-wrapper">';
     html += '<nav class="reader-nav" id="reader-nav">' + navHTML + '</nav>';
     html += subNavHTML;
+    html += detailNavHTML;
     html += '</div>';
     html += '<div class="reader-main" id="reader-main"></div>';
     html += '</div>';
@@ -266,6 +269,11 @@
 
     // 更新子章节导航条显示
     updateSubNavVisibility(chId);
+
+    // 清除第三层导航（切换大章节时重置）
+    var detailBar = document.getElementById('detail-nav-bar');
+    if (detailBar) { detailBar.classList.remove('visible'); detailBar.innerHTML = ''; }
+    window.__currentAbilities = null;
 
     // 记录当前状态
     window.__rulesCurrentChapter = chId;
@@ -336,6 +344,58 @@
 
     window.__rulesCurrentChapter = parentCh.id;
     window.__rulesCurrentSub = subId;
+
+    // ---- 第三层导航：ch3 专修子分类有技能条目时，初始化 ----
+    if (parentCh.id === 'ch3' && targetSub.data_path && data) {
+      initThirdLevelNav(targetSub, parentCh, data);
+    } else {
+      // 非 ch3：隐藏第三层导航
+      var detailBar = document.getElementById('detail-nav-bar');
+      if (detailBar) { detailBar.classList.remove('visible'); detailBar.innerHTML = ''; }
+    }
+  }
+
+  // 初始化第三层导航（技能条目 pills）+ 绑定技能卡片点击
+  function initThirdLevelNav(sub, parentCh, data) {
+    var src = resolveDataSource(data, parentCh.data_source);
+    if (!src || !src.categories) return;
+
+    var catData = null;
+    for (var i = 0; i < src.categories.length; i++) {
+      if (src.categories[i].id === sub.data_path) {
+        catData = src.categories[i];
+        break;
+      }
+    }
+
+    var abilities = (catData && catData.abilities) ? catData.abilities : [];
+
+    // 存储当前技能列表供第三层导航使用
+    window.__currentAbilities = abilities;
+
+    // 填充第三层导航条
+    updateDetailNav(abilities, abilities.length > 0 ? abilities[0].name : null);
+
+    // 自动展示第一个技能的详情
+    if (abilities.length > 0) {
+      switchAbility(abilities[0], abilities);
+    }
+
+    // 绑定 .ability-item 卡片点击事件
+    var main = document.getElementById('reader-main');
+    if (main) {
+      main.querySelectorAll('.ability-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+          var idx = parseInt(this.getAttribute('data-ab-index'), 10);
+          if (!isNaN(idx) && abilities[idx]) {
+            switchAbility(abilities[idx], abilities);
+          }
+        });
+        item.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
+        });
+      });
+    }
   }
 
   // ---- 渲染单个子章节的内容 ----
@@ -348,10 +408,10 @@
     if (parentCh.data_source && data) {
       var src = resolveDataSource(data, parentCh.data_source);
       if (src) {
-        var catData = null;
 
-        // ch3 专修：从 categories 数组查找
+        // ch3 专修：从 categories 数组查找 → 渲染为可点击技能列表
         if (parentCh.id === 'ch3' && src.categories) {
+          var catData = null;
           for (var i = 0; i < src.categories.length; i++) {
             if (src.categories[i].id === sub.data_path) {
               catData = src.categories[i];
@@ -359,7 +419,7 @@
             }
           }
           if (catData && catData.abilities && catData.abilities.length > 0) {
-            html += renderGenericList(catData.abilities, sub);
+            html += renderAbilityList(catData.abilities);
           } else {
             html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
           }
@@ -663,7 +723,7 @@
           }
         }
         if (catData && catData.abilities && catData.abilities.length > 0) {
-          html += renderGenericList(catData.abilities, sub);
+          html += renderAbilityList(catData.abilities);
           hasContent = true;
         } else if (catData && catData.name) {
           html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
@@ -782,6 +842,161 @@
     return html;
   }
 
+  // ---- 技能条目列表渲染（ch3 专用，可点击卡片） ----
+  function renderAbilityList(abilities) {
+    var html = '';
+    if (!abilities || !abilities.length) return html;
+    html += '<div class="ability-list">';
+    abilities.forEach(function(ab, idx) {
+      var hint = '';
+      if (ab.keywords && ab.keywords.length > 0) {
+        hint = '<span class="ability-tag-hint">' + ab.keywords[0] + '</span>';
+      }
+      var activeCls = idx === 0 ? ' active' : '';
+      html += '<span class="ability-item' + activeCls + '" data-ab-index="' + idx + '" data-ab-name="' + (ab.name || ab.id || '') + '" role="button" tabindex="0">';
+      html += (ab.name || ab.id || '未命名');
+      html += hint;
+      html += '</span>';
+    });
+    html += '</div>';
+    // 详情占位容器（由 switchAbility 填充）
+    html += '<div class="ability-detail" id="ability-detail"></div>';
+    return html;
+  }
+
+  // ---- 切换到具体技能条目（展示完整详情） ----
+  function switchAbility(ability, abilities) {
+    var detailEl = document.getElementById('ability-detail');
+    if (!detailEl) return;
+
+    var html = '';
+
+    // ---- 标题行 ----
+    html += '<div class="detail-header">';
+    // 尝试从名称中解析 EB 标注，如 "奔跑：（1EB）"
+    var ebMatch = null;
+    if (ability.name && /（(\d*EB)/.test(ability.name)) {
+      ebMatch = ability.name.match(/（(\d+EB)/);
+    }
+    var displayName = ability.name ? ability.name.replace(/（[^）]+）/g, '').trim() : (ability.id || '');
+    html += '<h4>' + displayName + '</h4>';
+    if (ebMatch) {
+      html += '<span class="detail-eb">（' + ebMatch[1] + '）</span>';
+    }
+    html += '</div>';
+
+    // ---- 关键词标签 ----
+    if (ability.keywords && ability.keywords.length > 0) {
+      html += '<div class="ability-keywords">';
+      ability.keywords.forEach(function(kw) {
+        html += '<span class="kw-tag">' + kw + '</span>';
+      });
+      html += '</div>';
+    }
+
+    // ---- 完整描述 ----
+    if (ability.desc && ability.desc.length > 0) {
+      html += '<div class="detail-desc">';
+      ability.desc.forEach(function(d) {
+        if (d) html += '<p>' + d + '</p>';
+      });
+      html += '</div>';
+    }
+
+    // ---- 等级表格 ----
+    if (ability.level_table && ability.level_table.length > 0) {
+      html += '<table class="level-table">';
+      html += '<thead><tr>';
+      // 动态列头
+      var firstRow = ability.level_table[0];
+      var colOrder = ['level', 'bonus', 'cost', 'effect'];
+      var colLabels = { level: '等级', bonus: '加值', cost: '消耗', effect: '额外增益' };
+      colOrder.forEach(function(key) {
+        if (firstRow.hasOwnProperty(key)) {
+          html += '<th>' + (colLabels[key] || key) + '</th>';
+        }
+      });
+      html += '</tr></thead><tbody>';
+      ability.level_table.forEach(function(row) {
+        html += '<tr>';
+        colOrder.forEach(function(key) {
+          if (row.hasOwnProperty(key)) {
+            html += '<td>' + (row[key] || '') + '</td>';
+          }
+        });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+    }
+
+    detailEl.innerHTML = html;
+
+    // 更新列表中 active 状态
+    var listEl = detailEl.closest('.sub-section');
+    if (listEl) {
+      listEl.querySelectorAll('.ability-item').forEach(function(item) { item.classList.remove('active'); });
+      var nameToFind = ability.name || ability.id || '';
+      var activeItem = listEl.querySelector('.ability-item[data-ab-name="' + nameToFind + '"]');
+      if (activeItem) activeItem.classList.add('active');
+    }
+
+    // 更新第三层导航 pill 激活状态
+    updateDetailNavActive(ability);
+
+    window.__rulesCurrentAbility = ability;
+  }
+
+  // 更新第三层导航激活状态
+  function updateDetailNavActive(ability) {
+    var detailBar = document.getElementById('detail-nav-bar');
+    if (!detailBar || !ability) return;
+    detailBar.querySelectorAll('.detail-pill').forEach(function(p) { p.classList.remove('active'); });
+    var nameToFind = ability.name || ability.id || '';
+    var activePill = detailBar.querySelector('.detail-pill[data-ab-name="' + nameToFind + '"]');
+    if (activePill) activePill.classList.add('active');
+  }
+
+  // 填充/更新第三层导航条的 pills
+  function updateDetailNav(abilities, selectedName) {
+    var detailBar = document.getElementById('detail-nav-bar');
+    if (!detailBar) return;
+
+    if (!abilities || abilities.length === 0) {
+      detailBar.classList.remove('visible');
+      detailBar.innerHTML = '';
+      return;
+    }
+
+    var pillsHTML = '';
+    abilities.forEach(function(ab) {
+      var activeCls = (ab.name === selectedName) ? ' active' : '';
+      pillsHTML += '<span class="detail-pill' + activeCls + '" data-ab-name="' + (ab.name || ab.id || '') + '" role="button" tabindex="0">' + (ab.name || ab.id || '') + '</span>';
+    });
+
+    detailBar.innerHTML = pillsHTML;
+    detailBar.classList.add('visible');
+
+    // 绑定点击事件
+    detailBar.querySelectorAll('.detail-pill').forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        var targetName = this.getAttribute('data-ab-name');
+        // 从当前子分类的 abilities 中找到目标
+        if (window.__currentAbilities) {
+          for (var i = 0; i < window.__currentAbilities.length; i++) {
+            if (window.__currentAbilities[i].name === targetName ||
+                window.__currentAbilities[i].id === targetName) {
+              switchAbility(window.__currentAbilities[i], window.__currentAbilities);
+              break;
+            }
+          }
+        }
+      });
+      pill.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
+      });
+    });
+  }
+
   // ---- 速查版交互绑定：Tab 切换 + 子章节 Pill 切换 ----
   function setupLookupInteractions(chapters, data) {
     var nav = document.getElementById('reader-nav');
@@ -821,6 +1036,18 @@
         pill.addEventListener('keydown', function(e) {
           if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
         });
+      });
+    }
+
+    // ---- 技能卡片委托点击（第三层：能力条目） ----
+    var main = document.getElementById('reader-main');
+    if (main) {
+      main.addEventListener('click', function(e) {
+        var abilityItem = e.target.closest ? e.target.closest('.ability-item') : null;
+        if (!abilityItem) return;
+        var idx = parseInt(abilityItem.getAttribute('data-ab-index'), 10);
+        if (isNaN(idx) || !window.__currentAbilities || !window.__currentAbilities[idx]) return;
+        switchAbility(window.__currentAbilities[idx], window.__currentAbilities);
       });
     }
 
