@@ -283,7 +283,14 @@
       for (var i = 0; i < ch.content.length; i++) {
         var c = ch.content[i];
         if (typeof c === 'string') {
-          html += '<p>' + c + '</p>';
+          // 检测段落是否为标题
+          if (isHeadingLine(c)) {
+            html += '<h3>' + c + '</h3>';
+          } else if (isSubHeadingLine(c)) {
+            html += '<h4>' + c + '</h4>';
+          } else {
+            html += '<p>' + c + '</p>';
+          }
           hasContent = true;
         } else if (typeof c === 'object') {
           html += '<div class="sub-section">';
@@ -651,6 +658,29 @@
       var activeThumb = document.querySelector('.chapter-thumb[data-target="' + activeId + '"]');
       if (activeThumb) activeThumb.classList.add('active');
     }
+  }
+
+  // 检测标题行：数字+点开头、纯英文标题、以"教条"开头等
+  function isHeadingLine(text) {
+    if (!text) return false;
+    // 章节标题格式："1.选择种族"、"教条1：顺流"
+    if (/^\d+[\.\．]\s*\S/.test(text)) return true;
+    if (/^教条\d+/.test(text)) return true;
+    if (/^[A-Z][a-z]+ [A-Za-z]/.test(text) && text.length < 60) return true;
+    // 种族章节的二级标题
+    if (/^(古老种族|灵魔混血种族|自然灵能种族|其他人类分支|玩家种族)/.test(text)) return true;
+    return false;
+  }
+
+  // 检测子标题行：英文+中文混合标题、引言行等
+  function isSubHeadingLine(text) {
+    if (!text) return false;
+    if (text.length > 80) return false;
+    // 如 "灵涅Soul Nirvana"、"空洞浩劫Hollow Catastrophe"
+    if (/^[\u4e00-\u9fff]{2,8}[A-Z][a-z]/.test(text)) return true;
+    // 如 "序言："、"战斗准则"
+    if (/^(序言|前言|战斗准则|耐力行动|施法行动)/.test(text)) return true;
+    return false;
   }
 
   // 渲染等级/数据表格
