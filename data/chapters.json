@@ -1,5 +1,7 @@
 {
   "book_title": "灰烬世界规则书",
+  "version": "1.0",
+  "source": "core",
   "chapters": [
     {
       "id": "ch0",
@@ -31,7 +33,8 @@
         "《灰烬 EW》的规则，从不局限于官方既定的一隅天地。身为跨越维度的灵涅，你可踏足万千宇宙、穿梭无尽星域，任凭思绪构筑独属于你的星球与位面，亲手缔造全新的世界法则与浩瀚宇宙。",
         "挣脱固定剧本的束缚，自定义疆域、文明、宿命与危机，带领同行的冒险者，奔赴无数独一无二的征程，在无垠烬宇之中，解锁无限冒险，书写万般未知的传奇。"
       ],
-      "sub_sections": []
+      "sub_sections": [],
+      "source": "core"
     },
     {
       "id": "ch1",
@@ -163,7 +166,8 @@
         "部分物品自带专属抗性，平日无显性效果，但会随冒险场景变化，影响耐久损耗的概率与幅度。",
         "当物品耐久度降至 0 时，判定为彻底损毁，自身品级随之下降。其中部分物品可依托对应专业专修修复耐久、重回可用状态；亦有部分物品一旦完全损毁，便再也无法复原。"
       ],
-      "sub_sections": []
+      "sub_sections": [],
+      "source": "core"
     },
     {
       "id": "ch2",
@@ -214,14 +218,15 @@
         "世外流民Exiles",
         "并非只有空洞浩劫的冒险才是真正的冒险，享受着当下的生活，远离打打杀杀，在你眼里你只想做一个简单的人。你们不属于任何的阵营，同为灵涅的你们并不想为阵营效忠但任然对奈洛斯之环抱有憧憬，以至于奈洛斯之环的法律无法审视你们的言行。或许你们曾经是罪犯，失去亲人的流浪之人，某个贵族或者别的什么。但如今你们都失去了太多，而被迫考虑新的生活。但约束感让你们十分不自在，开启你们的冒险故事但你们的所作所为也将处于无阵营之中。成为世外流民你们将可以选择15个种族的任意种族组成小队。"
       ],
-      "sub_sections": []
+      "sub_sections": [],
+      "source": "core"
     },
     {
       "id": "ch3",
       "title": "专修",
       "number": "第3章",
       "type": "data",
-      "data_source": "professions.json",
+      "data_source": "professions",
       "data_path": "categories",
       "renderer": "profession_list",
       "content": [],
@@ -230,9 +235,10 @@
           "id": "ch3_instinct",
           "title": "本能专修",
           "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[0]",
-          "renderer": "profession_detail",
+          "data_source": "professions",
+          "data_path": "instinct",
+          "source": "core",
+          "renderer": "profession_category",
           "content": [],
           "sub_sections": []
         },
@@ -240,9 +246,10 @@
           "id": "ch3_knowledge",
           "title": "知识类专修",
           "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[1]",
-          "renderer": "profession_detail",
+          "data_source": "professions",
+          "data_path": "knowledge",
+          "source": "core",
+          "renderer": "profession_category",
           "content": [],
           "sub_sections": []
         },
@@ -250,9 +257,10 @@
           "id": "ch3_communication",
           "title": "交流类专修",
           "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[2]",
-          "renderer": "profession_detail",
+          "data_source": "professions",
+          "data_path": "communication",
+          "source": "core",
+          "renderer": "profession_category",
           "content": [],
           "sub_sections": []
         },
@@ -260,9 +268,10 @@
           "id": "ch3_art",
           "title": "艺术类专修",
           "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[3]",
-          "renderer": "profession_detail",
+          "data_source": "professions",
+          "data_path": "art",
+          "source": "core",
+          "renderer": "profession_category",
           "content": [],
           "sub_sections": []
         },
@@ -270,9 +279,10 @@
           "id": "ch3_survival",
           "title": "生存类专修",
           "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[4]",
-          "renderer": "profession_detail",
+          "data_source": "professions",
+          "data_path": "survival",
+          "source": "core",
+          "renderer": "profession_category",
           "content": [],
           "sub_sections": []
         },
@@ -280,29 +290,10 @@
           "id": "ch3_special",
           "title": "特殊类专修",
           "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[5]",
-          "renderer": "profession_detail",
-          "content": [],
-          "sub_sections": []
-        },
-        {
-          "id": "ch3_craft",
-          "title": "专业专修",
-          "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[6]",
-          "renderer": "profession_detail",
-          "content": [],
-          "sub_sections": []
-        },
-        {
-          "id": "ch3_weapon",
-          "title": "武器专修",
-          "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[7]",
-          "renderer": "profession_detail",
+          "data_source": "professions",
+          "data_path": "special",
+          "source": "core",
+          "renderer": "profession_category",
           "content": [],
           "sub_sections": []
         },
@@ -310,96 +301,441 @@
           "id": "ch3_combat",
           "title": "战斗造诣专修",
           "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[8]",
-          "renderer": "profession_detail",
+          "data_source": "professions",
+          "data_path": "combat",
+          "source": "core",
+          "renderer": "profession_category",
           "content": [],
           "sub_sections": []
+        },
+        {
+          "id": "ch3_craft",
+          "title": "专业工艺专修",
+          "type": "group",
+          "chapter": "3.7",
+          "source": "core",
+          "content": [],
+          "sub_sections": [
+            {
+              "id": "ch3_craft_processing",
+              "title": "专业工艺加工",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "craft_processing",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_craft_metal",
+              "title": "专业金属加工",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "craft_metal",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_craft_textile",
+              "title": "专业纺织加工",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "craft_textile",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_craft_rune",
+              "title": "专业符文缔造",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "craft_rune",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_craft_farming",
+              "title": "专业养殖培育",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "craft_farming",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_craft_scroll",
+              "title": "专业铭文卷轴",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "craft_scroll",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            }
+          ]
+        },
+        {
+          "id": "ch3_weapon",
+          "title": "武器专修",
+          "type": "group",
+          "chapter": "3.8",
+          "source": "core",
+          "content": [],
+          "sub_sections": [
+            {
+              "id": "ch3_weapon_short",
+              "title": "短柄类武器专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "weapon_short",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_weapon_medium",
+              "title": "中柄类武器专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "weapon_medium",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_weapon_long",
+              "title": "长柄类武器专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "weapon_long",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_weapon_heavy",
+              "title": "重柄类武器专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "weapon_heavy",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_weapon_ranged",
+              "title": "远程类武器专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "weapon_ranged",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_weapon_special",
+              "title": "特殊类武器专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "weapon_special",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            }
+          ]
         },
         {
           "id": "ch3_martial",
           "title": "武技",
-          "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[9]",
-          "renderer": "profession_detail",
+          "type": "group",
+          "chapter": "3.10",
+          "source": "core",
           "content": [],
-          "sub_sections": []
+          "sub_sections": [
+            {
+              "id": "ch3_martial_short",
+              "title": "短柄武技",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "martial_short",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_martial_medium",
+              "title": "中柄武技",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "martial_medium",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_martial_long",
+              "title": "长柄武技",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "martial_long",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_martial_heavy",
+              "title": "重柄武技",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "martial_heavy",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_martial_special",
+              "title": "特殊武技",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "martial_special",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            }
+          ]
         },
         {
           "id": "ch3_arcane",
           "title": "奥法专修",
-          "type": "data",
-          "data_source": "professions.json",
-          "data_path": "categories[10]",
-          "renderer": "profession_detail",
+          "type": "group",
+          "chapter": "3.11",
+          "source": "core",
           "content": [],
-          "sub_sections": []
+          "sub_sections": [
+            {
+              "id": "ch3_arcane_element",
+              "title": "奥法元素专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "arcane_element",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_arcane_transmutation",
+              "title": "奥法变形专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "arcane_transmutation",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_arcane_environment",
+              "title": "奥法环境专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "arcane_environment",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_arcane_protection",
+              "title": "奥法保护专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "arcane_protection",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_arcane_summon",
+              "title": "奥法召唤专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "arcane_summon",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_arcane_extra_sense",
+              "title": "奥法特感专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "arcane_extra_sense",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_arcane_music",
+              "title": "奥法乐理专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "arcane_music",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_arcane_mimicry",
+              "title": "奥法拟象专修",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "arcane_mimicry",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            },
+            {
+              "id": "ch3_arcane_fusion",
+              "title": "统合法术聚变",
+              "type": "data",
+              "data_source": "professions",
+              "data_path": "arcane_fusion",
+              "source": "core",
+              "renderer": "profession_category",
+              "content": [],
+              "sub_sections": []
+            }
+          ]
         }
-      ]
+      ],
+      "source": "core"
     },
     {
       "id": "ch4",
       "title": "神术",
       "number": "第4章",
       "type": "data",
-      "data_source": "divine-arts.json",
+      "data_source": "divine-arts",
       "data_path": "pantheons",
       "renderer": "divine_list",
       "content": [],
-      "sub_sections": []
+      "sub_sections": [
+        {
+          "id": "ch4_father",
+          "title": "纳露安人类父神系",
+          "type": "data",
+          "data_source": "divine-arts",
+          "data_path": "pantheons[0]",
+          "source": "core",
+          "renderer": "pantheon",
+          "content": [
+            "父神系教条戒律",
+            "《德米乌尔格斯教典》《荆棘》(可从CHM4.1查找）",
+            "《尤里昂圣典》"
+          ],
+          "sub_sections": []
+        },
+        {
+          "id": "ch4_mother",
+          "title": "纳露安人类母神系",
+          "type": "data",
+          "data_source": "divine-arts",
+          "data_path": "pantheons[1]",
+          "source": "core",
+          "renderer": "pantheon",
+          "content": [
+            "母神系教条戒律",
+            "《柯诺斯库拉教义》",
+            "时序海妖的信徒并不将她视为一位会回应祈祷的人格神。因此她的追随者们耐心、深邃，且极具远见。他们不向女神祈求更多，只求能看懂时间的潮汐，以便在正确的时刻做出正确的判断。"
+          ],
+          "sub_sections": []
+        }
+      ],
+      "source": "core"
     },
     {
       "id": "ch5",
-      "title": "故事运作",
+      "title": "故事运作与角色投掷",
       "number": "第5章",
       "type": "data",
-      "data_source": "story-rules.json",
+      "data_source": "story-rules",
       "data_path": "sections",
       "renderer": "story_rules",
       "content": [],
       "sub_sections": [
         {
-          "id": "ch5_combat",
+          "id": "ch5_战斗与挑战",
           "title": "战斗与挑战",
           "type": "data",
-          "data_source": "story-rules.json",
-          "data_path": "sections[0]",
-          "renderer": "story_rule_detail",
+          "data_source": "story-rules",
+          "data_path": "战斗与挑战",
+          "source": "core",
+          "renderer": "story_section",
           "content": [],
           "sub_sections": []
         },
         {
-          "id": "ch5_social",
+          "id": "ch5_交流与生活",
           "title": "交流与生活",
           "type": "data",
-          "data_source": "story-rules.json",
-          "data_path": "sections[1]",
-          "renderer": "story_rule_detail",
+          "data_source": "story-rules",
+          "data_path": "交流与生活",
+          "source": "core",
+          "renderer": "story_section",
           "content": [],
           "sub_sections": []
         },
         {
-          "id": "ch5_management",
+          "id": "ch5_经营与管理",
           "title": "经营与管理",
           "type": "data",
-          "data_source": "story-rules.json",
-          "data_path": "sections[2]",
-          "renderer": "story_rule_detail",
+          "data_source": "story-rules",
+          "data_path": "经营与管理",
+          "source": "core",
+          "renderer": "story_section",
           "content": [],
           "sub_sections": []
         },
         {
-          "id": "ch5_status",
+          "id": "ch5_效应状态词缀",
           "title": "效应状态词缀",
           "type": "data",
-          "data_source": "story-rules.json",
-          "data_path": "sections[3]",
-          "renderer": "story_rule_detail",
+          "data_source": "story-rules",
+          "data_path": "效应状态词缀",
+          "source": "core",
+          "renderer": "story_section",
           "content": [],
           "sub_sections": []
         }
-      ]
+      ],
+      "source": "core"
     }
   ]
 }

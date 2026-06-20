@@ -432,18 +432,21 @@
       ch.sub_sections.forEach(function(sub) {
         html += '<div class="sub-section">';
         html += '<h3>' + (sub.title || sub.name || '') + '</h3>';
-        // 尝试解析 data_path 获取具体类别数据
-        if (sub.data_path && src) {
-          var catData = resolveDataPath(src, sub.data_path);
-          if (catData && catData.abilities && catData.abilities.length > 0) {
-            html += renderGenericList(catData.abilities, sub);
-            hasContent = true;
-          } else if (catData && catData.name) {
-            // 有类别名但无内容
-            html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
-          } else {
-            html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+        // 从 src.categories 数组里按 id 查找分类数据
+        var catData = null;
+        if (src && src.categories && Array.isArray(src.categories)) {
+          for (var i = 0; i < src.categories.length; i++) {
+            if (src.categories[i].id === sub.data_path) {
+              catData = src.categories[i];
+              break;
+            }
           }
+        }
+        if (catData && catData.abilities && catData.abilities.length > 0) {
+          html += renderGenericList(catData.abilities, sub);
+          hasContent = true;
+        } else if (catData && catData.name) {
+          html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
         } else {
           html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
         }
@@ -498,14 +501,19 @@
       ch.sub_sections.forEach(function(sub) {
         html += '<div class="sub-section">';
         html += '<h3>' + (sub.title || sub.name || '') + '</h3>';
-        if (sub.data_path && src) {
-          var secData = resolveDataPath(src, sub.data_path);
-          if (secData && secData.rules && secData.rules.length > 0) {
-            html += renderGenericList(secData.rules, sub);
-            hasContent = true;
-          } else {
-            html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
+        // 从 src.sections 数组里按 name 或 id 查找章节数据
+        var secData = null;
+        if (src && src.sections && Array.isArray(src.sections)) {
+          for (var i = 0; i < src.sections.length; i++) {
+            if (src.sections[i].name === sub.data_path || src.sections[i].id === sub.data_path) {
+              secData = src.sections[i];
+              break;
+            }
           }
+        }
+        if (secData && secData.rules && secData.rules.length > 0) {
+          html += renderGenericList(secData.rules, sub);
+          hasContent = true;
         } else {
           html += '<div class="chapter-placeholder">本章内容整理中，敬请期待</div>';
         }
