@@ -415,10 +415,27 @@
     window.__rulesCurrentChapter = parentCh.id;
     window.__rulesCurrentSub = subId;
 
+    // ---- ch2 特殊处理：直接子分类（种族）点击后直接显示详情 ----
+    if (parentCh.id === 'ch2' && targetSub.type === 'data' && targetSub.data_path && data) {
+      // 解析种族数据并直接显示详情
+      var src = resolveDataSource(data, targetSub.data_source);
+      if (src) {
+        var race = resolveDataPath(src, targetSub.data_path);
+        if (race && typeof race === 'object') {
+          switchRace(race);
+          // 隐藏第三层导航（ch2不需要）
+          var detailBar = document.getElementById('detail-nav-bar');
+          if (detailBar) { detailBar.classList.remove('visible'); detailBar.innerHTML = ''; }
+          return; // 直接返回，不执行后续的第三层导航初始化
+        }
+      }
+    }
+
     // ---- 第三层导航：按章节类型初始化 ----
     if (parentCh.id === 'ch3' && targetSub.data_path && data) {
       initThirdLevelNav(targetSub, parentCh, data);
-    } else if (parentCh.id === 'ch2' && targetSub.data_path && data) {
+    } else if (parentCh.id === 'ch2' && targetSub.data_path && data && targetSub.type !== 'data') {
+      // 保留旧逻辑：如果ch2的子分类不是data类型，调用initRaceNav（分类→种族列表）
       initRaceNav(targetSub, parentCh, data);
     } else {
       // 非 ch2/ch3：隐藏第三层导航
