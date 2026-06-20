@@ -183,7 +183,7 @@
 /* ---- 子章节导航条 ---- */
 .sub-nav-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;       /* 不换行，优先横向滚动 */
   align-items: center;
   gap: 6px;
   padding: 0 16px;
@@ -193,20 +193,35 @@
   max-height: 0;
   overflow: hidden;
   transition: all 0.3s ease;
-  opacity: 0;
+  opacity:0;
 }
 
 .sub-nav-bar.visible {
   min-height: 36px;
-  max-height: 120px;
+  max-height: 80px;        /* 足够显示一行pills */
   opacity: 1;
-  padding: 6px 16px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  padding: 8px 16px;
+  overflow-x: auto;        /* 横向滚动 */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* iOS平滑滚动 */
+  /* 渐变遮罩：右侧提示还有更多 */
+  mask-image: linear-gradient(to right, transparent 0, black 12px, calc(100% - 20px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 12px, calc(100% - 20px), transparent 100%);
 }
 
+/* 细滚动条样式（不再完全隐藏） */
 .sub-nav-bar::-webkit-scrollbar {
-  display: none;
+  height: 3px;
+}
+.sub-nav-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sub-nav-bar::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 76, 0.25);
+  border-radius: 2px;
+}
+.sub-nav-bar::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 168, 76, 0.45);
 }
 
 /* 子章节 pill */
@@ -240,7 +255,7 @@
 /* ---- 第三层导航：技能条目 pills ---- */
 .detail-nav-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;       /* 不换行，优先横向滚动 */
   align-items: center;
   gap: 5px;
   padding: 0 16px;
@@ -250,20 +265,34 @@
   max-height: 0;
   overflow: hidden;
   transition: all 0.25s ease;
-  opacity: 0;
+  opacity:0;
 }
 
 .detail-nav-bar.visible {
   min-height: 32px;
-  max-height: 100px;
+  max-height: 70px;        /* 足够显示一行pills */
   opacity: 1;
-  padding: 5px 16px;
-  overflow-x: auto;
+  padding: 6px 16px;
+  overflow-x: auto;        /* 横向滚动 */
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(to right, transparent 0, black 12px, calc(100% - 20px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 12px, calc(100% - 20px), transparent 100%);
 }
 
+/* 细滚动条样式 */
 .detail-nav-bar::-webkit-scrollbar {
-  display: none;
+  height: 3px;
+}
+.detail-nav-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.detail-nav-bar::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 76, 0.2);
+  border-radius: 2px;
+}
+.detail-nav-bar::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 168, 76, 0.4);
 }
 
 /* 技能条目 pill（第三层） */
