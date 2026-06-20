@@ -873,3 +873,37 @@ body::before {
         font-size: 0.88rem;
     }
 }
+
+/* ─── 敬请期待占位 ─── */
+.coming-soon {
+    text-align: center;
+    padding: 80px 20px;
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.coming-soon-icon {
+    font-size: 3.5rem;
+    color: var(--ash-gold-dim);
+    margin-bottom: 24px;
+    opacity: 0.6;
+}
+.coming-soon-title {
+    font-family: 'Cinzel', 'Noto Serif SC', serif;
+    font-size: 1.8rem;
+    color: var(--ash-gold);
+    margin-bottom: 16px;
+    letter-spacing: 0.1em;
+}
+.coming-soon-desc {
+    color: var(--ash-dim);
+    font-size: 0.95rem;
+    max-width: 480px;
+    line-height: 1.8;
+}
+.coming-soon-desc strong {
+    color: var(--ash-text);
+    font-weight: 700;
+}
