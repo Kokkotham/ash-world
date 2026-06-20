@@ -2,7 +2,20 @@
 // 所有页面引用此文件，即可从统一数据层读取
 
 (function() {
-  const DATA_PATH = '../data/';
+  var DATA_PATH = '../data/';
+
+  // 安全fetch：单个文件失败不阻断其他
+  function safeFetch(name) {
+    return fetch(DATA_PATH + name)
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + name);
+        return r.json();
+      })
+      .catch(function(err) {
+        console.error('[AshData] 加载失败: ' + name, err);
+        return null;
+      });
+  }
 
   window.AshData = {
     races: null,
@@ -16,32 +29,35 @@
     glossary: null,
     chapters: null,
     loaded: false,
+    loadErrors: [], // 记录哪些文件失败了
 
     async loadAll() {
       if (this.loaded) return;
-      const [races, deities, regions, modules, links, professions, divineArts, storyRules, glossary, chapters] = await Promise.all([
-        fetch(DATA_PATH + 'races.json').then(r => r.json()),
-        fetch(DATA_PATH + 'deities.json').then(r => r.json()),
-        fetch(DATA_PATH + 'regions.json').then(r => r.json()),
-        fetch(DATA_PATH + 'modules.json').then(r => r.json()),
-        fetch(DATA_PATH + 'links.json').then(r => r.json()),
-        fetch(DATA_PATH + 'professions.json').then(r => r.json()),
-        fetch(DATA_PATH + 'divine-arts.json').then(r => r.json()),
-        fetch(DATA_PATH + 'story-rules.json').then(r => r.json()),
-        fetch(DATA_PATH + 'glossary.json').then(r => r.json()),
-        fetch(DATA_PATH + 'chapters.json').then(r => r.json())
+      var results = await Promise.all([
+        safeFetch('races.json'),
+        safeFetch('deities.json'),
+        safeFetch('regions.json'),
+        safeFetch('modules.json'),
+        safeFetch('links.json'),
+        safeFetch('professions.json'),
+        safeFetch('divine-arts.json'),
+        safeFetch('story-rules.json'),
+        safeFetch('glossary.json'),
+        safeFetch('chapters.json')
       ]);
-      this.races = races;
-      this.deities = deities;
-      this.regions = regions;
-      this.modules = modules;
-      this.links = links;
-      this.professions = professions;
-      this.divineArts = divineArts;
-      this.storyRules = storyRules;
-      this.glossary = glossary;
-      this.chapters = chapters;
+      var names = ['races','deities','regions','modules','links','professions','divineArts','storyRules','glossary','chapters'];
+      this.loadErrors = [];
+      for (var i = 0; i < names.length; i++) {
+        if (results[i]) {
+          this[names[i]] = results[i];
+        } else {
+          this.loadErrors.push(names[i]);
+        }
+      }
       this.loaded = true;
+      if (this.loadErrors.length > 0) {
+        console.warn('[AshData] 部分文件加载失败:', this.loadErrors);
+      }
     },
 
     // 查所有关联：给一个对象的 type+id，返回所有关联内容

@@ -1,15 +1,36 @@
 // 灰烬世界 Ontology 页面渲染引擎
 // 所有子页面引用此文件，即可从 data/ 读取内容并显示关联
 (function() {
+
+  // 用户可见的错误提示（替代静默 return）
+  function showError(msg) {
+    var el = document.getElementById('onto-content');
+    if (!el) return;
+    el.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--ash-dim)">' +
+      '<h2 style="color:var(--ash-gold);margin-bottom:12px">⚠ 内容加载异常</h2>' +
+      '<p style="margin-bottom:8px">' + msg + '</p>' +
+      '<p style="font-size:0.78rem;opacity:0.6">请按 Ctrl+F5 强制刷新，或稍后重试</p></div>';
+  }
+
   async function init(pageName) {
     try {
       await window.AshData.loadAll();
     } catch(e) {
       console.error('[PageRender] loadAll failed:', e);
+      showError('数据加载异常：' + (e.message || e));
+      throw e;
+    }
+    var data = window.AshData;
+    if (!data.loaded) {
+      showError('数据未完成加载');
       return;
     }
-    const data = window.AshData;
-    if (!data.loaded) return;
+
+    // 检查关键文件是否缺失
+    if (data.loadErrors && data.loadErrors.length > 0) {
+      console.warn('[PageRender] 缺失文件:', data.loadErrors);
+      // 不阻断渲染，但记录缺失
+    }
 
     switch (pageName) {
       case 'modules': renderModules(data); break;
