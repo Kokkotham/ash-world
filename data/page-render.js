@@ -266,6 +266,9 @@
         // 以 "XXX专修（X）" 格式的是小标题
         if (/^[^\s]+（[ABCL]）$/.test(p.trim()) || /^[^\s]+\([ABCL]\)$/.test(p.trim())) {
           contentHTML += '<h4 class="overview-subtitle">' + p + '</h4>';
+        // 中文开头+冒号：属性名小标题（如"躯魄："、"核心躯魄："、"躯魄劣势限制："）
+        } else if (/^[一-鿿].*[:：]/.test(p.trim())) {
+          contentHTML += '<h4 class="content-subheading">' + p + '</h4>';
         } else if (p.match(/^[A-Za-z]/)) {
           // 英文开头的行作为副标题
           contentHTML += '<h3 class="overview-title">' + p + '</h3>';
@@ -283,8 +286,7 @@
     contentHTML += '</section>';
 
     main.innerHTML = contentHTML;
-    main.scrollTop = 0;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 不滚动到顶部，保持当前阅读位置
 
     // 更新标签激活状态
     var nav = document.getElementById('reader-nav');
@@ -392,8 +394,7 @@
     contentHTML += '</div></section>';
 
     main.innerHTML = contentHTML;
-    main.scrollTop = 0;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 不滚动到顶部，保持当前阅读位置
 
     // 确保父章节 tab 高亮
     var nav = document.getElementById('reader-nav');
@@ -443,9 +444,14 @@
       contentHTML += '<div class="chapter-body">';
       contentHTML += '<div class="chapter-overview">';
       ch.content.forEach(function(p) {
+        // 以 "XXX专修（X）" 格式的是小标题
         if (/^[^\s]+（[ABCL]）$/.test(p.trim()) || /^[^\s]+\([ABCL]\)$/.test(p.trim())) {
           contentHTML += '<h4 class="overview-subtitle">' + p + '</h4>';
+        // 中文开头+冒号：属性名小标题（如"躯魄："、"核心躯魄："）
+        } else if (/^[一-鿿].*[:：]/.test(p.trim())) {
+          contentHTML += '<h4 class="content-subheading">' + p + '</h4>';
         } else if (p.match(/^[A-Za-z]/)) {
+          // 英文开头的行作为副标题
           contentHTML += '<h3 class="overview-title">' + p + '</h3>';
         } else {
           contentHTML += '<p>' + p + '</p>';
@@ -457,7 +463,7 @@
 
     contentHTML += '</section>';
     main.innerHTML = contentHTML;
-    main.scrollTop = 0;
+    // 不滚动到顶部，保持当前阅读位置
   }
 
   // 初始化第三层导航（技能条目 pills），不自动选中任何一个

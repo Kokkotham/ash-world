@@ -366,6 +366,18 @@
   text-align: justify;
 }
 
+/* ---- 内容小标题样式（中文+冒号格式） ---- */
+.content-subheading {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ash-gold);
+  margin: 18px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  letter-spacing: 0.05em;
+}
+
 /* ---- 子分类快速目录（章节概览模式下的分类卡片列表） ---- */
 .sub-category-list {
   margin-top: 8px;
