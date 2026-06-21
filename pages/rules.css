@@ -35,6 +35,77 @@
   background: linear-gradient(90deg, transparent, var(--ash-gold-dim), var(--ash-gold), var(--ash-gold-dim), transparent);
 }
 
+/* ---- 种族分支导航 pills ---- */
+.branch-nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 16px 0 12px;
+  padding: 10px 14px;
+  background: rgba(201, 168, 76, 0.06);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 8px;
+}
+.branch-pill {
+  padding: 4px 14px;
+  font-size: 0.82rem;
+  color: var(--ash-text);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.branch-pill:hover {
+  background: rgba(201, 168, 76, 0.12);
+  border-color: var(--ash-gold-dim);
+  color: var(--ash-gold);
+}
+.branch-pill.active {
+  background: rgba(201, 168, 76, 0.18);
+  border-color: var(--ash-gold);
+  color: var(--ash-gold);
+}
+
+/* ---- 分支标题 ---- */
+.branch-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  color: var(--ash-gold);
+  margin: 28px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  scroll-margin-top: 12px;
+}
+
+/* ---- 种族特质展示 ---- */
+.race-traits-section {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(201, 168, 76, 0.1);
+}
+.trait-item {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: rgba(201, 168, 76, 0.04);
+  border-left: 3px solid var(--ash-gold-dim);
+  border-radius: 0 6px 6px 0;
+}
+.trait-name {
+  font-size: 0.9rem;
+  color: var(--ash-gold);
+  display: block;
+  margin-bottom: 4px;
+}
+.trait-desc {
+  font-size: 0.85rem;
+  color: var(--ash-text);
+  opacity: 0.85;
+  line-height: 1.6;
+  margin: 0;
+}
+
 /* ---- 阅读器整体布局：上下堆叠 ---- */
 .reader-layout {
   display: flex;

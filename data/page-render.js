@@ -177,6 +177,20 @@
     el.innerHTML = html;
   }
 
+  // 检测中英混合标题（如"灰烬世界Ember world"、"灵涅Soul Nirvana"）
+  // 规则：同时含中文字符和英文字母、不以句号等标点结尾、长度适中
+  function isMixedTitle(text) {
+    if (!text || text.length > 80) return false;
+    var hasCJK = /[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/.test(text);
+    var hasLatin = /[A-Za-z]/.test(text);
+    if (!hasCJK || !hasLatin) return false;
+    // 不以句子标点结尾
+    if (/[。！？.!?,;；]$/.test(text)) return false;
+    // 不是纯数字+单位（如"1.5米——1.9米"）
+    if (/^[\d\s\-—–.]+$/.test(text)) return false;
+    return true;
+  }
+
   // ============================================================
   //  规则书速查版：Tab 切换面板（非滚动阅读器）
   //  点击章节标签 → 切换内容区 | 点击子章节 pill → 切换子内容
@@ -262,14 +276,18 @@
       contentHTML += '<div class="chapter-body">';
       contentHTML += '<div class="chapter-overview">';
       ch.content.forEach(function(p) {
+        var pt = p.trim();
         // 以 "XXX专修（X）" 格式的是小标题
-        if (/^[^\s]+（[ABCL]）$/.test(p.trim()) || /^[^\s]+\([ABCL]\)$/.test(p.trim())) {
+        if (/^[^\s]+（[ABCL]）$/.test(pt) || /^[^\s]+\([ABCL]\)$/.test(pt)) {
           contentHTML += '<h4 class="overview-subtitle">' + p + '</h4>';
-        // 中文开头+冒号：属性名小标题（如"躯魄："、"核心躯魄："、"躯魄劣势限制："）
-        } else if (/^[一-鿿].*[:：]/.test(p.trim())) {
+        // 中文开头+冒号：属性名小标题（如"躯魄："、"核心躯魄："）
+        } else if (/^[一-鿿].*[:：]/.test(pt)) {
           contentHTML += '<h4 class="content-subheading">' + p + '</h4>';
         } else if (p.match(/^[A-Za-z]/)) {
-          // 英文开头的行作为副标题
+          // 纯英文开头的行作为副标题
+          contentHTML += '<h3 class="overview-title">' + p + '</h3>';
+        } else if (isMixedTitle(pt)) {
+          // 中英混合短文本（如"灰烬世界Ember world"、"灵涅Soul Nirvana"）作为章节小标题
           contentHTML += '<h3 class="overview-title">' + p + '</h3>';
         } else {
           contentHTML += '<p>' + p + '</p>';
@@ -377,7 +395,11 @@
       contentHTML += '<div class="sub-section-preface" id="sub-section-preface">';
       contentHTML += '<h3 class="sub-preface-title">' + (targetSub.title || targetSub.name || '') + '</h3>';
       targetSub.content.forEach(function(p) {
-        if (/^[A-Za-z]/.test(p.trim()) && !/[\u4e00-\u9fff]/.test(p)) {
+        var pt = p.trim();
+        if (/^[A-Za-z]/.test(pt) && !/[\u4e00-\u9fff]/.test(pt)) {
+          contentHTML += '<h4 class="overview-title">' + p + '</h4>';
+        } else if (isMixedTitle(pt)) {
+          // 中英混合标题
           contentHTML += '<h4 class="overview-title">' + p + '</h4>';
         } else {
           contentHTML += '<p>' + p + '</p>';
@@ -420,7 +442,7 @@
       if (src) {
         var race = resolveDataPath(src, targetSub.data_path);
         if (race && typeof race === 'object') {
-          switchRace(race);
+          switchRace(race, data);
           // 隐藏第三层导航（ch2不需要）
           var detailBar = document.getElementById('detail-nav-bar');
           if (detailBar) { detailBar.classList.remove('visible'); detailBar.innerHTML = ''; }
@@ -458,14 +480,18 @@
       contentHTML += '<div class="chapter-body">';
       contentHTML += '<div class="chapter-overview">';
       ch.content.forEach(function(p) {
+        var pt = p.trim();
         // 以 "XXX专修（X）" 格式的是小标题
-        if (/^[^\s]+（[ABCL]）$/.test(p.trim()) || /^[^\s]+\([ABCL]\)$/.test(p.trim())) {
+        if (/^[^\s]+（[ABCL]）$/.test(pt) || /^[^\s]+\([ABCL]\)$/.test(pt)) {
           contentHTML += '<h4 class="overview-subtitle">' + p + '</h4>';
         // 中文开头+冒号：属性名小标题（如"躯魄："、"核心躯魄："）
-        } else if (/^[一-鿿].*[:：]/.test(p.trim())) {
+        } else if (/^[一-鿿].*[:：]/.test(pt)) {
           contentHTML += '<h4 class="content-subheading">' + p + '</h4>';
         } else if (p.match(/^[A-Za-z]/)) {
-          // 英文开头的行作为副标题
+          // 纯英文开头的行作为副标题
+          contentHTML += '<h3 class="overview-title">' + p + '</h3>';
+        } else if (isMixedTitle(pt)) {
+          // 中英混合短文本作为章节小标题
           contentHTML += '<h3 class="overview-title">' + p + '</h3>';
         } else {
           contentHTML += '<p>' + p + '</p>';
@@ -1389,13 +1415,13 @@
             }
           }
         }
-        if (targetRace) switchRace(targetRace);
+        if (targetRace) switchRace(targetRace, data);
       });
       detailBar.appendChild(pill);
     });
   }
 
-  function switchRace(race) {
+  function switchRace(race, dataObj) {
     var detailEl = document.getElementById('ability-detail');
     if (!detailEl) return;
     window.__rulesCurrentRaceName = race.name || race.id || null;
@@ -1433,15 +1459,153 @@
       });
       html += '</div>';
     }
-    if (race.detail && race.detail.length > 0) {
-      html += '<div class="race-detail-body">';
-      race.detail.forEach(function(p) {
-        html += '<p>' + p + '</p>';
+
+    // ---- 查找分支数据 ----
+    var branchData = null;
+    if (dataObj && dataObj.races) {
+      branchData = findRaceBranchData(dataObj.races, race);
+    }
+
+    // ---- 渲染详情内容 ----
+    var detailContent = (branchData && branchData.detail) ? branchData.detail : (race.detail || []);
+    if (detailContent.length > 0) {
+      var parsed = parseBranchSections(detailContent);
+
+      if (parsed.branches.length > 0) {
+        // 分支导航 pills
+        html += '<div class="branch-nav-bar">';
+        parsed.branches.forEach(function(b, bi) {
+          html += '<span class="branch-pill" data-branch-anchor="branch-' + bi + '" role="button" tabindex="0">' + b.title + '</span>';
+        });
+        html += '</div>';
+
+        // 内容区：按段落渲染，分支标题带锚点 id
+        html += '<div class="race-detail-body">';
+        parsed.sections.forEach(function(sec, si) {
+          if (sec.type === 'branch-header') {
+            html += '<h4 class="branch-title" id="branch-' + sec.branchIdx + '">' + escapeHtml(sec.text) + '</h4>';
+          } else if (sec.type === 'section-header') {
+            html += '<h4 class="content-subheading">' + escapeHtml(sec.text) + '</h4>';
+          } else if (isMixedTitle(sec.text)) {
+            html += '<h3 class="overview-title">' + escapeHtml(sec.text) + '</h3>';
+          } else if (/^[A-Za-z]/.test(sec.text.trim()) && !/[\u4e00-\u9fff]/.test(sec.text)) {
+            html += '<h4 class="overview-title">' + escapeHtml(sec.text) + '</h4>';
+          } else {
+            html += '<p>' + escapeHtml(sec.text) + '</p>';
+          }
+        });
+        html += '</div>';
+      } else {
+        // 无分支：平铺渲染（支持混合标题检测）
+        html += '<div class="race-detail-body">';
+        detailContent.forEach(function(p) {
+          var pt = p.trim();
+          if (isMixedTitle(pt)) {
+            html += '<h3 class="overview-title">' + escapeHtml(p) + '</h3>';
+          } else if (/^[A-Za-z]/.test(pt) && !/[\u4e00-\u9fff]/.test(pt)) {
+            html += '<h4 class="overview-title">' + escapeHtml(p) + '</h4>';
+          } else {
+            html += '<p>' + escapeHtml(p) + '</p>';
+          }
+        });
+        html += '</div>';
+      }
+    }
+
+    // 种族特质（traits）单独展示
+    if (race.traits && race.traits.length > 0) {
+      html += '<div class="race-traits-section"><h4 class="content-subheading">种族灵涅特质</h4>';
+      race.traits.forEach(function(t) {
+        html += '<div class="trait-item">';
+        html += '<strong class="trait-name">' + escapeHtml(t.name) + '</strong>';
+        html += '<p class="trait-desc">' + escapeHtml(t.desc) + '</p>';
+        html += '</div>';
       });
       html += '</div>';
     }
+
     html += '</div>';
     detailEl.innerHTML = html;
+    bindBranchNavClick(detailEl);
+  }
+
+  // 在 races 数据中查找匹配的分支数据
+  function findRaceBranchData(racesData, race) {
+    if (!racesData || !race) return null;
+    var raceId = race.id || '';
+    var raceName = race.name || '';
+    var branchKeys = ['human_branches', 'spirit_mixed', 'nature_psionic', 'ancient'];
+    for (var k = 0; k < branchKeys.length; k++) {
+      var arr = racesData[branchKeys[k]];
+      if (!arr || !Array.isArray(arr)) continue;
+      for (var i = 0; i < arr.length; i++) {
+        var b = arr[i];
+        if (b.id === raceId ||
+            b.name === raceName ||
+            b.name === raceName.replace(/人类$/, '') ||
+            raceId.indexOf(b.id) >= 0 ||
+            b.id.indexOf(raceId.replace(/_human$/, '')) >= 0) {
+          return b;
+        }
+      }
+    }
+    return null;
+  }
+
+  // 解析 detail 数组，识别分支段落结构
+  function parseBranchSections(detailArr) {
+    var sections = [];
+    var branches = [];
+    for (var i = 0; i < detailArr.length; i++) {
+      var text = String(detailArr[i]).trim();
+      var secType = 'paragraph';
+      if (isBranchTitle(text, detailArr, i)) {
+        secType = 'branch-header';
+        branches.push({ title: text, idx: branches.length });
+      } else if (/^[一-鿿].*[:：\s]*$/.test(text) && text.length < 50 && !/^来源|备注|参考/.test(text) && !/^(肤色|瞳色|发色|根源属地)/.test(text)) {
+        secType = 'section-header';
+      }
+      sections.push({ type: secType, text: text, branchIdx: branches.length - 1 });
+    }
+    return { sections: sections, branches: branches };
+  }
+
+  // 判断一行文本是否是分支标题
+  function isBranchTitle(text, arr, idx) {
+    var pt = text.trim();
+    if (!pt || pt.length > 20 || pt.length < 2) return false;
+    if (/[。！？.!?,;；]$/.test(pt)) return false;
+    if (/[:：]$/.test(pt)) return false;
+    if (/^[\d\s\-—–.]+$/.test(pt)) return false;
+    if (/^["「『【]/.test(pt)) return false;
+    if (/^(肤色|瞳色|发色|根源属地|根源种族能力|特征|语言|平均身高|生育率|种族体型|成年岁数|种族抗性|基础主属性加成|种族能力|备注|来源)/.test(pt)) return false;
+    var mostlyCJK = /[\u4e00-\u9fff]/.test(pt);
+    if (!mostlyCJK) return false;
+    // 排除纯属性标签（如"躯魄+1"）
+    if (/^[^\s]*[+-]\d/.test(pt)) return false;
+    return true;
+  }
+
+  // 绑定分支导航点击事件（平滑滚动到锚点）
+  function bindBranchNavClick(container) {
+    if (!container) return;
+    container.querySelectorAll('.branch-pill').forEach(function(pill) {
+      pill.addEventListener('click', function() {
+        var anchor = pill.getAttribute('data-branch-anchor');
+        var target = container.querySelector('#' + anchor);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          container.querySelectorAll('.branch-pill').forEach(function(p) { p.classList.remove('active'); });
+          pill.classList.add('active');
+        }
+      });
+    });
+  }
+
+  function escapeHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
   }
 
 
