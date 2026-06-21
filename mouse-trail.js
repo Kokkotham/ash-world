@@ -242,13 +242,13 @@
     font-size: 0.68rem;
 }
 
-/* 避免与 #ash-return-btn（bottom:28px, height:48px）重叠 */
+/* 拖尾按钮在返回按钮下方 */
 .mouse-trail-toggle {
-    bottom: 86px;
+    bottom: 6px;
 }
 #ash-return-btn ~ .mouse-trail-toggle,
 .mouse-trail-toggle {
-    bottom: 86px;
+    bottom: 6px;
 }
 @media (max-width: 768px) {
     .mouse-trail-toggle {
@@ -258,11 +258,11 @@
         font-size: 0.68rem;
     }
     .mouse-trail-toggle {
-        bottom: 80px;
+        bottom: 4px;
     }
     #ash-return-btn ~ .mouse-trail-toggle,
     .particle-toggle ~ .mouse-trail-toggle {
-        bottom: 80px;
+        bottom: 4px;
     }
 }
 `;
