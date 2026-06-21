@@ -183,8 +183,14 @@
     if (!text || text.length > 80) return false;
     var hasCJK = /[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/.test(text);
     var hasLatin = /[A-Za-z]/.test(text);
-    if (!hasCJK || !hasLatin) return false;
-    // 不以句子标点结尾
+    if (!hasCJK && !hasLatin) return false;
+    // 纯中文短标题（如"灵涅与我"）：不长且不带句末标点
+    if (hasCJK && !hasLatin) {
+      if (text.length > 30) return false;
+      if (/[。！？.!?,;；，：]$/.test(text.trim())) return false;
+      return true;
+    }
+    // 中英混合：不以句子标点结尾
     if (/[。！？.!?,;；]$/.test(text)) return false;
     // 不是纯数字+单位（如"1.5米——1.9米"）
     if (/^[\d\s\-—–.]+$/.test(text)) return false;
