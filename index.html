@@ -338,6 +338,39 @@
             color: rgba(100, 100, 100, 0.5);
         }
 
+        /* 鼠标火光拖尾开关按钮 */
+        .trail-toggle {
+            position: fixed; bottom: 56px; right: 20px;
+            z-index: 10000; pointer-events: auto;
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 14px;
+            background: rgba(3, 5, 8, 0.65);
+            border: 1px solid rgba(184, 146, 58, 0.25);
+            border-radius: 2px;
+            color: var(--ash-gold-dim);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.7rem; letter-spacing: 0.1em;
+            cursor: pointer; transition: all 0.3s;
+            backdrop-filter: blur(4px);
+            user-select: none;
+        }
+        .trail-toggle:hover {
+            border-color: rgba(184, 146, 58, 0.55);
+            color: var(--ash-gold);
+        }
+        .trail-toggle.off {
+            border-color: rgba(60, 60, 60, 0.3);
+            color: rgba(100, 100, 100, 0.5);
+        }
+        .trail-toggle .trail-icon {
+            font-size: 0.85rem; line-height: 1; transition: opacity 0.3s;
+        }
+        .trail-toggle.off .trail-icon { opacity: 0.4; }
+        .trail-toggle .trail-label { font-size: 0.68rem; }
+        @media (max-width: 768px) {
+            .trail-toggle { bottom: 52px; right: 12px; padding: 8px 12px; font-size: 0.68rem; }
+        }
+
         /* 鼠标拖尾画布 */
         #cursor-trail {
             position: fixed; inset: 0; z-index: 4;
@@ -495,6 +528,7 @@
     </footer>
 
     <button class="particle-toggle" id="particle-toggle" title="切换灰烬粒子">灰烬粒子：开</button>
+    <button class="trail-toggle" id="trail-toggle" title="切换鼠标火光拖尾">✦ 火光拖尾：开</button>
 
     <script type="module">
     import * as THREE from 'three';
@@ -960,6 +994,19 @@
 
     const trailPoints = [];
     const MAX_TRAIL = 90;
+    let trailOn = true;
+    window.__setMouseTrail = function (on) {
+        trailOn = !!on;
+        const btn = document.getElementById('trail-toggle');
+        if (btn) {
+            btn.classList.toggle('off', !trailOn);
+            btn.title = trailOn ? '关闭鼠标火光拖尾' : '开启鼠标火光拖尾';
+        }
+        if (!trailOn) {
+            trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+            trailPoints.length = 0; // 清空残留粒子
+        }
+    };
     let lastMouseX = -1000, lastMouseY = -1000;
     const mouseWorldPos = new THREE.Vector3(0, 0, 0);
     const mouseNDC = new THREE.Vector2();
@@ -992,6 +1039,7 @@
     let hoverOnDiceTimer = 0; // 鼠标在骰子上的累计时间
 
     window.addEventListener('mousemove', e => {
+        if (!trailOn) return; // 关闭状态不记录
         // --- 拖尾记录 — 散落粒子 ---
         mouseActive = true;
         mouseInactiveTimer = 0;
@@ -1377,6 +1425,7 @@
 
         // --- 绘制鼠标光影跟踪（环境光晕，glowFade 淡出）---
         trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        if (trailOn) {
         if (glowFade > 0.01 && lastMouseX > -100) {
             const f = glowFade;
             // 大范围热源光晕 — 暖橙琥珀色，像火焰/余烬的热量扩散
@@ -1444,6 +1493,7 @@
             }
         }
 
+        
         composer.render();
     }
 
@@ -1615,6 +1665,14 @@
         particleToggleBtn.textContent = particlesVisible ? '灰烬粒子：开' : '灰烬粒子：关';
         particleToggleBtn.classList.toggle('off', !particlesVisible);
     });
+
+    // 火光拖尾开关按钮逻辑
+    const trailToggleBtn = document.getElementById('trail-toggle');
+    if (trailToggleBtn) {
+        trailToggleBtn.addEventListener('click', () => {
+            window.__setMouseTrail(!trailOn);
+        });
+    }
 
     window.addEventListener('resize', () => {
         const w = window.innerWidth;

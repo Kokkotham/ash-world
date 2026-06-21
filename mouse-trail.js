@@ -2,9 +2,23 @@
  * mouse-trail.js — 灰烬世界子页面鼠标火光拖尾效果
  * 用法：在子页面 </body> 前加 <script src="../mouse-trail.js"></script>
  * 效果：暖橙色鼠标光晕 + 火星粒子拖尾，无 Three.js 背景粒子
+ * 开关：自动在右下角创建按钮；也可通过 window.__setMouseTrail(on) 控制
  */
 (function () {
     'use strict';
+
+    // ── 全局开关状态（默认开启）──
+    let trailOn = true;
+    window.__mouseTrailOn = true;
+    window.__setMouseTrail = function (on) {
+        trailOn = !!on;
+        window.__mouseTrailOn = trailOn;
+        updateToggleBtn();
+        if (!trailOn) {
+            // 关闭时立刻清画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    };
 
     // ── 创建 canvas 元素 ──
     const canvas = document.createElement('canvas');
@@ -31,6 +45,7 @@
 
     // ── 鼠标追踪 ──
     window.addEventListener('mousemove', function (e) {
+        if (!trailOn) return; // 关闭状态不记录
         mouseActive = true;
         mouseInactiveTimer = 0;
         glowFade = 1.0; // 移动时立刻全亮
@@ -57,6 +72,12 @@
 
     function animate(now) {
         window.requestAnimationFrame(animate);
+
+        // 关闭状态：不绘制任何内容，清空画布后直接返回
+        if (!trailOn) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            return;
+        }
 
         const dt = Math.min((now - lastTime) / 1000, 0.05);
         lastTime = now;
@@ -138,4 +159,119 @@
     }
 
     window.requestAnimationFrame(animate);
+
+    // ==================== 开关按钮 ====================
+    function createToggleBtn() {
+        // 避免重复创建
+        if (document.getElementById('mouse-trail-toggle')) return;
+
+        const btn = document.createElement('button');
+        btn.id = 'mouse-trail-toggle';
+        btn.className = 'mouse-trail-toggle';
+        btn.setAttribute('aria-label', '切换鼠标火光拖尾效果');
+        btn.innerHTML = '<span class="trail-icon">✦</span><span class="trail-label">火光拖尾</span>';
+        document.body.appendChild(btn);
+
+        btn.addEventListener('click', function () {
+            window.__setMouseTrail(!trailOn);
+        });
+
+        // 同步初始状态
+        updateToggleBtn();
+    }
+
+    function updateToggleBtn() {
+        const btn = document.getElementById('mouse-trail-toggle');
+        if (!btn) return;
+        if (trailOn) {
+            btn.classList.remove('off');
+            btn.title = '关闭鼠标火光拖尾';
+        } else {
+            btn.classList.add('off');
+            btn.title = '开启鼠标火光拖尾';
+        }
+    }
+
+    // ── 注入按钮样式 ──
+    function injectStyle() {
+        if (document.getElementById('mouse-trail-style')) return;
+        const style = document.createElement('style');
+        style.id = 'mouse-trail-style';
+        style.textContent = `
+/* 鼠标火光拖尾开关按钮 */
+.mouse-trail-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(3, 5, 8, 0.65);
+    border: 1px solid rgba(184, 146, 58, 0.25);
+    border-radius: 2px;
+    color: var(--ash-gold-dim, #8a7340);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.3s;
+    backdrop-filter: blur(4px);
+    user-select: none;
+}
+.mouse-trail-toggle:hover {
+    border-color: rgba(184, 146, 58, 0.55);
+    color: var(--ash-gold, #c9a84c);
+}
+.mouse-trail-toggle.off {
+    border-color: rgba(60, 60, 60, 0.3);
+    color: rgba(100, 100, 100, 0.5);
+}
+.mouse-trail-toggle .trail-icon {
+    font-size: 0.85rem;
+    line-height: 1;
+    transition: opacity 0.3s;
+}
+.mouse-trail-toggle.off .trail-icon {
+    opacity: 0.4;
+}
+.mouse-trail-toggle .trail-label {
+    font-size: 0.68rem;
+}
+
+/* 与粒子按钮避免重叠：当粒子按钮存在时，拖尾按钮在其上方 */
+.mouse-trail-toggle {
+    bottom: 56px;
+}
+.particle-toggle ~ .mouse-trail-toggle {
+    bottom: 56px;
+}
+@media (max-width: 768px) {
+    .mouse-trail-toggle {
+        bottom: 16px;
+        right: 12px;
+        padding: 8px 12px;
+        font-size: 0.68rem;
+    }
+    .mouse-trail-toggle {
+        bottom: 52px;
+    }
+    .particle-toggle ~ .mouse-trail-toggle {
+        bottom: 52px;
+    }
+}
+`;
+        document.head.appendChild(style);
+    }
+
+    // ── 初始化按钮 ──
+    injectStyle();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', createToggleBtn);
+    } else {
+        createToggleBtn();
+    }
+
 })();
