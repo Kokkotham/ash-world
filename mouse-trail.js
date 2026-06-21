@@ -242,12 +242,13 @@
     font-size: 0.68rem;
 }
 
-/* 与粒子按钮避免重叠：当粒子按钮存在时，拖尾按钮在其上方 */
+/* 避免与 #ash-return-btn（bottom:28px, height:48px）重叠 */
 .mouse-trail-toggle {
-    bottom: 64px;
+    bottom: 86px;
 }
-.particle-toggle ~ .mouse-trail-toggle {
-    bottom: 64px;
+#ash-return-btn ~ .mouse-trail-toggle,
+.mouse-trail-toggle {
+    bottom: 86px;
 }
 @media (max-width: 768px) {
     .mouse-trail-toggle {
@@ -257,10 +258,11 @@
         font-size: 0.68rem;
     }
     .mouse-trail-toggle {
-        bottom: 60px;
+        bottom: 80px;
     }
+    #ash-return-btn ~ .mouse-trail-toggle,
     .particle-toggle ~ .mouse-trail-toggle {
-        bottom: 60px;
+        bottom: 80px;
     }
 }
 `;
