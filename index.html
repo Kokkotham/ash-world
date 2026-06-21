@@ -340,7 +340,7 @@
 
         /* 鼠标火光拖尾开关按钮 */
         .trail-toggle {
-            position: fixed; bottom: 56px; right: 20px;
+            position: fixed; bottom: 64px; right: 20px;
             z-index: 10000; pointer-events: auto;
             display: flex; align-items: center; gap: 6px;
             padding: 6px 14px;
@@ -368,7 +368,7 @@
         .trail-toggle.off .trail-icon { opacity: 0.4; }
         .trail-toggle .trail-label { font-size: 0.68rem; }
         @media (max-width: 768px) {
-            .trail-toggle { bottom: 52px; right: 12px; padding: 8px 12px; font-size: 0.68rem; }
+            .trail-toggle { bottom: 60px; right: 12px; padding: 8px 12px; font-size: 0.68rem; }
         }
 
         /* 鼠标拖尾画布 */
@@ -994,9 +994,10 @@
 
     const trailPoints = [];
     const MAX_TRAIL = 90;
-    let trailOn = true;
+    let trailOn = localStorage.getItem('ash_trail_on') !== 'false';
     window.__setMouseTrail = function (on) {
         trailOn = !!on;
+        localStorage.setItem('ash_trail_on', trailOn ? '1' : '0');
         const btn = document.getElementById('trail-toggle');
         if (btn) {
             btn.classList.toggle('off', !trailOn);
@@ -1659,9 +1660,14 @@
 
     // 粒子开关按钮逻辑
     const particleToggleBtn = document.getElementById('particle-toggle');
-    let particlesVisible = true;
+    let particlesVisible = localStorage.getItem('ash_particles_on') !== 'false';
+    // 应用初始状态
+    ashParticles.visible = particlesVisible;
+    particleToggleBtn.textContent = particlesVisible ? '灰烬粒子：开' : '灰烬粒子：关';
+    particleToggleBtn.classList.toggle('off', !particlesVisible);
     particleToggleBtn.addEventListener('click', () => {
         particlesVisible = !particlesVisible;
+        localStorage.setItem('ash_particles_on', particlesVisible ? '1' : '0');
         ashParticles.visible = particlesVisible;
         particleToggleBtn.textContent = particlesVisible ? '灰烬粒子：开' : '灰烬粒子：关';
         particleToggleBtn.classList.toggle('off', !particlesVisible);
@@ -1670,6 +1676,10 @@
     // 火光拖尾开关按钮逻辑
     const trailToggleBtn = document.getElementById('trail-toggle');
     if (trailToggleBtn) {
+        // 应用初始状态
+        trailToggleBtn.classList.toggle('off', !trailOn);
+        trailToggleBtn.title = trailOn ? '关闭鼠标火光拖尾' : '开启鼠标火光拖尾';
+        if (!trailOn) trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
         trailToggleBtn.addEventListener('click', () => {
             window.__setMouseTrail(!trailOn);
         });

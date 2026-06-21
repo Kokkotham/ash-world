@@ -7,12 +7,13 @@
 (function () {
     'use strict';
 
-    // ── 全局开关状态（默认开启）──
-    let trailOn = true;
-    window.__mouseTrailOn = true;
+    // ── 全局开关状态（默认开启，读取 localStorage）──
+    let trailOn = localStorage.getItem('ash_trail_on') !== 'false';
+    window.__mouseTrailOn = trailOn;
     window.__setMouseTrail = function (on) {
         trailOn = !!on;
         window.__mouseTrailOn = trailOn;
+        localStorage.setItem('ash_trail_on', trailOn ? '1' : '0');
         updateToggleBtn();
         if (!trailOn) {
             // 关闭时立刻清画布
@@ -243,10 +244,10 @@
 
 /* 与粒子按钮避免重叠：当粒子按钮存在时，拖尾按钮在其上方 */
 .mouse-trail-toggle {
-    bottom: 56px;
+    bottom: 64px;
 }
 .particle-toggle ~ .mouse-trail-toggle {
-    bottom: 56px;
+    bottom: 64px;
 }
 @media (max-width: 768px) {
     .mouse-trail-toggle {
@@ -256,10 +257,10 @@
         font-size: 0.68rem;
     }
     .mouse-trail-toggle {
-        bottom: 52px;
+        bottom: 60px;
     }
     .particle-toggle ~ .mouse-trail-toggle {
-        bottom: 52px;
+        bottom: 60px;
     }
 }
 `;
