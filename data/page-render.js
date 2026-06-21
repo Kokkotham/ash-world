@@ -1627,7 +1627,6 @@
       bar.classList.add('scroll-enhanced');
       var isDown = false;
       var startX, scrollLeft;
-      var arrowsContainer;
 
       // ---- 鼠标/触摸 拖拽滑动 ----
       bar.addEventListener('mousedown', function(e) {
@@ -1651,46 +1650,9 @@
       // 触摸支持（原生已支持overflow-x auto，这里只做箭头更新）
       bar.addEventListener('scroll', function() { updateArrows(); }, { passive: true });
 
-      // ---- 左右箭头按钮 ----
-      arrowsContainer = document.createElement('div');
-      arrowsContainer.className = 'scroll-arrows';
+      // ---- 左右箭头按钮（已移除，用户不需要） ----
 
-      var leftBtn = document.createElement('button');
-      leftBtn.className = 'scroll-arrow-btn left';
-      leftBtn.innerHTML = '&#8249;'; // ‹
-      leftBtn.setAttribute('type', 'button');
-      leftBtn.setAttribute('aria-label', '向左滚动');
-
-      var rightBtn = document.createElement('button');
-      rightBtn.className = 'scroll-arrow-btn right';
-      rightBtn.innerHTML = '&#8250;'; // ›
-      rightBtn.setAttribute('type', 'button');
-      rightBtn.setAttribute('aria-label', '向右滚动');
-
-      leftBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        smoothScrollBy(bar, -SCROLL_AMOUNT);
-      });
-      rightBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        smoothScrollBy(bar, SCROLL_AMOUNT);
-      });
-
-      arrowsContainer.appendChild(leftBtn);
-      arrowsContainer.appendChild(rightBtn);
-      bar.appendChild(arrowsContainer);
-
-      // 初始状态（延迟到bar visible后检测）
-      setTimeout(updateArrows, 350);
-      bar._scrollLeftBtn = leftBtn;
-      bar._scrollRightBtn = rightBtn;
-
-      function updateArrows() {
-        var canScrollLeft = bar.scrollLeft > 3;
-        var canScrollRight = bar.scrollLeft < bar.scrollWidth - bar.clientWidth - 3;
-        if (leftBtn) leftBtn.classList.toggle('visible', canScrollLeft);
-        if (rightBtn) rightBtn.classList.toggle('visible', canScrollRight);
-      }
+      // 初始化完成（保留拖拽和触摸滚动功能）
     }
 
     function smoothScrollBy(el, amount) {

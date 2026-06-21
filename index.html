@@ -316,9 +316,9 @@
             margin: 0 auto 12px; opacity: 0.4;
         }
 
-        /* 粒子开关按钮 */
+        /* 粒子开关按钮 — 在拖尾按钮上方 */
         .particle-toggle {
-            position: fixed; bottom: 20px; right: 20px;
+            position: fixed; bottom: 32px; right: 20px;
             z-index: 30; pointer-events: auto;
             background: rgba(3, 5, 8, 0.65);
             border: 1px solid rgba(184, 146, 58, 0.25);
@@ -423,8 +423,8 @@
             .top-nav { justify-content: space-between; }
             /* 移动端禁用鼠标拖尾（触屏无意义，节省性能） */
             #cursor-trail { display: none; }
-            /* 粒子开关按钮下移避免被底部栏遮挡 */
-            .particle-toggle { bottom: 16px; right: 12px; padding: 8px 12px; font-size: 0.68rem; }
+            /* 粒子开关按钮在拖尾按钮上方 */
+            .particle-toggle { bottom: 36px; right: 12px; padding: 8px 12px; font-size: 0.68rem; }
         }
         @media (max-width: 480px) {
             .header h1 { font-size: 1.55rem; letter-spacing: 0.16em; }
@@ -994,7 +994,7 @@
 
     const trailPoints = [];
     const MAX_TRAIL = 90;
-    let trailOn = localStorage.getItem('ash_trail_on') !== 'false';
+    let trailOn = localStorage.getItem('ash_trail_on') !== '0';
     window.__setMouseTrail = function (on) {
         trailOn = !!on;
         localStorage.setItem('ash_trail_on', trailOn ? '1' : '0');
@@ -1002,6 +1002,7 @@
         if (btn) {
             btn.classList.toggle('off', !trailOn);
             btn.title = trailOn ? '关闭鼠标火光拖尾' : '开启鼠标火光拖尾';
+            btn.innerHTML = '<span class="trail-icon">✦</span><span class="trail-label">火光拖尾：' + (trailOn ? '开' : '关') + '</span>';
         }
         if (!trailOn) {
             trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
@@ -1679,6 +1680,7 @@
         // 应用初始状态
         trailToggleBtn.classList.toggle('off', !trailOn);
         trailToggleBtn.title = trailOn ? '关闭鼠标火光拖尾' : '开启鼠标火光拖尾';
+        trailToggleBtn.innerHTML = '<span class="trail-icon">✦</span><span class="trail-label">火光拖尾：' + (trailOn ? '开' : '关') + '</span>';
         if (!trailOn) trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
         trailToggleBtn.addEventListener('click', () => {
             window.__setMouseTrail(!trailOn);

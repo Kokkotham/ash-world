@@ -8,7 +8,7 @@
     'use strict';
 
     // ── 全局开关状态（默认开启，读取 localStorage）──
-    let trailOn = localStorage.getItem('ash_trail_on') !== 'false';
+    let trailOn = localStorage.getItem('ash_trail_on') !== '0';
     window.__mouseTrailOn = trailOn;
     window.__setMouseTrail = function (on) {
         trailOn = !!on;
@@ -187,9 +187,11 @@
         if (trailOn) {
             btn.classList.remove('off');
             btn.title = '关闭鼠标火光拖尾';
+            btn.innerHTML = '<span class="trail-icon">✦</span><span class="trail-label">火光拖尾：开</span>';
         } else {
             btn.classList.add('off');
             btn.title = '开启鼠标火光拖尾';
+            btn.innerHTML = '<span class="trail-icon">✦</span><span class="trail-label">火光拖尾：关</span>';
         }
     }
 
@@ -242,27 +244,19 @@
     font-size: 0.68rem;
 }
 
-/* 拖尾按钮在返回按钮下方 */
+/* 拖尾按钮 — 统一位置 */
 .mouse-trail-toggle {
     bottom: 6px;
-}
-#ash-return-btn ~ .mouse-trail-toggle,
-.mouse-trail-toggle {
-    bottom: 6px;
+    right: 20px;
+    padding: 4px 12px;
+    font-size: 0.68rem;
 }
 @media (max-width: 768px) {
     .mouse-trail-toggle {
-        bottom: 16px;
-        right: 12px;
-        padding: 8px 12px;
-        font-size: 0.68rem;
-    }
-    .mouse-trail-toggle {
-        bottom: 4px;
-    }
-    #ash-return-btn ~ .mouse-trail-toggle,
-    .particle-toggle ~ .mouse-trail-toggle {
-        bottom: 4px;
+        bottom: 6px;
+        right: 10px;
+        padding: 5px 10px;
+        font-size: 0.62rem;
     }
 }
 `;

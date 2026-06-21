@@ -64,75 +64,10 @@
   }
 
   // ============================================================
-  // 返回骰子按钮（所有子页面统一）
+  // 返回骰子按钮 — 已移除（用户不再需要）
   // ============================================================
   function createReturnBtn() {
-    if (document.getElementById('ash-return-btn')) return;
-
-    // 注入样式
-    if (!document.getElementById('ash-return-style')) {
-      const s = document.createElement('style');
-      s.id = 'ash-return-style';
-      s.textContent = `
-        #ash-return-btn {
-          position: fixed; bottom: 28px; right: 28px; z-index: 999;
-          width: 48px; height: 48px;
-          background: rgba(10,14,18,0.85);
-          border: 1px solid rgba(201,168,76,0.3);
-          border-radius: 6px;
-          display: flex; align-items: center; justify-content: center;
-          cursor: pointer; transition: all 0.3s;
-          color: rgba(201,168,76,0.7);
-          font-size: 1.2rem; text-decoration: none;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-        #ash-return-btn:hover {
-          border-color: var(--ash-gold, #c9a84c);
-          color: var(--ash-gold, #c9a84c);
-          box-shadow: 0 4px 28px rgba(184,146,58,0.2);
-          transform: translateY(-2px);
-        }
-        #ash-return-btn .dice-icon {
-          font-family: 'Cinzel', serif;
-          font-size: 1.3rem;
-          line-height: 1;
-        }
-        #ash-return-btn .return-tip {
-          position: absolute; right: 58px; top: 50%; transform: translateY(-50%);
-          background: rgba(10,14,18,0.9);
-          color: var(--ash-gold, #c9a84c);
-          font-size: 0.72rem; padding: 4px 12px; border-radius: 3px;
-          white-space: nowrap; opacity: 0; pointer-events: none;
-          transition: opacity 0.3s; letter-spacing: 0.06em;
-          border: 1px solid rgba(201,168,76,0.15);
-        }
-        #ash-return-btn:hover .return-tip { opacity: 1; }
-        @media (max-width: 768px) {
-          #ash-return-btn { bottom: 16px; right: 16px; width: 40px; height: 40px; }
-        }
-      `;
-      document.head.appendChild(s);
-    }
-
-    const btn = document.createElement('a');
-    btn.id = 'ash-return-btn';
-    btn.href = '../index.html';
-    btn.title = '返回灰烬骰子';
-    btn.innerHTML =
-      '<span class="dice-icon">&#x2684;</span>' +
-      '<span class="return-tip">返回骰子</span>';
-
-    // 点击时触发过渡动画
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      if (window.ashTransition && window.ashTransition.out) {
-        ashTransition.out('../index.html');
-      } else {
-        window.location.href = '../index.html';
-      }
-    });
-
-    document.body.appendChild(btn);
+    /* no-op: 返回按钮已禁用 */
   }
 
   // DOM ready 后挂载
