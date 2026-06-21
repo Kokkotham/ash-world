@@ -201,7 +201,7 @@
       var isEmpty = !hasChapterContent(ch, data);
       var cls = 'chapter-tab' + (isEmpty ? ' empty' : '');
       navHTML += '<div class="' + cls + '" data-target="' + ch.id + '" role="button" tabindex="0">';
-      navHTML += '<span class="tab-num">' + (ch.number || '') + '</span>';
+      // 只显示章节名，不再显示"第X章"编号
       navHTML += '<span class="tab-title">' + (ch.title || ch.name || '') + '</span>';
       navHTML += '</div>';
     });
@@ -256,7 +256,6 @@
     // 如果有章节概述文字，展示概述后自动进入第一个子分类（无中间目录页）
     if (ch.content && ch.content.length > 0) {
       contentHTML += '<div class="chapter-heading">';
-      contentHTML += '<span class="chapter-num">' + (ch.number || '') + '</span>';
       contentHTML += '<h2>' + (ch.title || ch.name || '') + '</h2>';
       contentHTML += '<div class="heading-divider"></div>';
       contentHTML += '</div>';
@@ -367,7 +366,6 @@
 
     // 章节标题头
     contentHTML += '<div class="chapter-heading">';
-    contentHTML += '<span class="chapter-num">' + (parentCh.number || '') + '</span>';
     contentHTML += '<h2>' + (parentCh.title || parentCh.name || '') + '</h2>';
     contentHTML += '<div class="heading-divider"></div>';
     contentHTML += '</div>';
@@ -454,7 +452,6 @@
 
     if (ch.content && ch.content.length > 0) {
       contentHTML += '<div class="chapter-heading">';
-      contentHTML += '<span class="chapter-num">' + (ch.number || '') + '</span>';
       contentHTML += '<h2>' + (ch.title || ch.name || '') + '</h2>';
       contentHTML += '<div class="heading-divider"></div>';
       contentHTML += '</div>';
@@ -656,7 +653,6 @@
 
     // 章节标题
     html += '<div class="chapter-heading">';
-    html += '<span class="chapter-num">' + (ch.number || '') + '</span>';
     html += '<h2>' + (ch.title || ch.name || '') + '</h2>';
     html += '<div class="heading-divider"></div>';
     html += '</div>';

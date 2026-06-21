@@ -11,6 +11,30 @@
      └── .reader-main (正文区)
    ============================================ */
 
+/* ---- 配色变量覆盖：与首页 index.html 保持一致 ---- */
+:root {
+  --ash-dark: #030508;
+  --ash-gray: #080c10;
+  --ash-medium: #101820;
+  --ash-light: #2a3a42;
+  --ash-text: #a8b8bc;
+  --ash-dim: #6a7a7e;
+  --ash-gold: #c9a84c;
+  --ash-gold-dim: #8a7340;
+  --ash-ember: #5c1a1a;
+  --ash-ember-glow: #3a1010;
+  --ash-copper: #8a6030;
+}
+
+/* ---- 金边装饰线增强：置于「游戏规则」标题正下方 ---- */
+.page-header--compact .divider {
+  width: 80px;
+  height: 2px;
+  margin: 10px auto 6px;
+  opacity: 0.7;
+  background: linear-gradient(90deg, transparent, var(--ash-gold-dim), var(--ash-gold), var(--ash-gold-dim), transparent);
+}
+
 /* ---- 阅读器整体布局：上下堆叠 ---- */
 .reader-layout {
   display: flex;
@@ -28,15 +52,15 @@
   border-bottom: 1px solid rgba(201, 168, 76, 0.06);
 }
 
-/* ---- 横向章节微标签导航（始终横向） ---- */
+/* ---- 横向章节标签导航（始终横向） ---- */
 .reader-nav {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 6px 20px;
-  gap: 2px;
+  padding: 12px 20px;
+  gap: 8px;
   /* 隐藏横向滚动条 */
   scrollbar-width: none;
   scroll-behavior: smooth;
@@ -60,51 +84,46 @@
   opacity: 0.5;
 }
 
-/* ---- 章节标签 — 极简微标签（位置指示器，不抢眼） ---- */
+/* ---- 章节标签 — 主导航同款 gold border-bottom 风格 ---- */
 .chapter-tab {
   flex-shrink: 0;
-  padding: 3px 10px;
-  border-radius: 4px;
+  padding: 6px 16px 8px;
   background: transparent;
   border: none;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  font-family: 'Cinzel', serif;
-  font-size: 0.65rem;
-  color: #4a4638;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 0.95rem;
+  color: #9caab4;
   text-align: center;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 20px;
-  line-height: 1;
+  min-height: 34px;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
 }
 
-/* 隐藏标题文字，只保留章节号 */
 .chapter-tab .tab-title {
-  display: none;
+  display: inline;
 }
 
 .chapter-tab .tab-num {
-  font-family: 'Cinzel', serif;
-  font-size: 0.62rem;
-  color: inherit;
-  letter-spacing: 0.08em;
-  transition: color 0.2s ease;
+  display: none;
 }
 
 .chapter-tab:hover {
-  color: var(--ash-gold-dim);
+  color: var(--ash-gold);
+  border-bottom-color: rgba(201, 168, 76, 0.45);
 }
 
-/* 当前章节 — 微妙金色提示 */
 .chapter-tab.active {
   color: var(--ash-gold);
-  background: rgba(201, 168, 76, 0.08);
-}
-.chapter-tab.active .tab-num {
+  border-bottom-color: var(--ash-gold);
+  background: transparent;
   font-weight: 600;
 }
 
@@ -214,46 +233,34 @@
 .scroll-arrow-btn.left  { left: 6px; }
 .scroll-arrow-btn.right { right: 6px; }
 
-/* 子章节 pill — 柔和标签风格 */
+/* 子章节 pill — 主导航同款 gold border-bottom 风格 */
 .sub-pill {
   flex-shrink: 0;
-  padding: 3px 14px;
-  border-radius: 16px;
+  padding: 4px 14px 6px;
   background: transparent;
   border: none;
-  color: var(--ash-text-muted);
-  font-size: 0.73rem;
+  border-bottom: 2px solid transparent;
+  color: #9caab4;
+  font-size: 0.85rem;
   font-family: 'Noto Serif SC', serif;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
-  line-height: 1.6;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
   position: relative;
-}
-.sub-pill::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 16px;
-  background: var(--ash-gold);
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  pointer-events: none;
 }
 
 .sub-pill:hover {
-  color: var(--ash-text);
-}
-.sub-pill:hover::before {
-  opacity: 0.08;
+  color: var(--ash-gold);
+  border-bottom-color: rgba(201, 168, 76, 0.45);
 }
 
 .sub-pill.active {
   color: var(--ash-gold);
-  font-weight: 500;
-}
-.sub-pill.active::before {
-  opacity: 0.15;
+  border-bottom-color: var(--ash-gold);
+  background: transparent;
+  font-weight: 600;
 }
 
 /* ---- 第三层导航：技能条目 pills ---- */
@@ -295,49 +302,33 @@
 .detail-nav-bar::-webkit-scrollbar { display: none; }
 .detail-nav-bar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* 技能条目 pill（第三层）— 柔和标签风格 */
+/* 技能条目 pill（第三层）— 主导航同款 gold border-bottom 风格 */
 .detail-pill {
   flex-shrink: 0;
-  padding: 2px 12px;
-  border-radius: 14px;
+  padding: 3px 12px 5px;
   background: transparent;
   border: none;
-  color: var(--ash-text-muted);
-  font-size: 0.72rem;
-  font-family: 'Noto Sans SC', sans-serif;
+  border-bottom: 2px solid transparent;
+  color: #9caab4;
+  font-size: 0.8rem;
+  font-family: 'Noto Serif SC', serif;
   cursor: pointer;
   transition: all 0.18s ease;
   white-space: nowrap;
-  line-height: 1.7;
+  line-height: 1.6;
   position: relative;
-}
-.detail-pill::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 14px;
-  background: var(--ash-gold);
-  opacity: 0;
-  transition: opacity 0.18s ease;
-  pointer-events: none;
 }
 
 .detail-pill:hover {
-  color: var(--ash-text);
-}
-.detail-pill:hover::before {
-  opacity: 0.08;
+  color: var(--ash-gold);
+  border-bottom-color: rgba(201, 168, 76, 0.45);
 }
 
 .detail-pill.active {
   color: var(--ash-gold);
-  font-weight: 500;
-}
-.detail-pill.active::before {
-  opacity: 0.15;
-}
-  color: var(--ash-gold);
-  font-weight: 500;
+  border-bottom-color: var(--ash-gold);
+  background: transparent;
+  font-weight: 600;
 }
 
 /* ---- 章节概述区域 — 轻量化面板 ---- */
@@ -364,7 +355,7 @@
 
 .chapter-overview .overview-subtitle {
   font-size: 1rem;
-  color: var(--ash-gold-dim);
+  color: var(--ash-gold);
   margin: 18px 0 8px;
   padding-bottom: 6px;
   border-bottom: 1px solid rgba(201, 168, 76, 0.12);
@@ -399,7 +390,7 @@
 .sub-section-preface .overview-title {
   font-family: 'Cinzel', serif;
   font-size: 1rem;
-  color: var(--ash-gold-dim);
+  color: var(--ash-gold);
   margin: 16px 0 8px;
 }
 
@@ -751,7 +742,7 @@
 }
 
 .reader-chapter .chapter-body h4 {
-  color: var(--ash-gold-dim);
+  color: var(--ash-gold);
   font-family: 'Noto Serif SC', serif;
   font-size: 1rem;
   margin: 22px 0 10px;
@@ -791,7 +782,6 @@
 /* ---- 下一章按钮（速查模式已禁用，保留样式以防回退） ---- */
 .next-chapter-btn {
   display: none;
-}
   margin: 0 auto;
   padding: 12px 36px;
   background: transparent;
@@ -1069,33 +1059,30 @@
   }
 
   .reader-nav {
-    padding: 5px 14px;
-    gap: 2px;
+    padding: 6px 12px;
+    gap: 4px;
   }
 
   .chapter-tab {
-    padding: 2px 7px;
-    min-height: 18px;
-    font-size: 0.6rem;
+    padding: 4px 10px 6px;
+    min-height: 28px;
+    font-size: 0.82rem;
   }
 
-  .chapter-tab .tab-num {
-    font-size: 0.55rem;
-  }
-
+  /* 移动端显示章节名，隐藏编号（全局已隐藏） */
   .chapter-tab .tab-title {
-    display: none;
+    display: inline;
   }
 
   /* 子章节 pills 移动端 */
   .sub-nav-bar.visible {
-    padding: 5px 10px;
-    gap: 5px;
+    padding: 6px 36px;
+    gap: 6px;
   }
 
   .sub-pill {
-    padding: 3px 10px;
-    font-size: 0.68rem;
+    padding: 3px 12px 5px;
+    font-size: 0.78rem;
   }
 
   /* 阅读区 */
@@ -1104,9 +1091,7 @@
   }
 
   .reader-chapter {
-    padding: 4px 0 0;
-    margin-bottom: 0;
-    border-radius: 0;
+    padding: 8px 0 0;
   }
 
   .reader-chapter .chapter-heading h2 {
@@ -1115,13 +1100,8 @@
   }
 
   .reader-chapter .chapter-body {
-    font-size: 0.92rem;
+    font-size: 0.93rem;
     line-height: 1.9;
-  }
-
-  /* 种族卡片 */
-  .race-card {
-    padding: 14px 14px;
   }
 
   /* 等级表格横向滚动 */
@@ -1149,55 +1129,44 @@
 /* 极小屏（<=480px）导航项更紧凑 */
 @media (max-width: 480px) {
   .reader-nav {
-    padding: 4px 10px;
-    gap: 2px;
+    padding: 4px 8px;
+    gap: 3px;
   }
 
   .chapter-tab {
-    padding: 2px 6px;
-    font-size: 0.55rem;
-    min-height: 16px;
+    padding: 4px 8px 6px;
+    font-size: 0.78rem;
+    min-height: 26px;
   }
 
-  .chapter-tab .tab-num {
-    font-size: 0.5rem;
-  }
-
+  /* 极小屏显示章节名，隐藏编号（全局已隐藏） */
   .chapter-tab .tab-title {
-    display: none;
+    display: inline;
   }
 
   .sub-pill {
-    padding: 2px 8px;
-    font-size: 0.65rem;
+    padding: 3px 10px 5px;
+    font-size: 0.72rem;
+  }
+
+  .detail-pill {
+    padding: 2px 8px 4px;
+    font-size: 0.68rem;
   }
 
   .reader-chapter {
-    padding: 2px 0 0;
-    border-radius: 0;
+    padding: 4px 0 0;
   }
 
   .reader-chapter .chapter-heading h2 {
-    font-size: 1.05rem;
+    font-size: 1.1rem;
   }
 
   .reader-chapter .chapter-body {
-    font-size: 0.9rem;
+    font-size: 0.92rem;
   }
 
   .reader-main {
-    padding: 10px 12px 36px;
-  }
-
-  /* 属性条标签 */
-  .attr-bars-mini .attr-item .attr-label {
-    width: 20px;
-    font-size: 0.68rem;
-  }
-
-  /* 特质标签 */
-  .trait-tag {
-    font-size: 0.68rem;
-    padding: 2px 8px;
+    padding: 12px 12px 36px;
   }
 }
