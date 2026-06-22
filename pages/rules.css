@@ -1,7 +1,8 @@
 /* ============================================
    rules.css — 规则书阅读器布局样式
    配合 page-render.js renderRules() 使用
-   暗底（#030508）、金色（#c9a84c）点缀、半透明玻璃面板
+   暗底（#0d0d0d）、金色（#c9a84c）点缀、纯文字流式排版
+   视觉风格对齐 worldview 世界观页面
 
    布局结构：
    .reader-layout (flex column)
@@ -11,19 +12,20 @@
      └── .reader-main (正文区)
    ============================================ */
 
-/* ---- 配色变量覆盖：与首页 index.html 保持一致 ---- */
+/* ---- 配色变量：与 worldview 世界观页面保持一致 ---- */
 :root {
-  --ash-dark: #030508;
-  --ash-gray: #080c10;
-  --ash-medium: #101820;
-  --ash-light: #2a3a42;
-  --ash-text: #a8b8bc;
-  --ash-dim: #6a7a7e;
+  --ash-dark: #0d0d0d;
+  --ash-darker: #080808;
+  --ash-gray: #1a1a1a;
+  --ash-medium: #2d2d2d;
+  --ash-light: #4a4a4a;
+  --ash-dim: #8a8a8a;
+  --ash-text: #c9c5b8;
   --ash-gold: #c9a84c;
   --ash-gold-dim: #8a7340;
-  --ash-ember: #5c1a1a;
-  --ash-ember-glow: #3a1010;
-  --ash-copper: #8a6030;
+  --ash-red: #8b3a3a;
+  --ash-ember: #d46b3a;
+  --ash-blue: #4a7c8a;
 }
 
 /* ---- 金边装饰线增强：置于「游戏规则」标题正下方 ---- */
@@ -35,36 +37,28 @@
   background: linear-gradient(90deg, transparent, var(--ash-gold-dim), var(--ash-gold), var(--ash-gold-dim), transparent);
 }
 
-/* ---- 种族分支导航 pills ---- */
+/* ---- 种族分支导航 pills（已弃用，保留空壳） ---- */
 .branch-nav-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   margin: 16px 0 12px;
-  padding: 10px 14px;
-  background: rgba(201, 168, 76, 0.06);
-  border: 1px solid rgba(201, 168, 76, 0.15);
-  border-radius: 8px;
+  padding: 0;
 }
 .branch-pill {
   padding: 4px 14px;
   font-size: 0.82rem;
   color: var(--ash-text);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(201, 168, 76, 0.2);
-  border-radius: 20px;
+  background: transparent;
+  border: none;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 .branch-pill:hover {
-  background: rgba(201, 168, 76, 0.12);
-  border-color: var(--ash-gold-dim);
   color: var(--ash-gold);
 }
 .branch-pill.active {
-  background: rgba(201, 168, 76, 0.18);
-  border-color: var(--ash-gold);
   color: var(--ash-gold);
 }
 
@@ -74,23 +68,20 @@
   font-size: 1.05rem;
   color: var(--ash-gold);
   margin: 28px 0 10px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  padding-bottom: 8px;
   scroll-margin-top: 12px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
 }
 
 /* ---- 种族特质展示 ---- */
 .race-traits-section {
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid rgba(201, 168, 76, 0.1);
 }
 .trait-item {
   margin-bottom: 12px;
-  padding: 10px 14px;
-  background: rgba(201, 168, 76, 0.04);
-  border-left: 3px solid var(--ash-gold-dim);
-  border-radius: 0 6px 6px 0;
+  padding: 10px 0;
+  background: transparent;
 }
 .trait-name {
   font-size: 0.9rem;
@@ -119,8 +110,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(3, 5, 8, 0.98);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.06);
+  background: rgba(13, 13, 13, 0.98);
 }
 
 /* ---- 横向章节标签导航（始终横向） ---- */
@@ -155,19 +145,19 @@
   opacity: 0.5;
 }
 
-/* ---- 章节标签 — 主导航同款 gold border-bottom 风格 ---- */
+/* ---- 章节标签 — 极细金线选中指示 ---- */
 .chapter-tab {
   flex-shrink: 0;
   padding: 6px 16px 8px;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
+  border-bottom: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
   font-family: 'Noto Serif SC', serif;
   font-size: 0.95rem;
-  color: #9caab4;
+  color: var(--ash-dim);
   text-align: center;
   position: relative;
   display: flex;
@@ -188,29 +178,29 @@
 
 .chapter-tab:hover {
   color: var(--ash-gold);
-  border-bottom-color: rgba(201, 168, 76, 0.45);
+  border-bottom-color: rgba(201, 168, 76, 0.3);
 }
 
 .chapter-tab.active {
   color: var(--ash-gold);
-  border-bottom-color: var(--ash-gold);
+  border-bottom-color: rgba(201, 168, 76, 0.5);
   background: transparent;
   font-weight: 600;
 }
 
 /* 空内容标签灰态 */
 .chapter-tab.empty {
-  color: #555;
+  color: var(--ash-medium);
   cursor: default;
 }
 
 .chapter-tab.empty .tab-num,
 .chapter-tab.empty .tab-title {
-  color: #555;
+  color: var(--ash-medium);
 }
 
 .chapter-tab.empty:hover {
-  color: #777;
+  color: var(--ash-dim);
   background: transparent;
 }
 
@@ -221,8 +211,7 @@
   align-items: center;
   gap: 6px;
   padding: 0 16px;
-  background: rgba(3, 5, 8, 0.95);
-  border-top: 1px solid rgba(201, 168, 76, 0.06);
+  background: rgba(13, 13, 13, 0.95);
   min-height: 0;
   max-height: 0;
   overflow: hidden;
@@ -255,63 +244,18 @@
 .sub-nav-bar::-webkit-scrollbar { display: none; }
 .sub-nav-bar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* ---- 左右滚动箭头 ---- */
-.scroll-arrows {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  pointer-events: none;
-  z-index: 2;
-}
+/* ---- 左右滚动箭头（已废弃，保留空壳） ---- */
+.scroll-arrows { display: none; }
+.scroll-arrow-btn { display: none; }
 
-.scroll-arrow-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: rgba(201, 168, 76, 0.12);
-  border: 1px solid rgba(201, 168, 76, 0.25);
-  color: var(--ash-gold);
-  font-size: 14px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  pointer-events: auto;
-  transition: all 0.2s ease;
-  opacity: 0;
-  visibility: hidden;
-}
-
-.scroll-arrow-btn.visible {
-  opacity: 1;
-  visibility: visible;
-}
-
-.scroll-arrow-btn:hover {
-  background: rgba(201, 168, 76, 0.22);
-  border-color: rgba(201, 168, 76, 0.5);
-  transform: translateY(-50%) scale(1.1);
-}
-.scroll-arrow-btn:active {
-  transform: translateY(-50%) scale(0.95);
-}
-
-.scroll-arrow-btn.left  { left: 6px; }
-.scroll-arrow-btn.right { right: 6px; }
-
-/* 子章节 pill — 主导航同款 gold border-bottom 风格 */
+/* 子章节 pill — 极细金线选中指示 */
 .sub-pill {
   flex-shrink: 0;
   padding: 4px 14px 6px;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
-  color: #9caab4;
+  border-bottom: 1px solid transparent;
+  color: var(--ash-dim);
   font-size: 0.85rem;
   font-family: 'Noto Serif SC', serif;
   cursor: pointer;
@@ -324,12 +268,12 @@
 
 .sub-pill:hover {
   color: var(--ash-gold);
-  border-bottom-color: rgba(201, 168, 76, 0.45);
+  border-bottom-color: rgba(201, 168, 76, 0.3);
 }
 
 .sub-pill.active {
   color: var(--ash-gold);
-  border-bottom-color: var(--ash-gold);
+  border-bottom-color: rgba(201, 168, 76, 0.5);
   background: transparent;
   font-weight: 600;
 }
@@ -341,8 +285,7 @@
   align-items: center;
   gap: 5px;
   padding: 0 16px;
-  background: rgba(3, 5, 8, 0.92);
-  border-top: 1px solid rgba(201, 168, 76, 0.05);
+  background: rgba(13, 13, 13, 0.92);
   min-height: 0;
   max-height: 0;
   overflow: hidden;
@@ -373,14 +316,14 @@
 .detail-nav-bar::-webkit-scrollbar { display: none; }
 .detail-nav-bar { -ms-overflow-style: none; scrollbar-width: none; }
 
-/* 技能条目 pill（第三层）— 主导航同款 gold border-bottom 风格 */
+/* 技能条目 pill（第三层）— 极细金线选中指示 */
 .detail-pill {
   flex-shrink: 0;
   padding: 3px 12px 5px;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
-  color: #9caab4;
+  border-bottom: 1px solid transparent;
+  color: var(--ash-dim);
   font-size: 0.8rem;
   font-family: 'Noto Serif SC', serif;
   cursor: pointer;
@@ -392,24 +335,21 @@
 
 .detail-pill:hover {
   color: var(--ash-gold);
-  border-bottom-color: rgba(201, 168, 76, 0.45);
+  border-bottom-color: rgba(201, 168, 76, 0.3);
 }
 
 .detail-pill.active {
   color: var(--ash-gold);
-  border-bottom-color: var(--ash-gold);
+  border-bottom-color: rgba(201, 168, 76, 0.5);
   background: transparent;
   font-weight: 600;
 }
 
-/* ---- 章节概述区域 — 轻量化面板 ---- */
+/* ---- 章节概述区域 — 无边框纯文字 ---- */
 .chapter-overview {
   margin-bottom: 28px;
-  padding: 20px 24px;
-  background: rgba(10, 14, 20, 0.35);
-  border: none;
-  border-left: 3px solid rgba(201, 168, 76, 0.2);
-  border-radius: 0;
+  padding: 20px 0;
+  background: transparent;
 }
 
 .chapter-overview .overview-title {
@@ -434,20 +374,17 @@
 
 .chapter-overview p {
   font-size: 0.92rem;
-  line-height: 1.85;
+  line-height: 1.8;
   color: var(--ash-text);
   margin-bottom: 10px;
   text-align: justify;
 }
 
-/* ---- 子分类前言区域 — 轻量化面板 ---- */
+/* ---- 子分类前言区域 — 无边框纯文字 ---- */
 .sub-section-preface {
   margin-bottom: 24px;
-  padding: 16px 24px;
-  background: rgba(10, 14, 20, 0.3);
-  border: none;
-  border-left: 3px solid rgba(201, 168, 76, 0.15);
-  border-radius: 0;
+  padding: 16px 0;
+  background: transparent;
 }
 
 .sub-preface-title {
@@ -467,7 +404,7 @@
 
 .sub-section-preface p {
   font-size: 0.92rem;
-  line-height: 1.85;
+  line-height: 1.8;
   color: var(--ash-text);
   margin-bottom: 10px;
   text-align: justify;
@@ -481,8 +418,8 @@
   color: var(--ash-gold);
   margin: 22px 0 10px;
   padding-bottom: 6px;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
   letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
 }
 
 /* ---- 子分类快速目录（章节概览模式下的分类卡片列表） ---- */
@@ -505,9 +442,8 @@
   gap: 10px;
   padding: 12px 20px;
   margin: 6px 6px 6px 0;
-  background: rgba(15, 20, 28, 0.7);
-  border: 1px solid rgba(201, 168, 76, 0.12);
-  border-radius: 8px;
+  background: transparent;
+  border: none;
   cursor: pointer;
   transition: all 0.25s ease;
   user-select: none;
@@ -515,10 +451,8 @@
 }
 
 .sub-category-card:hover {
-  background: rgba(20, 26, 36, 0.85);
-  border-color: rgba(201, 168, 76, 0.35);
+  background: rgba(26, 26, 26, 0.6);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(201, 168, 76, 0.06);
 }
 
 .sub-category-card:active {
@@ -538,9 +472,8 @@
 .sub-category-card .sub-cat-count {
   font-size: 0.72rem;
   color: var(--ash-gold-dim);
-  background: rgba(201, 168, 76, 0.08);
+  background: transparent;
   padding: 2px 8px;
-  border-radius: 10px;
   white-space: nowrap;
 }
 
@@ -558,9 +491,8 @@
   align-items: center;
   gap: 6px;
   padding: 6px 16px;
-  border-radius: 6px;
-  background: rgba(10, 14, 20, 0.8);
-  border: 1px solid rgba(201, 168, 76, 0.1);
+  background: transparent;
+  border: none;
   color: var(--ash-text);
   font-family: 'Noto Serif SC', serif;
   font-size: 0.85rem;
@@ -580,11 +512,9 @@
 }
 
 .ability-item:hover {
-  border-color: rgba(201, 168, 76, 0.3);
-  background: rgba(20, 25, 32, 0.9);
   color: var(--ash-gold);
+  background: rgba(26, 26, 26, 0.5);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(201, 168, 76, 0.06);
 }
 
 .ability-item:hover::after {
@@ -593,16 +523,13 @@
 }
 
 .ability-item.active {
-  border-color: rgba(201, 168, 76, 0.45);
-  background: rgba(201, 168, 76, 0.08);
   color: var(--ash-gold);
 }
 
 .ability-item .ability-tag-hint {
   font-size: 0.62rem;
   padding: 1px 6px;
-  border-radius: 8px;
-  background: rgba(201, 168, 76, 0.08);
+  background: transparent;
   color: var(--ash-gold-dim);
   font-family: 'Noto Sans SC', sans-serif;
 }
@@ -623,7 +550,7 @@
   text-align: left;
   padding: 8px 0 12px;
   margin-bottom: 4px;
-  padding-bottom: 10px;
+  padding-bottom: 12px;
   border-bottom: 1px solid rgba(201, 168, 76, 0.15);
 }
 .ability-main-title h2 {
@@ -670,7 +597,7 @@
 
 .ability-detail .detail-desc {
   color: var(--ash-text);
-  line-height: 1.9;
+  line-height: 1.8;
   font-size: 0.95rem;
   margin-bottom: 20px;
 }
@@ -687,10 +614,6 @@
   font-size: 0.84rem;
 }
 
-.ability-detail .level-table tbody tr:nth-child(even) td {
-  background: rgba(201, 168, 76, 0.02);
-}
-
 /* 种族详情 — 开放流式 */
 .race-detail {
   padding: 8px 0 0;
@@ -700,8 +623,8 @@
   font-size: 1.4rem;
   color: var(--ash-gold);
   margin: 0 0 8px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
 }
 
 .race-detail .attr-bars-mini {
@@ -710,7 +633,7 @@
 
 .race-detail-body {
   margin-top: 12px;
-  line-height: 1.9;
+  line-height: 1.8;
 }
 
 .race-detail-body p {
@@ -729,9 +652,8 @@
 .ability-keywords .kw-tag {
   font-size: 0.68rem;
   padding: 2px 10px;
-  border-radius: 10px;
-  background: rgba(100, 180, 120, 0.08);
-  border: 1px solid rgba(100, 180, 120, 0.15);
+  background: transparent;
+  border: none;
   color: #8cd4a0;
   font-family: 'Noto Sans SC', sans-serif;
 }
@@ -758,12 +680,10 @@
   display: none;
 }
 
-/* 章节标题 — 对齐世界观 .section-title 风格（左对齐 + 金色底线） */
+/* 章节标题 — 对齐世界观 .section-title 风格（金色下划线） */
 .reader-chapter .chapter-heading {
   text-align: left;
   margin: 8px 0 16px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
 }
 
 .reader-chapter .chapter-heading .chapter-num {
@@ -780,9 +700,10 @@
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--ash-gold);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   margin: 0;
-  border-bottom: none;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
 }
 
 /* 隐藏居中分隔线 — 已由 border-bottom 替代 */
@@ -793,7 +714,7 @@
 /* 章节内容 — 对齐 worldview .text-block 排版 */
 .reader-chapter .chapter-body {
   color: var(--ash-text);
-  line-height: 1.9;
+  line-height: 1.8;
   font-size: 0.95rem;
 }
 
@@ -809,7 +730,7 @@
   margin: 32px 0 14px;
   letter-spacing: 0.08em;
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.1);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
 }
 
 .reader-chapter .chapter-body h4 {
@@ -817,13 +738,14 @@
   font-family: 'Noto Serif SC', serif;
   font-size: 1rem;
   margin: 22px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
 }
 
 /* 子章节分隔 — 更轻 */
 .reader-chapter .sub-section {
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid rgba(201, 168, 76, 0.06);
 }
 
 .reader-chapter .sub-section:first-child {
@@ -836,7 +758,7 @@
 .chapter-placeholder {
   text-align: center;
   padding: 60px 20px;
-  color: #777;
+  color: var(--ash-dim);
   font-size: 1rem;
   font-family: 'Noto Serif SC', serif;
   letter-spacing: 0.05em;
@@ -844,9 +766,8 @@
 .chapter-placeholder::before {
   content: '';
   display: block;
-  width: 40px;
-  height: 1px;
-  background: rgba(201, 168, 76, 0.15);
+  width: 0;
+  height: 0;
   margin: 0 auto 16px;
 }
 
@@ -918,16 +839,15 @@
 
 /* ---- 种族卡片（ch2 内部） ---- */
 .race-card {
-  background: rgba(8, 12, 16, 0.7);
-  border: 1px solid rgba(201, 168, 76, 0.1);
-  border-radius: 6px;
-  padding: 20px 24px;
+  background: transparent;
+  border: none;
+  padding: 20px 0;
   margin-bottom: 16px;
-  transition: border-color 0.2s;
+  transition: none;
 }
 
 .race-card:hover {
-  border-color: rgba(201, 168, 76, 0.2);
+  background: rgba(26, 26, 26, 0.5);
 }
 
 .race-card .race-header {
@@ -948,7 +868,7 @@
 .race-card .race-desc {
   color: var(--ash-text);
   font-size: 0.85rem;
-  line-height: 1.75;
+  line-height: 1.8;
   margin-bottom: 10px;
   max-height: 100px;
   overflow: hidden;
@@ -1002,40 +922,35 @@
 .trait-tag {
   font-size: 0.72rem;
   padding: 3px 10px;
-  background: rgba(201, 168, 76, 0.08);
-  border: 1px solid rgba(201, 168, 76, 0.15);
-  border-radius: 12px;
+  background: transparent;
+  border: none;
   color: var(--ash-gold-dim);
   cursor: default;
 }
 
-/* ---- 等级表格（保留现有样式，新增玻璃底） ---- */
+/* ---- 等级表格（极简无边框） ---- */
 .level-table {
   width: 100%;
   border-collapse: collapse;
   margin: 16px 0;
   font-size: 0.85rem;
-  background: rgba(3, 5, 8, 0.4);
-  border: 1px solid rgba(201, 168, 76, 0.15);
-  border-radius: 4px;
-  overflow: hidden;
+  background: transparent;
+  border: none;
 }
 
 .level-table thead th {
-  background: rgba(201, 168, 76, 0.12);
+  background: transparent;
   color: var(--ash-gold);
   padding: 10px 14px;
   text-align: left;
   font-family: 'Cinzel', serif;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
-  border-bottom: 2px solid rgba(201, 168, 76, 0.2);
 }
 
 .level-table tbody td {
   padding: 8px 14px;
   color: var(--ash-text);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.05);
 }
 
 .level-table tbody tr:hover td {
@@ -1046,21 +961,16 @@
 .version-tag {
   font-size: 0.62rem;
   padding: 2px 8px;
-  border-radius: 10px;
   vertical-align: middle;
   font-family: 'Noto Serif SC', serif;
   letter-spacing: 0;
   display: inline-block;
 }
 .version-tag.new {
-  background: rgba(0, 200, 100, 0.1);
   color: #0c8;
-  border: 1px solid rgba(0, 200, 100, 0.2);
 }
 .version-tag.modified {
-  background: rgba(201, 168, 76, 0.1);
   color: var(--ash-gold);
-  border: 1px solid rgba(201, 168, 76, 0.2);
 }
 
 /* ---- 防御表格（攻击形态） ---- */
@@ -1071,11 +981,9 @@
   margin: 14px 0;
 }
 .attack-card {
-  background: var(--ash-gray);
-  border: 1px solid var(--ash-light);
-  border-top: 3px solid var(--ash-red);
-  padding: 14px 16px;
-  border-radius: 0 0 4px 4px;
+  background: transparent;
+  border: none;
+  padding: 14px 0;
 }
 .attack-card h4 {
   color: var(--ash-ember);
@@ -1086,7 +994,7 @@
 .attack-card p {
   color: var(--ash-text);
   font-size: 0.84rem;
-  line-height: 1.65;
+  line-height: 1.8;
   margin-bottom: 6px;
 }
 .tag-avail { color: #6bba6b; font-size: 0.78rem; }
@@ -1104,7 +1012,8 @@
   font-size: 1.6rem;
   color: var(--ash-gold);
   margin-bottom: 12px;
-  border-bottom: none;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
 }
 .rules-placeholder p {
   font-size: 1rem;
@@ -1172,7 +1081,7 @@
 
   .reader-chapter .chapter-body {
     font-size: 0.93rem;
-    line-height: 1.9;
+    line-height: 1.8;
   }
 
   /* 等级表格横向滚动 */

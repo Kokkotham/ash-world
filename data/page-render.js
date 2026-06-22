@@ -449,9 +449,7 @@
         var race = resolveDataPath(src, targetSub.data_path);
         if (race && typeof race === 'object') {
           switchRace(race, data);
-          // 隐藏第三层导航（ch2不需要）
-          var detailBar = document.getElementById('detail-nav-bar');
-          if (detailBar) { detailBar.classList.remove('visible'); detailBar.innerHTML = ''; }
+          // 不隐藏第三层导航 — 种族分支将使用 detail-nav-bar 展示（与专修同款）
           return; // 直接返回，不执行后续的第三层导航初始化
         }
       }
@@ -1474,34 +1472,42 @@
 
     // ---- 渲染详情内容 ----
     var detailContent = (branchData && branchData.detail) ? branchData.detail : (race.detail || []);
+    var parsedBranches = null;
     if (detailContent.length > 0) {
-      var parsed = parseBranchSections(detailContent);
+      parsedBranches = parseBranchSections(detailContent);
+    }
 
-      if (parsed.branches.length > 0) {
-        // 分支导航 pills
-        html += '<div class="branch-nav-bar">';
-        parsed.branches.forEach(function(b, bi) {
-          html += '<span class="branch-pill" data-branch-anchor="branch-' + bi + '" role="button" tabindex="0">' + b.title + '</span>';
-        });
-        html += '</div>';
+    // ---- 如果有分支 → 填充第3档导航（与专修同款 detail-pill）----
+    if (parsedBranches && parsedBranches.branches.length > 0) {
+      window.__currentRaceBranches = parsedBranches;
+      window.__currentRaceOverview = race; // 保存种族概述数据
+      window.__rulesCurrentBranchName = null;
 
-        // 内容区：按段落渲染，分支标题带锚点 id
-        html += '<div class="race-detail-body">';
-        parsed.sections.forEach(function(sec, si) {
-          if (sec.type === 'branch-header') {
-            html += '<h4 class="branch-title" id="branch-' + sec.branchIdx + '">' + escapeHtml(sec.text) + '</h4>';
-          } else if (sec.type === 'section-header') {
-            html += '<h4 class="content-subheading">' + escapeHtml(sec.text) + '</h4>';
-          } else if (isMixedTitle(sec.text)) {
-            html += '<h3 class="overview-title">' + escapeHtml(sec.text) + '</h3>';
-          } else if (/^[A-Za-z]/.test(sec.text.trim()) && !/[\u4e00-\u9fff]/.test(sec.text)) {
-            html += '<h4 class="overview-title">' + escapeHtml(sec.text) + '</h4>';
-          } else {
-            html += '<p>' + escapeHtml(sec.text) + '</p>';
-          }
-        });
-        html += '</div>';
-      } else {
+      // 用 detail-nav-bar 展示分支 pills（复用专修的3档导航条）
+      updateDetailNavForBranches(parsedBranches.branches, null);
+
+      // 初始视图：显示种族概述（第一个分支标题之前的内容）
+      html += '<div class="race-detail-body" id="race-branch-content">';
+      var overviewShown = false;
+      parsedBranches.sections.forEach(function(sec, si) {
+        if (sec.type === 'branch-header') return; // 跳过分支标题，初始不显示
+        overviewShown = true;
+        if (sec.type === 'section-header') {
+          html += '<h4 class="content-subheading">' + escapeHtml(sec.text) + '</h4>';
+        } else if (isMixedTitle(sec.text)) {
+          html += '<h3 class="overview-title">' + escapeHtml(sec.text) + '</h3>';
+        } else if (/^[A-Za-z]/.test(sec.text.trim()) && !/[\u4e00-\u9fff]/.test(sec.text)) {
+          html += '<h4 class="overview-title">' + escapeHtml(sec.text) + '</h4>';
+        } else {
+          html += '<p>' + escapeHtml(sec.text) + '</p>';
+        }
+      });
+      // 如果没有概述内容，显示提示文字
+      if (!overviewShown) {
+        html += '<p style="color:var(--ash-text-dim);font-style:italic;">选择下方分支查看详细信息</p>';
+      }
+      html += '</div>';
+    } else {
         // 无分支：平铺渲染（支持混合标题检测）
         html += '<div class="race-detail-body">';
         detailContent.forEach(function(p) {
@@ -1516,7 +1522,6 @@
         });
         html += '</div>';
       }
-    }
 
     // 种族特质（traits）单独展示
     if (race.traits && race.traits.length > 0) {
@@ -1532,7 +1537,6 @@
 
     html += '</div>';
     detailEl.innerHTML = html;
-    bindBranchNavClick(detailEl);
   }
 
   // 在 races 数据中查找匹配的分支数据
@@ -1592,20 +1596,125 @@
     return true;
   }
 
-  // 绑定分支导航点击事件（平滑滚动到锚点）
-  function bindBranchNavClick(container) {
-    if (!container) return;
-    container.querySelectorAll('.branch-pill').forEach(function(pill) {
+  // ============================================================
+  //  种族分支第3档导航（与专修同款 detail-pill 风格）
+  // ============================================================
+
+  /**
+   * 用 detail-nav-bar 展示种族分支 pills，点击切换内容
+   * @param {Array} branches - [{ title: '精灵Elf', idx: 0 }, ...]
+   * @param {string|null} selectedTitle - 当前选中的分支标题
+   */
+  function updateDetailNavForBranches(branches, selectedTitle) {
+    var detailBar = document.getElementById('detail-nav-bar');
+    if (!detailBar) return;
+
+    if (!branches || branches.length === 0) {
+      detailBar.classList.remove('visible');
+      detailBar.innerHTML = '';
+      return;
+    }
+
+    var pillsHTML = '';
+    branches.forEach(function(b) {
+      var activeCls = (b.title === selectedTitle) ? ' active' : '';
+      pillsHTML += '<span class="detail-pill' + activeCls + '"'
+                 + ' data-branch-name="' + escapeAttr(b.title) + '"'
+                 + ' data-branch-idx="' + b.idx + '"'
+                 + ' role="button" tabindex="0">'
+                 + escapeHtml(b.title) + '</span>';
+    });
+
+    detailBar.innerHTML = pillsHTML;
+    detailBar.classList.add('visible');
+
+    // ---- 点击事件：切换内容（非滚动）----
+    detailBar.querySelectorAll('.detail-pill').forEach(function(pill) {
       pill.addEventListener('click', function() {
-        var anchor = pill.getAttribute('data-branch-anchor');
-        var target = container.querySelector('#' + anchor);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          container.querySelectorAll('.branch-pill').forEach(function(p) { p.classList.remove('active'); });
-          pill.classList.add('active');
+        var targetName = this.getAttribute('data-branch-name');
+        var targetIdx = parseInt(this.getAttribute('data-branch-idx'), 10);
+
+        // 反选：再点已激活的 → 回到概述
+        if (window.__rulesCurrentBranchName === targetName) {
+          window.__rulesCurrentBranchName = null;
+          detailBar.querySelectorAll('.detail-pill').forEach(function(p) { p.classList.remove('active'); });
+          renderRaceOverviewContent();
+          return;
         }
+
+        // 正常选择：渲染该分支的内容段落
+        window.__rulesCurrentBranchName = targetName;
+        detailBar.querySelectorAll('.detail-pill').forEach(function(p) { p.classList.remove('active'); });
+        this.classList.add('active');
+        renderRaceBranchContent(targetIdx);
+      });
+      pill.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.click(); }
       });
     });
+  }
+
+  /** 渲染种族概述（所有分支标题之前的内容） */
+  function renderRaceOverviewContent() {
+    var container = document.getElementById('race-branch-content');
+    if (!container || !window.__currentRaceBranches) return;
+
+    var html = '';
+    var shown = false;
+    window.__currentRaceBranches.sections.forEach(function(sec) {
+      if (sec.type === 'branch-header') return; // 跳过所有分支标题及之后的内容
+      shown = true;
+      if (sec.type === 'section-header') {
+        html += '<h4 class="content-subheading">' + escapeHtml(sec.text) + '</h4>';
+      } else if (isMixedTitle(sec.text)) {
+        html += '<h3 class="overview-title">' + escapeHtml(sec.text) + '</h3>';
+      } else if (/^[A-Za-z]/.test(sec.text.trim()) && !/[\u4e00-\u9fff]/.test(sec.text)) {
+        html += '<h4 class="overview-title">' + escapeHtml(sec.text) + '</h4>';
+      } else {
+        html += '<p>' + escapeHtml(sec.text) + '</p>';
+      }
+    });
+    if (!shown) {
+      html += '<p style="color:var(--ash-text-dim);font-style:italic;">选择上方分支查看详细信息</p>';
+    }
+    container.innerHTML = html;
+  }
+
+  /** 渲染指定分支的完整内容 */
+  function renderRaceBranchContent(branchIdx) {
+    var container = document.getElementById('race-branch-content');
+    if (!container || !window.__currentRaceBranches) return;
+
+    var html = '';
+    var inTargetBranch = false;
+    window.__currentRaceBranches.sections.forEach(function(sec) {
+      // 进入目标分支区域
+      if (sec.type === 'branch-header' && sec.branchIdx === branchIdx) {
+        inTargetBranch = true;
+        html += '<h4 class="content-subheading" style="color:var(--ash-gold);margin-top:16px;">' + escapeHtml(sec.text) + '</h4>';
+        return;
+      }
+      // 到达下一个分支标题 → 停止
+      if (sec.type === 'branch-header' && inTargetBranch) return;
+      // 只渲染目标分支内的内容
+      if (inTargetBranch) {
+        if (sec.type === 'section-header') {
+          html += '<h4 class="content-subheading">' + escapeHtml(sec.text) + '</h4>';
+        } else if (isMixedTitle(sec.text)) {
+          html += '<h3 class="overview-title">' + escapeHtml(sec.text) + '</h3>';
+        } else if (/^[A-Za-z]/.test(sec.text.trim()) && !/[\u4e00-\u9fff]/.test(sec.text)) {
+          html += '<h4 class="overview-title">' + escapeHtml(sec.text) + '</h4>';
+        } else {
+          html += '<p>' + escapeHtml(sec.text) + '</p>';
+        }
+      }
+    });
+    container.innerHTML = html;
+  }
+
+  /** HTML 属性转义 */
+  function escapeAttr(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   function escapeHtml(s) {
