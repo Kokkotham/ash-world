@@ -60,6 +60,28 @@ def table_to_html(table):
     return html
 
 
+def render_material_template(text):
+    """把 '材料模板：材料名称品质【】...' 渲染为样式化的信息块"""
+    return f'<div class="material-template">{text}</div>'
+
+
+# 检测是否是材料模板行
+def is_material_template(p):
+    return p.startswith("材料模板：") or p.startswith("材料模版：")
+
+
+# 检测是否是子分类标题（如"鱼"、"蔬菜"、"禽畜肉"）— 短中文词，不含【】
+def is_sub_category(p):
+    return (
+        len(p) <= 8
+        and re.match(r'^[\u4e00-\u9fff]+$', p)
+        and '【' not in p and '[' not in p
+        and not p.startswith('材料')
+        and not p.startswith('第')
+        and not p.startswith('【')
+    )
+
+
 # ── 第6章 子章节配置 ────────────────────────────────────────────────────────
 CH6_GUIDE_FILES = [
     ("6.1锻造指南",       "锻造"),
@@ -152,12 +174,33 @@ def build_ch7():
             raw = load_ew_raw(ew_file)
             if raw:
                 paras = [p for p in raw.get("paragraphs", []) if p.strip()]
-                if paras:
-                    sub_content.append(paras[0])
-                for t in raw.get("tables", []):
-                    html = table_to_html(t)
+                tables = raw.get("tables", [])
+                table_idx = 0
+
+                for p in paras:
+                    # 子分类标题（如"鱼"、"蔬菜"）→ h3
+                    if is_sub_category(p):
+                        sub_content.append(f'<h3 class="material-category">{p}</h3>')
+                    # 材料模板行 → 样式化信息块，并在其后紧跟表格
+                    elif is_material_template(p):
+                        sub_content.append(render_material_template(p))
+                        # 模板行后面就是该分类的表格
+                        if table_idx < len(tables):
+                            html = table_to_html(tables[table_idx])
+                            if html:
+                                sub_content.append(html)
+                            table_idx += 1
+                    # 其他段落（如"【 估价】【 物品详情 】"）→ 保留
+                    else:
+                        sub_content.append(p)
+
+                # 如果还有没分配的表格（安全兜底），追加到末尾
+                while table_idx < len(tables):
+                    html = table_to_html(tables[table_idx])
                     if html:
                         sub_content.append(html)
+                    table_idx += 1
+
         sub_sections.append({
             "id": f"ch7_{slugify(title)}",
             "title": title,

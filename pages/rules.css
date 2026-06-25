@@ -1330,3 +1330,28 @@
   min-width: 24px;
   text-align: right;
 }
+
+/* ---- 材料子分类标题（如 鱼、蔬菜、禽畜肉） ---- */
+.material-category {
+  color: var(--ash-gold);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 28px 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+}
+.material-category:first-child {
+  margin-top: 8px;
+}
+
+/* ---- 材料模板信息块 ---- */
+.material-template {
+  display: inline-block;
+  background: rgba(212, 175, 55, 0.08);
+  border-left: 3px solid var(--ash-gold-dim);
+  padding: 5px 12px;
+  margin: 4px 0 10px 0;
+  font-size: 0.85rem;
+  color: var(--ash-medium);
+  letter-spacing: 0.3px;
+}
