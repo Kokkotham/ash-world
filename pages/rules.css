@@ -1198,3 +1198,135 @@
     white-space: nowrap;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   能力条目卡片（.ability-card）— 由 build_ch4_full.py 渲染
+   替代原始 docx 的合并单元格表格，展示神术/技能详情
+   ══════════════════════════════════════════════════════════ */
+.ability-card {
+  margin: 18px 0;
+  padding: 16px 18px;
+  background: rgba(26, 26, 26, 0.5);
+  border-left: 3px solid var(--ash-gold-dim);
+  border-radius: 0 6px 6px 0;
+}
+/* 元信息栏：类型 | MP | 前置 | 最大等级 */
+.ability-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+}
+.ab-type {
+  font-family: 'Cinzel', serif;
+  color: var(--ash-gold);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.ab-cost {
+  color: var(--ash-ember);
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  background: rgba(212, 107, 58, 0.1);
+  border-radius: 3px;
+}
+.ab-prereq {
+  color: var(--ash-blue);
+  font-size: 0.8rem;
+}
+.ab-level {
+  color: var(--ash-dim);
+  font-size: 0.78rem;
+}
+/* 能力描述 */
+.ability-desc {
+  color: var(--ash-text);
+  line-height: 1.85;
+  font-size: 0.93rem;
+  text-align: justify;
+  margin-bottom: 8px;
+}
+/* 强化增益区 */
+.ability-enhancement {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(201, 168, 76, 0.15);
+}
+.enh-line {
+  color: #a8d4aa;
+  font-size: 0.84rem;
+  padding: 3px 0;
+  line-height: 1.6;
+}
+.enh-line::before {
+  content: '✦ ';
+  color: var(--ash-gold-dim);
+  font-size: 0.72rem;
+}
+
+/* ══════════════════════════════════════════════════════════
+   等级进度表（.ew-level-progress）— 双栏显示
+   用于 1P-100P 等级奖励等长表格
+   ══════════════════════════════════════════════════════════ */
+.ew-level-progress {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.84rem;
+  column-count: 2;
+  column-gap: 24px;
+}
+.ew-level-progress thead {
+  display: none; /* 隐藏表头，用第一行即可 */
+}
+.ew-level-progress tbody tr {
+  display: inline-block;
+  width: 100%;
+  break-inside: avoid;
+}
+.ew-level-progress tbody td:first-child {
+  color: var(--ash-gold-dim);
+  font-weight: 600;
+  min-width: 40px;
+}
+.ew-level-progress tbody td:last-child {
+  color: var(--ash-text);
+}
+.ew-level-progress tbody tr:hover td {
+  background: rgba(201, 168, 76, 0.04);
+}
+
+/* 移动端：等级表单栏 */
+@media (max-width: 768px) {
+  .ew-level-progress {
+    column-count: 1;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   目录式小表（.ew-toc-table）— 编号+名称
+   ══════════════════════════════════════════════════════════ */
+.ew-toc-table {
+  width: auto;
+  margin: 10px 0 16px 20px;
+  font-size: 0.88rem;
+  border: none;
+  background: transparent;
+}
+.ew-toc-table td {
+  padding: 3px 14px 3px 0;
+  color: var(--ash-text);
+  border: none;
+  vertical-align: top;
+}
+.ew-toc-table td:first-child {
+  color: var(--ash-gold-dim);
+  white-space: nowrap;
+  min-width: 24px;
+  text-align: right;
+}

@@ -64,19 +64,236 @@ def slugify(name):
 
 
 def table_to_html(table):
+    """
+    智能表格渲染器：
+    - 能力条目表（≥5列 + 合并单元格）→ 渲染为语义化 .ability-card
+    - 等级进度表（2列，>10行）→ 渲染为双栏 .level-table
+    - 目录式小表（2列，≤5行）→ 渲染为 .toc-table  
+    - 其他普通表 → 渲染为 .ew-table
+    """
     headers = table.get("headers", [])
     rows = table.get("rows", [])
     if not headers or not rows:
         return ""
-    html = '<table class="ew-table"><thead><tr>'
+
+    num_cols = len(headers)
+    num_rows = len(rows)
+
+    # ── Case A: 能力条目表格（神术/技能等）──
+    # 特征：≥5列，数据行中每行所有单元格值相同（原始docx合并单元格）
+    if num_cols >= 5 and num_rows >= 2:
+        is_ability = True
+        for r in rows:
+            vals = list(r.values())
+            # 允许 header 行有不同值（那是元信息），但数据行必须全相同或接近全同
+            unique_count = len(set(vals))
+            if unique_count > 2:  # 超过2个不同值 → 不是能力表
+                is_ability = False
+                break
+        if is_ability:
+            return _render_ability_card(headers, rows)
+
+    # ── Case B: 等级进度表（如 1P-100P 光化点）──
+    # 特征：正好2列，较多行（通常>8），第一列是数字/等级格式
+    if num_cols == 2 and num_rows >= 6:
+        first_col_vals = [list(r.values())[0] for r in rows]
+        if _looks_like_levels(first_col_vals):
+            return _render_level_table(headers, rows)
+
+    # ── Case C: 目录式小表（编号+名称）──
+    if num_cols == 2 and num_rows <= 5:
+        return _render_toc_table(headers, rows)
+
+    # ── Case D: 去重后的普通表格 ──
+    return _render_regular_table(headers, rows)
+
+
+def _looks_like_levels(values):
+    """判断第一列值是否像等级/段位（数字+p/P 或纯数字递增）"""
+    import re
+    for v in values[:min(5, len(values))]:
+        s = str(v).strip()
+        if re.match(r'^\d+[pP]?$', s) or re.match(r'^\d+$', s):
+            continue
+        # 也允许 "1P" 格式
+        if re.match(r'^\d+[pP]$', s):
+            continue
+        return False
+    return True
+
+
+# ══════════════════════════════════════════════════════════
+#  能力条目卡片渲染（处理合并单元格问题）
+# ══════════════════════════════════════════════════════════
+
+def _render_ability_card(headers, rows):
+    """
+    将 docx 中的"能力条目"合并单元格表格渲染为语义化 HTML 卡片。
+    
+    原始结构（docx 合并单元格）：
+    | 能力名   | 类型     | MP | 前置X | 连接Y | 最大等级N |
+    | （描述文字，跨所有列合并）                            |
+    | 强化增益 | 强化增益 | ..| ..    | ..    | ..         |
+    | 效果值   | 效果值   | ..| ..    | ..    | ..         |
+    
+    提取后 headers 是各列文字（可能有重复），rows 的每个 cell 都有相同内容。
+    我们要去重并重新组织为卡片布局。
+    """
+    num_cols = len(headers)
+
+    # 解析 header 行 — 提取能力元信息
+    # 通常结构：[类型名, MP消耗, "前置连接", 前置值, "最大强化等级", 等级值]
+    # 或者更复杂：[祝福神术, 0MP, 前置连接, 日蚀, 最大强化等级, 无]
+    ability_type = headers[0].strip() if headers[0] else ""
+    ability_cost = headers[1].strip() if num_cols > 1 else ""
+    
+    # 提取前置条件（col 2-3）和等级（col 4-5）
+    prereq_parts = []
+    level_parts = []
+    for i in range(2, num_cols):
+        val = headers[i].strip()
+        if val in ("前置连接", "前置", ""):
+            continue
+        if i <= 3 or "前置" in headers[i-1] if i > 0 else False:
+            prereq_parts.append(val)
+        else:
+            level_parts.append(val)
+    
+    prereq = " ".join(prereq_parts).strip()
+    max_level = " ".join(level_parts).strip()
+
+    # 如果没有明确分出前置和等级，用 fallback
+    if not prereq and num_cols >= 4:
+        prereq = f"{headers[2]} {headers[3]}".strip()
+    if not max_level and num_cols >= 6:
+        max_level = f"{headers[4]} {headers[5]}".strip()
+
+    # 提取描述文字（第0行去重）
+    desc = _dedup_row_value(rows[0]) if rows else ""
+    
+    # 提取强化增益（后续行）
+    enhancement_lines = []
+    for r in rows[1:]:
+        label = _dedup_row_value(r)
+        if label and label != desc:  # 避免和描述重复
+            enhancement_lines.append(label)
+
+    # 构建 HTML
+    html = '<div class="ability-card">'
+    # 元信息栏
+    html += '<div class="ability-meta">'
+    html += f'<span class="ab-type">{_esc(ability_type)}</span>'
+    if ability_cost:
+        html += f'<span class="ab-cost">{_esc(ability_cost)}</span>'
+    if prereq:
+        html += f'<span class="ab-prereq">前置 {_esc(prereq)}</span>'
+    if max_level:
+        html += f'<span class="ab-level">{_esc(max_level)}</span>'
+    html += '</div>'  # .ability-meta
+    
+    # 描述
+    if desc:
+        html += f'<div class="ability-desc">{_esc(desc)}</div>'
+    
+    # 强化增益
+    if enhancement_lines:
+        html += '<div class="ability-enhancement">'
+        for line in enhancement_lines:
+            html += f'<div class="enh-line">{_esc(line)}</div>'
+        html += '</div>'  # .ability-enhancement
+    
+    html += '</div>'  # .ability-card
+    return html
+
+
+def _dedup_row_value(row):
+    """从可能因合并单元格而重复的行数据中去重，取唯一值"""
+    values = list(row.values())
+    unique = list(dict.fromkeys(values))  # 保重去序
+    # 返回最长的那个值（通常是完整的描述文本）
+    if len(unique) == 1:
+        return unique[0]
+    # 如果有多个不同值，返回最长非空值
+    best = max((v for v in unique if v.strip()), key=len, default="")
+    return best
+
+
+def _esc(text):
+    """HTML 转义"""
+    if not text:
+        return ""
+    return (str(text)
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace('"', "&quot;"))
+
+
+# ══════════════════════════════════════════════════════════
+#  等级进度表（双栏显示）
+# ══════════════════════════════════════════════════════════
+
+def _render_level_table(headers, rows):
+    """渲染等级进度表（1P-100P 等），使用 CSS 双栏"""
+    html = '<table class="ew-table ew-level-progress"><thead><tr>'
     for h in headers:
-        html += f"<th>{h}</th>"
+        html += f"<th>{_esc(h)}</th>"
     html += "</tr></thead><tbody>"
     for row in rows:
         html += "<tr>"
         for h in headers:
             v = row.get(h, "")
-            html += f"<td>{v}</td>"
+            html += f"<td>{_esc(v)}</td>"
+        html += "</tr>"
+    html += "</tbody></table>"
+    return html
+
+
+# ══════════════════════════════════════════════════════════
+#  目录式小表
+# ══════════════════════════════════════════════════════════
+
+def _render_toc_table(headers, rows):
+    """渲染小型目录/索引表（编号 + 名称）"""
+    html = '<table class="ew-table ew-toc-table"><tbody>'
+    for row in rows:
+        vals = list(row.values())
+        html += f"<tr><td>{_esc(str(vals[0]))}</td><td><strong>{_esc(str(vals[1]))}</strong></td></tr>"
+    html += "</tbody></table>"
+    return html
+
+
+# ══════════════════════════════════════════════════════════
+#  去重普通表格
+# ══════════════════════════════════════════════════════════
+
+def _render_regular_table(headers, rows):
+    """渲染普通表格（带基本的行内去重：同行相同值只输出一次）"""
+    html = '<table class="ew-table"><thead><tr>'
+    for h in headers:
+        html += f"<th>{_esc(h)}</th>"
+    html += "</tr></thead><tbody>"
+    for row in rows:
+        html += "<tr>"
+        prev_val = None
+        colspan_count = 1
+        col_values = []
+        for j, h in enumerate(headers):
+            v = row.get(h, "")
+            col_values.append(v)
+        
+        # 对连续相同的值做去重（colspan）
+        i = 0
+        while i < len(col_values):
+            v = col_values[i]
+            span = 1
+            while i + span < len(col_values) and col_values[i + span] == v:
+                span += 1
+            if span > 1:
+                html += f"<td colspan=\"{span}\">{_esc(v)}</td>"
+            else:
+                html += f"<td>{_esc(v)}</td>"
+            i += span
         html += "</tr>"
     html += "</tbody></table>"
     return html
