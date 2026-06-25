@@ -1150,3 +1150,51 @@
     padding: 12px 12px 36px;
   }
 }
+
+/* ---- 通用内容表格（ew-table，由 table_to_html 生成） ---- */
+.ew-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.85rem;
+  background: transparent;
+  border: none;
+}
+.ew-table thead th {
+  background: rgba(201, 168, 76, 0.08);
+  color: var(--ash-gold);
+  padding: 8px 12px;
+  text-align: left;
+  font-family: 'Cinzel', serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+}
+.ew-table tbody td {
+  padding: 7px 12px;
+  color: var(--ash-text);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.ew-table tbody tr:hover td {
+  background: rgba(201, 168, 76, 0.04);
+}
+.ew-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* 移动端：表格横向滚动 */
+@media (max-width: 768px) {
+  .chapter-body {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ew-table {
+    min-width: 480px;
+    font-size: 0.82rem;
+  }
+  .ew-table thead th,
+  .ew-table tbody td {
+    padding: 7px 10px;
+    white-space: nowrap;
+  }
+}

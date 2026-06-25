@@ -283,8 +283,11 @@
       contentHTML += '<div class="chapter-overview">';
       ch.content.forEach(function(p) {
         var pt = p.trim();
+        // 以 "<" 开头的字符串视为原始 HTML，直接输出（用于表格等）
+        if (pt.startsWith('<')) {
+          contentHTML += p;
         // 以 "XXX专修（X）" 格式的是小标题
-        if (/^[^\s]+（[ABCL]）$/.test(pt) || /^[^\s]+\([ABCL]\)$/.test(pt)) {
+        } else if (/^[^\s]+（[ABCL]）$/.test(pt) || /^[^\s]+\([ABCL]\)$/.test(pt)) {
           contentHTML += '<h4 class="overview-subtitle">' + p + '</h4>';
         // 中文开头+冒号：属性名小标题（如"躯魄："、"核心躯魄："）
         } else if (/^[一-鿿].*[:：]/.test(pt)) {
@@ -402,7 +405,10 @@
       contentHTML += '<h3 class="sub-preface-title">' + (targetSub.title || targetSub.name || '') + '</h3>';
       targetSub.content.forEach(function(p) {
         var pt = p.trim();
-        if (/^[A-Za-z]/.test(pt) && !/[\u4e00-\u9fff]/.test(pt)) {
+        // 以 "<" 开头的字符串视为原始 HTML，直接输出（用于表格等）
+        if (pt.startsWith('<')) {
+          contentHTML += p;
+        } else if (/^[A-Za-z]/.test(pt) && !/[\u4e00-\u9fff]/.test(pt)) {
           contentHTML += '<h4 class="overview-title">' + p + '</h4>';
         } else if (isMixedTitle(pt)) {
           // 中英混合标题

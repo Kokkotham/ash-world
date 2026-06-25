@@ -38,6 +38,25 @@ def slugify(name):
     s = re.sub(r'\s+', '_', s)
     return s
 
+def table_to_html(table):
+    """将 ew_raw 表格转为 HTML 字符串（用于注入 content 数组）。"""
+    headers = table.get("headers", [])
+    rows = table.get("rows", [])
+    if not headers or not rows:
+        return ""
+    html = '<table class="ew-table"><thead><tr>'
+    for h in headers:
+        html += f'<th>{h}</th>'
+    html += '</tr></thead><tbody>'
+    for row in rows:
+        html += '<tr>'
+        for h in headers:
+            v = row.get(h, "")
+            html += f'<td>{v}</td>'
+        html += '</tr>'
+    html += '</tbody></table>'
+    return html
+
 # ─── ew_raw 文件名 → 章节键 的映射 ────────────────────────────────────────────
 # 从文件名提取章节前缀，如 "3.1本能专修（改动）.json" → "3.1"
 def extract_chapter_prefix(filename):
@@ -655,6 +674,22 @@ def build_chapters_json(prof_categories, ch3_sub_sections,
     chapters[5]["data_source"] = "story-rules"
     chapters[5]["sub_sections"] = ch5_sub_sections
     print(f"  ch5: {len(ch5_sub_sections)} 个章节")
+
+    # ── ch6 专业制作与创造 ──
+    ch6 = build_ch6()
+    # 确保 chapters 至少有 8 个
+    while len(chapters) < 8:
+        idx = len(chapters)
+        ch = {"id": f"ch{idx}", "title": "", "number": f"第{idx}章",
+               "type": "text", "data_source": None, "content": [], "sub_sections": []}
+        chapters.append(ch)
+    chapters[6] = ch6
+    print(f"  ch6: {ch6['title']} ({len(ch6.get('sub_sections', []))} 个子章节)")
+
+    # ── ch7 材料 ──
+    ch7 = build_ch7()
+    chapters[7] = ch7
+    print(f"  ch7: {ch7['title']} ({len(ch7.get('sub_sections', []))} 个子章节)")
 
     return {
         "book_title": "灰烬世界规则书",
