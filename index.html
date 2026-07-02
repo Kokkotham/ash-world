@@ -1964,8 +1964,8 @@
     animate(performance.now());
     </script>
     <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.10.0/cloudbase.full.js"></script>
-    <script src="js/ash-init.js?v=3"></script>
-    <script src="js/ash-db.js?v=3"></script>
+    <script src="js/ash-init.js?v=4"></script>
+    <script src="js/ash-db.js?v=4"></script>
     <script src="transition.js"></script>
     <!-- 手机号登录 + 资料保存 -->
     <script>
@@ -2113,15 +2113,20 @@
                 sendCodeBtn.disabled = true;
                 sendCodeBtn.textContent = '发送中...';
 
-                auth.getVerificationCode({ phone_number: fullPhone })
+                var sendPromise = auth.getVerification({ phone_number: fullPhone });
+                var timeoutPromise = new Promise(function(_, reject) {
+                    setTimeout(function() { reject(new Error('请求超时，请检查网络后重试')); }, 15000);
+                });
+                Promise.race([sendPromise, timeoutPromise])
                     .then(function(res) {
                         verificationInfo = unwrap(res);
-                        console.log('[ash] 验证码已发送');
+                        console.log('[ash] 验证码已发送:', verificationInfo);
                         startCountdown();
                     })
                     .catch(function(err) {
                         console.error('[ash] 发送验证码失败:', err);
-                        showError('发送失败: ' + (err.message || err.errMsg || '请检查手机号'));
+                        var msg = err.message || err.errMsg || (err.data && err.data.message) || '请检查手机号或网络';
+                        showError('发送失败: ' + msg);
                         clearCountdown();
                     });
             });
@@ -2141,11 +2146,14 @@
                 confirmBtn.disabled = true;
                 confirmBtn.textContent = '登录中...';
 
-                auth.signInWithPhoneCode({
+                var loginPromise = auth.signInWithSms({
                     verificationInfo: verificationInfo,
                     verificationCode: code,
                     phoneNum: fullPhone
-                })
+                });
+                Promise.race([loginPromise, new Promise(function(_, reject) {
+                    setTimeout(function() { reject(new Error('登录请求超时，请检查网络后重试')); }, 15000);
+                })])
                 .then(function(res) {
                     var user = unwrap(res);
                     console.log('[ash] 登录成功:', user);

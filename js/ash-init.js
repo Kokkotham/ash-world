@@ -30,7 +30,8 @@
 
     function friendlyError(err) {
         if (!err) return '未知错误';
-        var msg = (err.message || err.errMsg || String(err)).toLowerCase();
+        var raw = err.message || err.errMsg || (err.data && err.data.message) || String(err);
+        var msg = raw.toLowerCase();
         if (msg.indexOf('db or table not exist') !== -1 || msg.indexOf('collection not exist') !== -1) {
             return '数据库集合未创建，请联系管理员在 CloudBase 控制台创建集合。';
         }
@@ -43,10 +44,13 @@
         if (msg.indexOf('invalid phone') !== -1 || msg.indexOf('phone number') !== -1) {
             return '手机号格式不正确。';
         }
-        if (msg.indexOf('invalid verification code') !== -1 || msg.indexOf('验证码') !== -1) {
+        if (msg.indexOf('invalid verification code') !== -1 || msg.indexOf('verification code') !== -1) {
             return '验证码错误或已过期，请重新获取。';
         }
-        return err.message || err.errMsg || String(err);
+        if (msg.indexOf('is not a function') !== -1) {
+            return 'SDK 接口调用错误，请刷新页面或联系管理员。';
+        }
+        return raw;
     }
 
     function init() {
