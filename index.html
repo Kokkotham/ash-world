@@ -2661,7 +2661,7 @@
         }
 
         if (loginClose) loginClose.addEventListener('click', closeModal);
-        if (loginBackdrop) loginBackdrop.addEventListener('click', closeModal);
+        // 用户反馈：点击弹窗外会误关，禁用背景点击关闭
 
         if (loginBtn) {
             loginBtn.addEventListener('click', function(e) {
@@ -2707,7 +2707,7 @@
         }
 
         if (profileClose) profileClose.addEventListener('click', function() { if (profileOverlay) profileOverlay.classList.remove('show'); });
-        if (profileBackdrop) profileBackdrop.addEventListener('click', function() { if (profileOverlay) profileOverlay.classList.remove('show'); });
+        // 禁用背景点击关闭，避免误触
 
         if (profileSaveBtn) {
             profileSaveBtn.addEventListener('click', function() {
