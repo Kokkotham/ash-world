@@ -28,9 +28,41 @@
         }
     }
 
-    function friendlyError(err) {
+    function safeStringify(obj, maxLen) {
+        maxLen = maxLen || 500;
+        if (obj === null || obj === undefined) return '';
+        if (typeof obj === 'string') return obj;
+        if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
+        if (obj instanceof Error) return obj.message || String(obj);
+        try {
+            var json = JSON.stringify(obj);
+            if (json && json.length > maxLen) json = json.slice(0, maxLen) + '...';
+            return json || String(obj);
+        } catch (e) {
+            return String(obj);
+        }
+    }
+    function extractErrorMessage(err) {
         if (!err) return '未知错误';
-        var raw = err.message || err.errMsg || (err.data && err.data.message) || String(err);
+        if (typeof err === 'string') return err;
+        var candidates = [
+            err.message, err.errMsg, err.msg, err.errorMessage, err.errorMsg,
+            err.error_description, err.description, err.reason,
+            err.error && err.error.message, err.error && err.error.errMsg,
+            err.data && err.data.message, err.data && err.data.errMsg, err.data && err.data.msg,
+            err.response && err.response.data && err.response.data.message,
+            err.response && err.response.data && err.response.data.errMsg
+        ];
+        for (var i = 0; i < candidates.length; i++) {
+            var c = candidates[i];
+            if (c && typeof c === 'string' && c.trim()) return c.trim();
+        }
+        if (err.message && typeof err.message === 'object') return extractErrorMessage(err.message);
+        if (err.data && typeof err.data === 'object') return extractErrorMessage(err.data);
+        return safeStringify(err, 300);
+    }
+    function friendlyError(err) {
+        var raw = extractErrorMessage(err);
         var msg = raw.toLowerCase();
         if (msg.indexOf('db or table not exist') !== -1 || msg.indexOf('collection not exist') !== -1) {
             return '数据库集合未创建，请联系管理员在 CloudBase 控制台创建集合。';
@@ -49,6 +81,9 @@
         }
         if (msg.indexOf('is not a function') !== -1) {
             return 'SDK 接口调用错误，请刷新页面或联系管理员。';
+        }
+        if (msg.indexOf('internal server error') !== -1 || msg.indexOf('internal error') !== -1) {
+            return '服务端错误，请稍后重试或联系管理员。';
         }
         return raw;
     }

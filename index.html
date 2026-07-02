@@ -2160,8 +2160,8 @@
     animate(performance.now());
     </script>
     <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.10.0/cloudbase.full.js"></script>
-    <script src="js/ash-init.js?v=5"></script>
-    <script src="js/ash-db.js?v=5"></script>
+    <script src="js/ash-init.js?v=6"></script>
+    <script src="js/ash-db.js?v=6"></script>
     <script src="transition.js"></script>
     <!-- 注册/登录 + 资料保存 -->
     <script>
@@ -2280,17 +2280,62 @@
             if (authSubmitText) authSubmitText.textContent = text || (currentMode === 'login' ? '登录' : '注册');
             if (authSpinner) authSpinner.style.display = loading ? 'inline-block' : 'none';
         }
-        function friendlyAuthError(err) {
+        function safeStringify(obj, maxLen) {
+            maxLen = maxLen || 500;
+            if (obj === null || obj === undefined) return '';
+            if (typeof obj === 'string') return obj;
+            if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
+            if (obj instanceof Error) return obj.message || String(obj);
+            try {
+                var json = JSON.stringify(obj);
+                if (json && json.length > maxLen) json = json.slice(0, maxLen) + '...';
+                return json || String(obj);
+            } catch (e) {
+                return String(obj);
+            }
+        }
+        function extractErrorMessage(err) {
             if (!err) return '未知错误';
-            var raw = err.message || err.errMsg || (err.data && err.data.message) || String(err);
+            if (typeof err === 'string') return err;
+            // 常见嵌套字段
+            var candidates = [
+                err.message,
+                err.errMsg,
+                err.msg,
+                err.errorMessage,
+                err.errorMsg,
+                err.error_description,
+                err.description,
+                err.reason,
+                err.error && err.error.message,
+                err.error && err.error.errMsg,
+                err.data && err.data.message,
+                err.data && err.data.errMsg,
+                err.data && err.data.msg,
+                err.response && err.response.data && err.response.data.message,
+                err.response && err.response.data && err.response.data.errMsg
+            ];
+            for (var i = 0; i < candidates.length; i++) {
+                var c = candidates[i];
+                if (c && typeof c === 'string' && c.trim()) return c.trim();
+            }
+            // 如果 message 是对象，递归提取
+            if (err.message && typeof err.message === 'object') return extractErrorMessage(err.message);
+            if (err.data && typeof err.data === 'object') return extractErrorMessage(err.data);
+            return safeStringify(err, 300);
+        }
+        function friendlyAuthError(err) {
+            var raw = extractErrorMessage(err);
             var msg = raw.toLowerCase();
             if (msg.indexOf('user not found') !== -1 || msg.indexOf('user does not exist') !== -1) return '账号不存在，请检查邮箱/用户名或先注册。';
-            if (msg.indexOf('invalid password') !== -1 || msg.indexOf('password') !== -1) return '密码错误，请重新输入。';
+            if (msg.indexOf('invalid password') !== -1) return '密码错误，请重新输入。';
             if (msg.indexOf('verification code') !== -1 || msg.indexOf('invalid verification') !== -1) return '验证码错误或已过期。';
-            if (msg.indexOf('username already registered') !== -1 || msg.indexOf('already exists') !== -1) return '该用户名或邮箱已被注册。';
+            if (msg.indexOf('username already registered') !== -1 || msg.indexOf('already exists') !== -1 || msg.indexOf('email already registered') !== -1) return '该用户名或邮箱已被注册。';
             if (msg.indexOf('invalid username') !== -1) return '用户名格式不正确。';
             if (msg.indexOf('invalid email') !== -1) return '邮箱格式不正确。';
-            if (msg.indexOf('network') !== -1 || msg.indexOf('timeout') !== -1) return '网络连接异常，请检查网络后重试。';
+            if (msg.indexOf('network') !== -1 || msg.indexOf('timeout') !== -1 || msg.indexOf('请求超时') !== -1) return '网络连接异常，请检查网络后重试。';
+            if (msg.indexOf('is not a function') !== -1) return 'SDK 接口调用错误，请刷新页面或联系管理员。';
+            if (msg.indexOf('internal server error') !== -1 || msg.indexOf('internal error') !== -1) return '服务端错误，请稍后重试或联系管理员。';
             return raw;
         }
 
@@ -2535,21 +2580,32 @@
             setSubmitLoading(true, '验证中...');
 
             // 第一步：验证邮箱验证码
+            if (!verificationInfo || !verificationInfo.verification_id) {
+                setSubmitLoading(false);
+                setGlobalError('验证码信息丢失，请重新获取验证码');
+                return;
+            }
             auth.verify({ verification_id: verificationInfo.verification_id, verification_code: code })
                 .then(function(res) {
                     var tokenRes = unwrap(res);
+                    if (!tokenRes || !tokenRes.verification_token) {
+                        throw new Error('验证码校验未返回有效凭证，请重试');
+                    }
                     verificationToken = tokenRes.verification_token;
+                    console.log('[ash] 验证码校验成功，准备注册');
 
                     // 第二步：注册
                     setSubmitLoading(true, '注册中...');
-                    return auth.signUp({
+                    var signUpPayload = {
                         email: email,
                         verification_code: code,
                         verification_token: verificationToken,
                         username: username,
                         password: password,
                         name: username
-                    });
+                    };
+                    console.log('[ash] signUp payload:', signUpPayload);
+                    return auth.signUp(signUpPayload);
                 })
                 .then(function(res) {
                     var user = unwrap(res);
@@ -2574,7 +2630,8 @@
                     setTimeout(function() { window.location.href = 'pages/profile.html'; }, 600);
                 })
                 .catch(function(err) {
-                    console.error('[ash] 注册失败:', err);
+                    console.error('[ash] 注册失败，原始错误对象:', err);
+                    console.error('[ash] 注册失败，提取信息:', extractErrorMessage(err));
                     setSubmitLoading(false);
                     setGlobalError('注册失败: ' + friendlyAuthError(err));
                 });
