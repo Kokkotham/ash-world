@@ -32,17 +32,29 @@
     function getUid() {
         var auth = window.ashAuth;
         if (!auth) return null;
-        var user = auth.hasLoginState ? auth.hasLoginState() : null;
-        if (user && user.user && user.user.uid) return user.user.uid;
+        var user = auth.currentUser;
+        if (user && user.uid) return user.uid;
         return null;
     }
 
     function getPhone() {
         var auth = window.ashAuth;
         if (!auth) return '';
-        var user = auth.hasLoginState ? auth.hasLoginState() : null;
-        if (user && user.user && user.user.phone) return user.user.phone;
+        var user = auth.currentUser;
+        if (user && user.phone_number) return user.phone_number;
         return '';
+    }
+
+    function getEmail() {
+        var auth = window.ashAuth;
+        if (!auth) return '';
+        var user = auth.currentUser;
+        if (user && user.email) return user.email;
+        return '';
+    }
+
+    function getCurrentUser() {
+        return window.ashAuth ? window.ashAuth.currentUser : null;
     }
 
     // ==================== Users ====================
@@ -185,6 +197,8 @@
         friendlyError: friendlyError,
         getUid: getUid,
         getPhone: getPhone,
+        getEmail: getEmail,
+        getCurrentUser: getCurrentUser,
         getUserProfile: getUserProfile,
         setUserProfile: setUserProfile,
         ensureUserProfile: ensureUserProfile,
