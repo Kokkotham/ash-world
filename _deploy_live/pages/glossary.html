@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>规则术语表 — 灰烬世界</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        /* 搜索框 */
+        .search-box {
+            max-width: 480px;
+            margin: 0 auto 32px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 18px 12px 44px;
+            background: var(--ash-gray);
+            border: 1px solid var(--ash-light);
+            border-radius: 4px;
+            color: var(--ash-text);
+            font-size: 0.95rem;
+            font-family: 'Noto Serif SC', serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-box input::placeholder { color: #6a6050; }
+        .search-box input:focus { border-color: var(--ash-gold-dim); }
+        .search-box .search-icon {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: #6a6050;
+            font-size: 1rem;
+        }
+
+        /* 分类导航 */
+        .cat-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 36px;
+        }
+        .cat-btn {
+            padding: 6px 16px;
+            background: var(--ash-gray);
+            border: 1px solid var(--ash-light);
+            border-radius: 3px;
+            color: var(--ash-text);
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Noto Serif SC', serif;
+            letter-spacing: 0.03em;
+        }
+        .cat-btn:hover, .cat-btn.active {
+            color: var(--ash-gold);
+            border-color: var(--ash-gold-dim);
+            background: rgba(201,168,76,0.08);
+        }
+
+        /* 分类区块 */
+        .cat-section {
+            margin-bottom: 48px;
+        }
+        .cat-section.hidden { display: none; }
+        .cat-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.15rem;
+            color: var(--ash-gold);
+            letter-spacing: 0.08em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(201,168,76,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cat-title .cat-icon { font-size: 1.2rem; }
+        .cat-title .cat-count {
+            font-size: 0.72rem;
+            color: var(--ash-dim);
+            font-family: 'Noto Serif SC', serif;
+            margin-left: 6px;
+        }
+
+        /* 术语卡片 */
+        .term-card {
+            background: var(--ash-gray);
+            border: 1px solid var(--ash-light);
+            border-radius: 4px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .term-card:hover {
+            border-color: var(--ash-gold-dim);
+            box-shadow: 0 0 12px rgba(201,168,76,0.06);
+        }
+        .term-card.hidden { display: none; }
+        .term-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+        .term-name {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1rem;
+            color: var(--ash-gold);
+            font-weight: 600;
+        }
+        .term-abbr {
+            font-family: 'Cinzel', serif;
+            font-size: 0.82rem;
+            color: var(--ash-ember);
+            background: rgba(201,138,76,0.1);
+            padding: 2px 8px;
+            border-radius: 3px;
+            letter-spacing: 0.05em;
+        }
+        .term-ref {
+            font-size: 0.72rem;
+            color: #6a6050;
+            font-style: italic;
+        }
+        .term-desc {
+            font-size: 0.88rem;
+            color: var(--ash-text);
+            line-height: 1.75;
+            margin-top: 4px;
+        }
+        .term-desc strong { color: var(--ash-gold); }
+
+        /* 快速参考标签 */
+        .term-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .term-tag {
+            font-size: 0.72rem;
+            padding: 2px 8px;
+            border-radius: 2px;
+            letter-spacing: 0.03em;
+        }
+        .tag-action { background: rgba(107,170,107,0.12); color: #6baa6b; border: 1px solid rgba(107,170,107,0.2); }
+        .tag-attack { background: rgba(186,107,107,0.12); color: #ba6b6b; border: 1px solid rgba(186,107,107,0.2); }
+        .tag-defend { background: rgba(107,139,186,0.12); color: #6b8bba; border: 1px solid rgba(107,139,186,0.2); }
+        .tag-protect { background: rgba(160,130,186,0.12); color: #a082ba; border: 1px solid rgba(160,130,186,0.2); }
+        .tag-weapon { background: rgba(186,160,107,0.12); color: #baa06b; border: 1px solid rgba(186,160,107,0.2); }
+        .tag-special { background: rgba(201,168,76,0.12); color: #c9a84c; border: 1px solid rgba(201,168,76,0.2); }
+        .tag-life { background: rgba(107,186,170,0.12); color: #6baa9a; border: 1px solid rgba(107,186,170,0.2); }
+        .tag-manage { background: rgba(140,160,186,0.12); color: #8ca0ba; border: 1px solid rgba(140,160,186,0.2); }
+        .tag-world { background: rgba(186,140,107,0.12); color: #ba8c6b; border: 1px solid rgba(186,140,107,0.2); }
+
+        /* 无结果提示 */
+        .no-result {
+            text-align: center;
+            color: var(--ash-dim);
+            padding: 48px 20px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .no-result.show { display: block; }
+
+        /* 统计栏 */
+        .stats-bar {
+            text-align: center;
+            margin-bottom: 28px;
+            font-size: 0.82rem;
+            color: var(--ash-dim);
+        }
+        .stats-bar strong { color: var(--ash-gold); }
+
+        /* ── 移动端适配 ── */
+        @media (max-width: 768px) {
+            .search-box { max-width: 100%; margin-bottom: 20px; }
+            .search-box input { font-size: 1rem; padding: 12px 16px 12px 42px; }
+            .cat-nav { gap: 6px; margin-bottom: 24px; }
+            .cat-btn {
+                padding: 8px 14px; font-size: 0.8rem;
+                min-height: 36px; /* 触控 */
+            }
+            .term-card { padding: 14px 14px; margin-bottom: 10px; }
+            .term-name { font-size: 0.95rem; }
+            .term-desc { font-size: 0.86rem; }
+            .cat-title { font-size: 1rem; }
+        }
+        @media (max-width: 480px) {
+            .search-box input { font-size: 0.9rem; }
+            .cat-btn { padding: 8px 10px; font-size: 0.76rem; }
+            .term-card { padding: 12px 12px; }
+            .term-name { font-size: 0.88rem; }
+            .term-desc { font-size: 0.83rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-nav">
+        <a href="../index.html" class="nav-brand"><span>灰烬世界</span></a>
+        <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+        <div class="nav-links">
+            <div class="nav-item"><a href="news.html">最新资讯</a></div>
+            <div class="nav-item">
+                <span>世界设定</span>
+                <div class="nav-dropdown">
+                    <a href="worldview.html">世界观</a>
+                    <a href="map.html">地图</a>
+                    <a href="pantheon.html">神系</a>
+                    <a href="races-ontology.html">种族</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <span>规则&amp;模组</span>
+                <div class="nav-dropdown">
+                    <a href="rules.html">规则书</a>
+                    <a href="character-sheet.html">角色卡</a>
+                    <a href="glossary.html">规则术语表</a>
+                    <a href="modules.html">模组</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <span>社区</span>
+                <div class="nav-dropdown">
+                    <a href="articles.html">文章</a>
+                    <a href="art.html">绘图</a>
+                    <a href="discussion.html">讨论</a>
+                    <a href="community.html">玩家共创</a>
+                    <a href="works.html">衍生作品</a>
+                </div>
+            </div>
+            <div class="nav-item"><a href="merch.html">商店</a></div>
+        </div>
+    </nav>
+
+
+    <nav class="nav-mobile" id="navMobile">
+        <div class="mobile-group"><div class="mobile-group-title">最新</div>
+            <a class="mobile-link" href="news.html">最新资讯</a></div>
+        <div class="mobile-group"><div class="mobile-group-title">世界设定</div>
+            <a class="mobile-link" href="worldview.html">世界观</a>
+            <a class="mobile-link" href="map.html">地图</a>
+            <a class="mobile-link" href="pantheon.html">神系</a>
+            <a class="mobile-link" href="races-ontology.html">种族</a></div>
+        <div class="mobile-group"><div class="mobile-group-title">规则&模组</div>
+            <a class="mobile-link" href="rules.html">规则书</a>
+            <a class="mobile-link" href="character-sheet.html">角色卡</a>
+            <a class="mobile-link" href="glossary.html">规则术语表</a>
+            <a class="mobile-link" href="modules.html">模组</a></div>
+        <div class="mobile-group"><div class="mobile-group-title">社区</div>
+            <a class="mobile-link" href="articles.html">文章</a>
+            <a class="mobile-link" href="art.html">绘图</a>
+            <a class="mobile-link" href="discussion.html">讨论</a>
+            <a class="mobile-link" href="community.html">玩家共创</a>
+            <a class="mobile-link" href="works.html">衍生作品</a></div>
+        <div class="mobile-group"><a class="mobile-link" href="merch.html" style="color:var(--ash-gold)">商店</a></div>
+    </nav>
+    <header class="page-header">
+        <h1>规则术语表</h1>
+        <p class="subtitle">RULES GLOSSARY — QUICK INDEX</p>
+        <div class="divider"></div>
+    </header>
+
+    <main class="content">
+
+        <!-- 搜索框 -->
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="搜索术语名称、缩写或关键词…">
+        </div>
+
+        <!-- 统计 -->
+        <div class="stats-bar">共 <strong id="totalCount">0</strong> 条术语 · <strong>9</strong> 个分类</div>
+
+        <!-- 分类导航 -->
+        <div class="cat-nav">
+            <div class="cat-btn active" data-cat="all">全部</div>
+            <div class="cat-btn" data-cat="action">⚔ 行动</div>
+            <div class="cat-btn" data-cat="attack">🗡 攻击</div>
+            <div class="cat-btn" data-cat="defend">🛡 防御</div>
+            <div class="cat-btn" data-cat="protect">💫 防护体系</div>
+            <div class="cat-btn" data-cat="weapon">⚒ 武器与词条</div>
+            <div class="cat-btn" data-cat="special">🔥 特殊战斗</div>
+            <div class="cat-btn" data-cat="life">🏕 交流与生活</div>
+            <div class="cat-btn" data-cat="manage">🏛 经营与管理</div>
+            <div class="cat-btn" data-cat="world">🌌 世界观</div>
+        </div>
+
+        <!-- 无结果 -->
+        <div class="no-result" id="noResult">未找到匹配的术语，请尝试其他关键词。</div>
+
+        <div id="onto-content"></div>
+    </main>
+<div class="content" id="onto-linked"></div>
+
+        <nav class="bottom-nav">
+        <a href="news.html">最新资讯</a>
+        <a href="worldview.html">世界观</a>
+        <a href="map.html">地图</a>
+        <a href="races-ontology.html">种族</a>
+        <a href="rules.html" class="active">规则书</a>
+        <a href="modules.html">模组</a>
+        <a href="works.html">衍生作品</a>
+        <a href="merch.html">商店</a>
+    </nav>
+
+    <footer class="footer">
+        <p>灰烬世界 Ash World &copy; 2026 桌游工作室</p>
+    </footer>
+
+    <script>
+        // 动态搜索与分类筛选 — 适配 PageRender 渲染后的内容
+        (function() {
+            var searchInput = document.getElementById('searchInput');
+            var noResult = document.getElementById('noResult');
+            var totalCount = document.getElementById('totalCount');
+            var catNav = document.querySelector('.cat-nav');
+            var ontoContent = document.getElementById('onto-content');
+
+            // 延迟初始化，等待 PageRender 渲染完成
+            function setup() {
+                if (!window.AshData || !window.AshData.glossary || !window.AshData.loaded) {
+                    setTimeout(setup, 100);
+                    return;
+                }
+
+                var glossaryData = window.AshData.glossary;
+                var entries = glossaryData.entries || [];
+                var categories = glossaryData.categories || [];
+                var catMap = {};
+                categories.forEach(function(c) { catMap[c.id] = c.name; });
+
+                // 更新总数
+                if (totalCount) {
+                    totalCount.textContent = entries.length;
+                }
+
+                // 动态生成分类按钮
+                if (catNav && categories.length > 0) {
+                    var btnHtml = '<div class="cat-btn active" data-cat="all">全部</div>';
+                    categories.forEach(function(cat) {
+                        btnHtml += '<div class="cat-btn" data-cat="' + cat.id + '">' + cat.name + '</div>';
+                    });
+                    catNav.innerHTML = btnHtml;
+
+                    catNav.querySelectorAll('.cat-btn').forEach(function(btn) {
+                        btn.addEventListener('click', function() {
+                            catNav.querySelectorAll('.cat-btn').forEach(function(b) {
+                                b.classList.remove('active');
+                            });
+                            btn.classList.add('active');
+                            applyFilter();
+                        });
+                    });
+                }
+
+                // 绑定搜索
+                if (searchInput) {
+                    searchInput.addEventListener('input', applyFilter);
+                }
+            }
+
+            function applyFilter() {
+                var query = searchInput ? searchInput.value.trim().toLowerCase() : '';
+                var activeBtn = catNav ? catNav.querySelector('.cat-btn.active') : null;
+                var activeCat = activeBtn ? activeBtn.dataset.cat : 'all';
+                var visibleCount = 0;
+
+                if (!ontoContent) return;
+
+                var allCards = ontoContent.querySelectorAll('.card');
+                allCards.forEach(function(card) {
+                    var cardText = (card.textContent || '').toLowerCase();
+                    var cardGrid = card.closest('.card-grid');
+                    var catId = '';
+
+                    // 从 h2.section-title 获取分类名称并映射到分类 ID
+                    if (cardGrid) {
+                        var h2 = cardGrid.previousElementSibling;
+                        if (h2 && h2.classList.contains('section-title')) {
+                            var h2Text = h2.textContent.trim();
+                            catId = resolveCategoryId(h2Text);
+                        }
+                    }
+
+                    // 分类筛选
+                    if (activeCat !== 'all' && catId !== activeCat) {
+                        card.style.display = 'none';
+                        return;
+                    }
+
+                    // 搜索筛选
+                    if (query && cardText.indexOf(query) === -1) {
+                        card.style.display = 'none';
+                        return;
+                    }
+
+                    card.style.display = '';
+                    visibleCount++;
+                });
+
+                if (noResult) {
+                    noResult.classList.toggle('show', visibleCount === 0 && query !== '');
+                }
+            }
+
+            // 将 section-title 文本映射到分类 ID（兼容 ID 或中文名）
+            function resolveCategoryId(h2Text) {
+                if (!window.AshData || !window.AshData.glossary) return h2Text;
+                var categories = window.AshData.glossary.categories || [];
+                for (var i = 0; i < categories.length; i++) {
+                    if (categories[i].id === h2Text || categories[i].name === h2Text) {
+                        return categories[i].id;
+                    }
+                }
+                return h2Text;
+            }
+
+            // 立即启动轮询，页面渲染完成后初始化
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() { setTimeout(setup, 50); });
+            } else {
+                setTimeout(setup, 50);
+            }
+        })();
+    </script>
+    <script src="../transition.js"></script>
+    <script src="../ash-bg.js"></script>
+    <script src="../mouse-trail.js"></script>
+    <script src="../data/ash-data-inline.js"></script>
+    <script src="../data/ash-data.js"></script>
+    <script src="../data/page-render.js"></script>
+    <script src="../data/keyword-tooltip.js"></script>
+    <script>PageRender.init('glossary');</script>
+
+<script>
+(function(){
+    var btn=document.getElementById('navToggle');
+    var panel=document.getElementById('navMobile');
+    if(btn&&panel){
+        btn.addEventListener('click',function(){
+            btn.classList.toggle('open');
+            panel.classList.toggle('open');
+        });
+        // Click a link closes the panel
+        panel.querySelectorAll('.mobile-link').forEach(function(l){
+            l.addEventListener('click',function(){btn.classList.remove('open');panel.classList.remove('open');});
+        });
+    }
+})();
+</script>
+</body>
+</html>

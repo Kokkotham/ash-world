@@ -1,6 +1,6 @@
 # 灰烬世界 Ash World — 工作进度交接
 
-> 最后更新: 2026-06-17
+> 最后更新: 2026-07-02
 
 ## 项目概述
 
@@ -8,9 +8,13 @@
 
 ## 部署地址
 
-- **CloudStudio**: https://9a465c3434074b28a0eebbac66865030.app.codebuddy.work
-- **GitHub Pages**: https://kokkotham.github.io/ash-world/ (当前 404，需在 Settings→Pages 手动恢复，选 main 分支 /root)
+- **自定义域名**: https://ember-world.site （DNS 指向 GitHub Pages）
+- **CloudBase 静态托管**: https://ew-prod-d0gciqy00757cc7dc-1449294861.tcloudbaseapp.com
+- **GitHub Pages**: https://kokkotham.github.io/ash-world/
 - **GitHub 仓库**: github.com/Kokkotham/ash-world
+- **CloudBase 环境**: ew-prod-d0gciqy00757cc7dc (ap-shanghai)
+- **域名注册**: 腾讯云，ember-world.site，首年 10 元
+- **CloudStudio** (旧): https://9a465c3434074b28a0eebbac66865030.app.codebuddy.work
 
 ## 技术栈决策
 

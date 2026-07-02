@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人主页 — 灰烬世界</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+        :root {
+            --panel-bg: rgba(14,18,24,0.55);
+            --panel-border: rgba(201,168,76,0.12);
+        }
+        .profile-wrapper {
+            max-width: 780px; margin: 0 auto;
+            padding: 100px 20px 60px;
+            display: flex; flex-direction: column; gap: 24px;
+        }
+        /* ── 头像区 ── */
+        .profile-header {
+            text-align: center; padding: 20px 0 8px;
+        }
+        .avatar-circle {
+            width: 88px; height: 88px; border-radius: 50%;
+            margin: 0 auto 16px;
+            background: rgba(201,168,76,0.08);
+            border: 2px solid rgba(201,168,76,0.25);
+            background-size: cover; background-position: center;
+            position: relative; cursor: pointer;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .avatar-circle:hover {
+            border-color: var(--ash-gold);
+            box-shadow: 0 0 20px rgba(201,168,76,0.15);
+        }
+        .avatar-placeholder {
+            color: var(--ash-dim); font-size: 2rem;
+            pointer-events: none;
+        }
+        .avatar-upload-hint {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.5); opacity: 0;
+            transition: opacity 0.3s; border-radius: 50%;
+            color: var(--ash-gold); font-size: 0.72rem;
+            letter-spacing: 0.06em;
+        }
+        .avatar-circle:hover .avatar-upload-hint { opacity: 1; }
+        #avatarInput { display: none; }
+        .profile-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem; font-weight: 700;
+            color: var(--ash-gold);
+            letter-spacing: 0.1em;
+            margin-bottom: 4px;
+        }
+        .profile-phone {
+            font-size: 0.78rem; color: var(--ash-dim);
+            letter-spacing: 0.06em; margin-bottom: 6px;
+        }
+        .profile-bio {
+            font-size: 0.85rem; color: var(--ash-dim);
+            letter-spacing: 0.04em; opacity: 0.7;
+            max-width: 400px; margin: 0 auto;
+        }
+        .edit-link {
+            display: inline-block; margin-top: 12px;
+            padding: 6px 18px;
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 2px; color: var(--ash-gold);
+            font-size: 0.75rem; letter-spacing: 0.08em;
+            background: rgba(201,168,76,0.04);
+            cursor: pointer; transition: all 0.3s;
+            text-decoration: none;
+        }
+        .edit-link:hover {
+            background: rgba(201,168,76,0.12);
+            border-color: var(--ash-gold);
+        }
+
+        /* ── 面板通用 ── */
+        .panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px; padding: 28px 24px;
+        }
+        .panel::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(201,168,76,0.15), transparent);
+            pointer-events: none;
+        }
+        .panel { position: relative; overflow: hidden; }
+        .panel-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem; font-weight: 700;
+            color: var(--ash-gold); letter-spacing: 0.08em;
+            margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+        }
+        .panel-title .icon { font-size: 1.1rem; }
+
+        /* ── 角色卡网格 ── */
+        .char-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+        .char-card {
+            background: rgba(201,168,76,0.04);
+            border: 1px solid rgba(201,168,76,0.1);
+            border-radius: 6px; padding: 16px;
+            cursor: pointer; transition: all 0.3s;
+            text-decoration: none; display: block;
+        }
+        .char-card:hover {
+            background: rgba(201,168,76,0.08);
+            border-color: var(--ash-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .char-card .char-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem; font-weight: 700;
+            color: var(--ash-gold); letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+        .char-card .char-meta {
+            font-size: 0.72rem; color: var(--ash-dim);
+            letter-spacing: 0.04em; display: flex; gap: 12px;
+            flex-wrap: wrap;
+        }
+        .char-card .char-date {
+            font-size: 0.65rem; color: rgba(255,255,255,0.2);
+            margin-top: 8px; letter-spacing: 0.04em;
+        }
+        .new-char-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; padding: 14px;
+            border: 1px dashed rgba(201,168,76,0.2);
+            border-radius: 6px; color: var(--ash-dim);
+            font-size: 0.82rem; letter-spacing: 0.06em;
+            cursor: pointer; transition: all 0.3s;
+            background: transparent;
+        }
+        .new-char-btn:hover {
+            border-color: var(--ash-gold); color: var(--ash-gold);
+            background: rgba(201,168,76,0.04);
+        }
+
+        /* ── 游戏记录 ── */
+        .session-list { display: flex; flex-direction: column; gap: 10px; }
+        .session-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(201,168,76,0.03);
+            border-radius: 4px;
+        }
+        .session-item .session-name {
+            font-size: 0.85rem; color: var(--ash-text);
+            letter-spacing: 0.04em;
+        }
+        .session-item .session-date {
+            font-size: 0.7rem; color: var(--ash-dim);
+            white-space: nowrap;
+        }
+        .session-item .session-role {
+            font-size: 0.68rem; color: var(--ash-gold);
+            margin-left: auto; margin-right: 12px;
+            opacity: 0.7;
+        }
+
+        /* ── 统计数字 ── */
+        .stat-row {
+            display: flex; gap: 24px; flex-wrap: wrap;
+        }
+        .stat-item { flex: 1; min-width: 100px; text-align: center; }
+        .stat-item .stat-num {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem; font-weight: 700;
+            color: var(--ash-gold); letter-spacing: 0.06em;
+        }
+        .stat-item .stat-label {
+            font-size: 0.72rem; color: var(--ash-dim);
+            letter-spacing: 0.04em; margin-top: 4px;
+        }
+
+        /* ── 空状态 ── */
+        .empty-state {
+            text-align: center; padding: 32px 20px;
+            color: var(--ash-dim); font-size: 0.85rem;
+            letter-spacing: 0.04em; opacity: 0.6;
+        }
+        .empty-state .empty-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
+
+        /* ── 编辑弹窗（复用 index 样式） ── */
+        .profile-overlay {
+            position: fixed; inset: 0; z-index: 500;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .profile-overlay.show { opacity: 1; pointer-events: auto; }
+        .login-backdrop {
+            position: absolute; inset: 0;
+            background: rgba(0,0,0,0.6);
+        }
+        .profile-card {
+            position: relative; width: 360px; max-width: 90vw;
+            background: linear-gradient(160deg, rgba(18,22,30,0.97) 0%, rgba(10,14,20,0.98) 100%);
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 4px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+            padding: 32px 28px 24px;
+            backdrop-filter: blur(24px);
+        }
+        .profile-card h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem; font-weight: 700;
+            color: var(--ash-gold); letter-spacing: 0.08em;
+            margin-bottom: 20px;
+        }
+        .profile-card label {
+            display: block; font-size: 0.72rem;
+            color: var(--ash-dim); margin-bottom: 6px;
+            letter-spacing: 0.06em;
+        }
+        .profile-card input, .profile-card textarea {
+            width: 100%; margin-bottom: 14px;
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 2px;
+            background: rgba(0,0,0,0.3);
+            color: var(--ash-dim);
+            font-size: 0.82rem; padding: 10px 12px;
+            font-family: 'Noto Serif SC', serif;
+            outline: none; transition: border-color 0.3s;
+        }
+        .profile-card input:focus, .profile-card textarea:focus {
+            border-color: var(--ash-gold);
+        }
+        .profile-card textarea {
+            resize: vertical; min-height: 60px;
+        }
+        .profile-save-btn {
+            display: block; width: 100%; padding: 11px;
+            background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(180,140,50,0.15));
+            border: 1px solid rgba(201,168,76,0.35);
+            border-radius: 2px; color: var(--ash-gold);
+            font-size: 0.82rem; letter-spacing: 0.1em; cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .profile-save-btn:hover {
+            background: linear-gradient(135deg, rgba(201,168,76,0.3), rgba(180,140,50,0.25));
+            border-color: var(--ash-gold);
+        }
+        .profile-save-btn:disabled { cursor: not-allowed; opacity: 0.4; }
+        .login-close {
+            position: absolute; top: 10px; right: 14px;
+            background: none; border: none;
+            color: var(--ash-dim); font-size: 1.3rem;
+            cursor: pointer; transition: color 0.2s;
+        }
+        .login-close:hover { color: var(--ash-gold); }
+        .profile-success { color: #8cd4b8; font-size: 0.72rem; text-align: center; margin-top: 8px; opacity: 0; transition: opacity 0.3s ease; }
+        .profile-success.visible { opacity: 1; }
+        .login-error { color: #d44; font-size: 0.72rem; margin-top: 8px; text-align: center; min-height: 1.2em; }
+    </style>
+</head>
+<body>
+    <nav class="top-nav" id="page-header">
+        <div class="nav-brand"><a href="../index.html" style="color:inherit;text-decoration:none;">灰烬世界</a></div>
+        <div class="nav-links">
+            <div class="nav-item"><a href="worldview.html">世界设定</a></div>
+            <div class="nav-item"><a href="rules.html">规则书</a></div>
+            <div class="nav-item"><a href="character-sheet.html">角色卡</a></div>
+            <div class="nav-item">
+                <a href="../index.html" style="color:var(--ash-gold);">首页</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-wrapper">
+        <!-- 头像 + 基本信息 -->
+        <div class="profile-header">
+            <div class="avatar-circle" id="avatarCircle" title="点击上传头像">
+                <span class="avatar-placeholder" id="avatarPlaceholder">?</span>
+                <span class="avatar-upload-hint">更换头像</span>
+            </div>
+            <input type="file" id="avatarInput" accept="image/*">
+            <div class="profile-name" id="displayName">未设置</div>
+            <div class="profile-phone" id="phoneDisplay"></div>
+            <div class="profile-bio" id="bioDisplay"></div>
+            <a class="edit-link" id="editProfileBtn" href="javascript:void(0)">编辑资料</a>
+        </div>
+
+        <!-- 统计 -->
+        <div class="panel" id="statsPanel">
+            <div class="panel-title"><span class="icon">&#9733;</span>数据统计</div>
+            <div class="stat-row">
+                <div class="stat-item"><span class="stat-num" id="charCount">0</span><span class="stat-label">角色卡</span></div>
+                <div class="stat-item"><span class="stat-num" id="sessionCount">0</span><span class="stat-label">游戏记录</span></div>
+                <div class="stat-item"><span class="stat-num">-</span><span class="stat-label">成就点数</span></div>
+            </div>
+        </div>
+
+        <!-- 我的角色卡 -->
+        <div class="panel" id="charsPanel">
+            <div class="panel-title"><span class="icon">&#9876;</span>我的角色卡</div>
+            <div class="char-grid" id="charGrid">
+                <div class="empty-state"><span class="empty-icon">&#9876;</span>还没有角色卡</div>
+            </div>
+            <a class="new-char-btn" href="character-sheet.html" style="margin-top:16px;display:flex;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                创建新角色
+            </a>
+        </div>
+
+        <!-- 游戏记录 -->
+        <div class="panel" id="sessionsPanel">
+            <div class="panel-title"><span class="icon">&#9733;</span>游戏记录</div>
+            <div class="session-list" id="sessionList">
+                <div class="empty-state"><span class="empty-icon">&#9783;</span>还没有游戏记录</div>
+            </div>
+            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+                <input type="text" id="sessionTitle" placeholder="团名（如：灰烬之海）" maxlength="30" style="flex:1;min-width:140px;border:1px solid rgba(201,168,76,0.2);border-radius:2px;background:rgba(0,0,0,0.3);color:var(--ash-dim);font-size:0.78rem;padding:8px 12px;outline:none;font-family:'Noto Serif SC',serif;">
+                <input type="text" id="sessionRole" placeholder="身份（DM/玩家）" maxlength="10" style="width:100px;border:1px solid rgba(201,168,76,0.2);border-radius:2px;background:rgba(0,0,0,0.3);color:var(--ash-dim);font-size:0.78rem;padding:8px 12px;outline:none;font-family:'Noto Serif SC',serif;">
+                <button id="logSessionBtn" style="padding:8px 16px;border:1px solid rgba(201,168,76,0.25);border-radius:2px;background:rgba(201,168,76,0.06);color:var(--ash-gold);font-size:0.78rem;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s;white-space:nowrap;">记录</button>
+            </div>
+            <div class="login-error" id="sessionMsg" style="min-height:1.2em;"></div>
+        </div>
+    </div>
+
+    <!-- 编辑弹窗 -->
+    <div class="profile-overlay" id="editOverlay">
+        <div class="login-backdrop" id="editBackdrop"></div>
+        <div class="profile-card">
+            <button class="login-close" id="editClose">&times;</button>
+            <h2>编辑资料</h2>
+            <label>显示名称</label>
+            <input type="text" id="editName" placeholder="你在余烬中的名字" maxlength="20">
+            <label>个人简介</label>
+            <textarea id="editBio" placeholder="灰烬中的旅人..." maxlength="120"></textarea>
+            <button class="profile-save-btn" id="editSaveBtn">保存到云端</button>
+            <div class="profile-success" id="editSuccess">已保存</div>
+            <div class="login-error" id="editError"></div>
+        </div>
+    </div>
+
+    <script src="../js/tcb-sdk.js"></script>
+    <script src="../js/ash-init.js"></script>
+    <script src="../js/ash-db.js"></script>
+    <script>
+    (function() {
+        var auth = window.ashAuth;
+        if (!auth || typeof cloudbase === 'undefined') {
+            document.body.innerHTML = '<div style="text-align:center;padding:200px 20px;color:#d44;">系统初始化失败，请刷新页面</div>';
+            return;
+        }
+
+        // DOM
+        var avatarCircle     = document.getElementById('avatarCircle');
+        var avatarPlaceholder= document.getElementById('avatarPlaceholder');
+        var avatarInput      = document.getElementById('avatarInput');
+        var displayNameEl    = document.getElementById('displayName');
+        var phoneDisplayEl   = document.getElementById('phoneDisplay');
+        var bioDisplayEl     = document.getElementById('bioDisplay');
+        var editProfileBtn   = document.getElementById('editProfileBtn');
+        var charGrid         = document.getElementById('charGrid');
+        var charCountEl      = document.getElementById('charCount');
+        var sessionCountEl   = document.getElementById('sessionCount');
+        var sessionList      = document.getElementById('sessionList');
+        var sessionTitleEl   = document.getElementById('sessionTitle');
+        var sessionRoleEl    = document.getElementById('sessionRole');
+        var logSessionBtn    = document.getElementById('logSessionBtn');
+        var sessionMsg       = document.getElementById('sessionMsg');
+
+        // 编辑弹窗
+        var editOverlay   = document.getElementById('editOverlay');
+        var editBackdrop  = document.getElementById('editBackdrop');
+        var editClose     = document.getElementById('editClose');
+        var editName      = document.getElementById('editName');
+        var editBio       = document.getElementById('editBio');
+        var editSaveBtn   = document.getElementById('editSaveBtn');
+        var editSuccess   = document.getElementById('editSuccess');
+        var editError     = document.getElementById('editError');
+
+        var cachedName = '';
+        var cachedBio = '';
+        var cachedAvatar = '';
+
+        function unwrap(r) {
+            if (r && r.data !== undefined) return r.data;
+            return r;
+        }
+
+        // 头像上传
+        if (avatarCircle && avatarInput) {
+            avatarCircle.addEventListener('click', function() { avatarInput.click(); });
+            avatarInput.addEventListener('change', function() {
+                var file = avatarInput.files[0];
+                if (!file) return;
+                if (file.size > 2 * 1024 * 1024) { alert('图片不能超过 2MB'); return; }
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var dataUrl = e.target.result;
+                    // CloudBase 不支持客户端直接传文件，先存为 localStorage base64 降级，后续可接云存储
+                    cachedAvatar = dataUrl;
+                    localStorage.setItem('ew_avatar', dataUrl);
+                    setAvatar(dataUrl);
+                    // 同步到数据库
+                    ASH_DB.ready().then(function() {
+                        return ASH_DB.user.update({ avatar: dataUrl });
+                    }).catch(function() {});
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function setAvatar(url) {
+            if (!avatarCircle) return;
+            if (url) {
+                avatarCircle.style.backgroundImage = 'url(' + url + ')';
+                if (avatarPlaceholder) avatarPlaceholder.style.display = 'none';
+            } else {
+                avatarCircle.style.backgroundImage = '';
+                if (avatarPlaceholder) avatarPlaceholder.style.display = '';
+            }
+        }
+
+        // 渲染角色卡列表
+        function renderCharacters(list) {
+            if (!charGrid) return;
+            if (!list || list.length === 0) {
+                charGrid.innerHTML = '<div class="empty-state"><span class="empty-icon">&#9876;</span>还没有角色卡</div>';
+                if (charCountEl) charCountEl.textContent = '0';
+                return;
+            }
+            if (charCountEl) charCountEl.textContent = String(list.length);
+            var html = '';
+            list.forEach(function(c) {
+                var race = c.race || '未知种族';
+                var prof = c.profession || '';
+                var lvl  = c.level || 1;
+                var date = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString('zh-CN') : '';
+                html += '<a class="char-card" href="character-sheet.html?id=' + c._id + '">';
+                html += '<div class="char-name">' + (c.name || '未命名') + '</div>';
+                html += '<div class="char-meta"><span>' + race + '</span>';
+                if (prof) html += '<span>' + prof + '</span>';
+                html += '<span>Lv.' + lvl + '</span></div>';
+                if (date) html += '<div class="char-date">' + date + '</div>';
+                html += '</a>';
+            });
+            charGrid.innerHTML = html;
+        }
+
+        // 渲染游戏记录
+        function renderSessions(list) {
+            if (!sessionList) return;
+            if (sessionCountEl) sessionCountEl.textContent = String(list.length || 0);
+            if (!list || list.length === 0) {
+                sessionList.innerHTML = '<div class="empty-state"><span class="empty-icon">&#9783;</span>还没有游戏记录</div>';
+                return;
+            }
+            var html = '';
+            list.forEach(function(s) {
+                var date = s.createdAt ? new Date(s.createdAt).toLocaleDateString('zh-CN') : '';
+                html += '<div class="session-item">';
+                html += '<span class="session-name">' + (s.title || '未命名团') + '</span>';
+                if (s.role) html += '<span class="session-role">' + s.role + '</span>';
+                if (date) html += '<span class="session-date">' + date + '</span>';
+                html += '</div>';
+            });
+            sessionList.innerHTML = html;
+        }
+
+        // 加载数据
+        function loadAll() {
+            ASH_DB.ready().then(function() {
+                ASH_DB.user.getOrCreate().then(function(user) {
+                    if (user.displayName) {
+                        cachedName = user.displayName;
+                        if (displayNameEl) displayNameEl.textContent = user.displayName;
+                    }
+                    if (user.bio) {
+                        cachedBio = user.bio;
+                        if (bioDisplayEl) bioDisplayEl.textContent = user.bio;
+                    }
+                    if (user.avatar) {
+                        cachedAvatar = user.avatar;
+                        setAvatar(user.avatar);
+                    }
+                }).catch(function() {});
+
+                ASH_DB.characters.list().then(function(list) {
+                    renderCharacters(list);
+                }).catch(function() {});
+
+                ASH_DB.sessions.list().then(function(list) {
+                    renderSessions(list);
+                }).catch(function() {});
+            }).catch(function() {});
+        }
+
+        // 记录游戏
+        if (logSessionBtn) {
+            logSessionBtn.addEventListener('click', function() {
+                var title = (sessionTitleEl.value || '').trim();
+                if (!title) { if (sessionMsg) sessionMsg.textContent = '请输入团名'; return; }
+                var role = (sessionRoleEl.value || '').trim() || '玩家';
+                logSessionBtn.disabled = true;
+                logSessionBtn.textContent = '...';
+
+                ASH_DB.sessions.log({ title: title, role: role }).then(function() {
+                    if (sessionMsg) sessionMsg.textContent = '';
+                    if (sessionTitleEl) sessionTitleEl.value = '';
+                    if (sessionRoleEl) sessionRoleEl.value = '';
+                    logSessionBtn.disabled = false;
+                    logSessionBtn.textContent = '记录';
+                    // 刷新列表
+                    ASH_DB.sessions.list().then(function(list) { renderSessions(list); });
+                }).catch(function(err) {
+                    if (sessionMsg) sessionMsg.textContent = '记录失败: ' + (err.message || '');
+                    logSessionBtn.disabled = false;
+                    logSessionBtn.textContent = '记录';
+                });
+            });
+        }
+
+        // 编辑弹窗
+        if (editProfileBtn) {
+            editProfileBtn.addEventListener('click', function() {
+                if (editName) editName.value = cachedName || '';
+                if (editBio) editBio.value = cachedBio || '';
+                if (editSuccess) editSuccess.classList.remove('visible');
+                if (editError) editError.textContent = '';
+                if (editOverlay) editOverlay.classList.add('show');
+            });
+        }
+        if (editClose) editClose.addEventListener('click', function() { if (editOverlay) editOverlay.classList.remove('show'); });
+        if (editBackdrop) editBackdrop.addEventListener('click', function() { if (editOverlay) editOverlay.classList.remove('show'); });
+
+        if (editSaveBtn) {
+            editSaveBtn.addEventListener('click', function() {
+                var name = (editName.value || '').trim();
+                var bio  = (editBio.value || '').trim();
+                if (!name) { if (editError) editError.textContent = '请输入名称'; return; }
+                editSaveBtn.disabled = true;
+
+                ASH_DB.user.update({ displayName: name, bio: bio }).then(function() {
+                    cachedName = name; cachedBio = bio;
+                    if (displayNameEl) displayNameEl.textContent = name;
+                    if (bioDisplayEl) bioDisplayEl.textContent = bio;
+                    localStorage.setItem('ew_display_name', name);
+                    localStorage.setItem('ew_bio', bio);
+                    if (editSuccess) editSuccess.classList.add('visible');
+                    editSaveBtn.disabled = false;
+                    setTimeout(function() {
+                        if (editSuccess) editSuccess.classList.remove('visible');
+                        if (editOverlay) editOverlay.classList.remove('show');
+                    }, 1200);
+                }).catch(function(err) {
+                    if (editError) editError.textContent = '保存失败: ' + (err.message || '');
+                    editSaveBtn.disabled = false;
+                });
+            });
+        }
+
+        // 页面初始化
+        auth.getLoginState().then(function(result) {
+            var state = unwrap(result);
+            if (state && state.user) {
+                if (phoneDisplayEl) phoneDisplayEl.textContent = state.user.username || state.user.phone || '';
+                // 先读本地缓存降级
+                cachedName = localStorage.getItem('ew_display_name') || '';
+                cachedBio = localStorage.getItem('ew_bio') || '';
+                cachedAvatar = localStorage.getItem('ew_avatar') || '';
+                if (displayNameEl && cachedName) displayNameEl.textContent = cachedName;
+                if (bioDisplayEl && cachedBio) bioDisplayEl.textContent = cachedBio;
+                if (cachedAvatar) setAvatar(cachedAvatar);
+                // 从云端加载
+                loadAll();
+            } else {
+                document.querySelector('.profile-wrapper').innerHTML = '<div style="text-align:center;padding:80px 20px;color:var(--ash-dim);"><p style="font-size:1.2rem;margin-bottom:16px;">需要登录才能查看个人主页</p><a href="../index.html" style="color:var(--ash-gold);text-decoration:underline;">返回首页登录</a></div>';
+            }
+        }).catch(function() {
+            document.querySelector('.profile-wrapper').innerHTML = '<div style="text-align:center;padding:80px 20px;color:var(--ash-dim);"><p style="font-size:1.2rem;margin-bottom:16px;">需要登录才能查看个人主页</p><a href="../index.html" style="color:var(--ash-gold);text-decoration:underline;">返回首页登录</a></div>';
+        });
+    })();
+    </script>
+</body>
+</html>

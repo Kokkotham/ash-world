@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>种族（Ontology 数据层） — 灰烬世界</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.linked-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(201,168,76,0.15); font-size: 0.85rem; color: var(--ash-gold-dim); }
+.linked-section a { color: var(--ash-gold); text-decoration: none; margin: 0 4px; }
+.linked-section a:hover { text-decoration: underline; }
+.tag-link { display: inline-block; background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); border-radius: 12px; padding: 2px 10px; margin: 2px 4px; font-size: 0.8rem; cursor: pointer; }
+.tag-link:hover { background: rgba(201,168,76,0.15); }
+.attr-bars { margin: 8px 0; }
+.attr-bar-row { display: flex; align-items: center; margin: 2px 0; font-size: 0.75rem; }
+.attr-bar-label { width: 32px; text-align: right; margin-right: 4px; color: var(--ash-gold-dim); }
+.attr-bar-fill { display: inline-block; height: 8px; border-radius: 4px; min-width: 4px; }
+.attr-bar-val { margin-left: 4px; }
+.tag-new { background: rgba(0,200,100,0.15); color: #0c8; }
+.tag-modified { background: rgba(201,168,76,0.12); color: var(--ash-gold); }
+.player-traits { margin-top: 6px; }
+.player-traits ul { margin: 4px 0 0 16px; font-size: 0.78rem; color: var(--ash-gold-dim); }
+</style>
+</head>
+<body>
+<nav class="top-nav">
+  <a href="../index.html" class="nav-brand"><span>灰烬世界</span></a>
+  <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+        <div class="nav-links">
+    <div class="nav-item"><a href="news.html">最新资讯</a></div>
+    <div class="nav-item"><span>世界设定</span><div class="nav-dropdown"><a href="worldview.html">世界观</a><a href="map.html">地图</a><a href="pantheon.html">神系</a><a href="races-ontology.html">种族</a></div></div>
+    <div class="nav-item"><span>规则&模组</span><div class="nav-dropdown"><a href="rules.html">规则书</a><a href="character-sheet.html">角色卡</a><a href="glossary.html">规则术语表</a><a href="modules.html">模组</a></div></div>
+    <div class="nav-item"><span>社区</span><div class="nav-dropdown"><a href="articles.html">文章</a><a href="art.html">绘图</a><a href="discussion.html">讨论</a><a href="community.html">玩家共创</a><a href="works.html">衍生作品</a></div></div>
+    <div class="nav-item"><a href="merch.html">商店</a></div>
+  </div>
+</nav>
+
+
+    <nav class="nav-mobile" id="navMobile">
+        <div class="mobile-group"><div class="mobile-group-title">最新</div>
+            <a class="mobile-link" href="news.html">最新资讯</a></div>
+        <div class="mobile-group"><div class="mobile-group-title">世界设定</div>
+            <a class="mobile-link" href="worldview.html">世界观</a>
+            <a class="mobile-link" href="map.html">地图</a>
+            <a class="mobile-link" href="pantheon.html">神系</a>
+            <a class="mobile-link" href="races-ontology.html">种族</a></div>
+        <div class="mobile-group"><div class="mobile-group-title">规则&模组</div>
+            <a class="mobile-link" href="rules.html">规则书</a>
+            <a class="mobile-link" href="character-sheet.html">角色卡</a>
+            <a class="mobile-link" href="glossary.html">规则术语表</a>
+            <a class="mobile-link" href="modules.html">模组</a></div>
+        <div class="mobile-group"><div class="mobile-group-title">社区</div>
+            <a class="mobile-link" href="articles.html">文章</a>
+            <a class="mobile-link" href="art.html">绘图</a>
+            <a class="mobile-link" href="discussion.html">讨论</a>
+            <a class="mobile-link" href="community.html">玩家共创</a>
+            <a class="mobile-link" href="works.html">衍生作品</a></div>
+        <div class="mobile-group"><a class="mobile-link" href="merch.html" style="color:var(--ash-gold)">商店</a></div>
+    </nav>
+<header class="page-header">
+  <h1>种族 <span style="font-size:0.7em;color:var(--ash-gold);vertical-align:middle">Ontology 版</span></h1>
+  <p class="subtitle">RACES &amp; PEOPLES — 数据来自统一数据层</p>
+  <div class="divider"></div>
+</header>
+
+<main class="content" id="race-content">
+  <p style="text-align:center;color:var(--ash-gold-dim);padding:40px">正在从 Ontology 数据层加载种族数据...</p>
+</main>
+
+    <nav class="bottom-nav">
+        <a href="news.html">最新资讯</a>
+        <a href="worldview.html">世界观</a>
+        <a href="map.html">地图</a>
+        <a href="races-ontology.html" class="active">种族</a>
+        <a href="rules.html">规则书</a>
+        <a href="modules.html">模组</a>
+        <a href="works.html">衍生作品</a>
+        <a href="merch.html">商店</a>
+    </nav>
+
+<footer class="footer"><p>灰烬世界 Ash World &copy; 2026 桌游工作室</p></footer>
+<script src="../transition.js"></script>
+<script src="../ash-bg.js"></script>
+<script src="../mouse-trail.js"></script>
+<script src="../data/ash-data-inline.js"></script>
+<script src="../data/ash-data.js"></script>
+<script>
+(async function() {
+  await AshData.loadAll();
+  const container = document.getElementById('race-content');
+  if (!AshData.races) {
+    container.innerHTML = '<p style="text-align:center;color:var(--ash-danger)">数据加载失败，请检查 data/ 目录</p>';
+    return;
+  }
+
+  function renderRaceSection(title, races) {
+    let html = '<h2 class="section-title">' + title + '</h2><div class="card-grid">';
+    races.forEach(race => {
+      const links = AshData.resolveLinks('race', race.id);
+      let linkedHTML = '';
+      if (links.length > 0) {
+        linkedHTML = '<div class="linked-section"><strong>关联：</strong>';
+        const seen = new Set();
+        links.forEach(l => {
+          if (!l.target) return;
+          const key = l.targetType + '::' + l.target.name;
+          if (seen.has(key)) return;
+          seen.add(key);
+          const href = l.targetType === 'region' ? 'map.html' :
+                       l.targetType === 'module' ? 'modules.html' :
+                       l.targetType === 'deity' ? 'pantheon.html' : '#';
+          linkedHTML += '<span class="tag-link" title="' + l.link + '">' + l.targetType + '：' + l.target.name + '</span>';
+        });
+        linkedHTML += '</div>';
+      }
+      html += '<div class="card"><h3>' + race.name + '</h3><p>' + (race.desc || '') + '</p><div class="meta">' + (race.era || '') + (race.culture ? ' | ' + race.culture : '') + '</div>' + linkedHTML + '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  let html = '';
+  if (AshData.races.ancient) html += renderRaceSection('古老种族', AshData.races.ancient);
+  if (AshData.races.spirit_mixed) html += renderRaceSection('灵魔混血种族（万魔纪诞生）', AshData.races.spirit_mixed);
+  if (AshData.races.nature_psionic) html += renderRaceSection('自然灵能种族', AshData.races.nature_psionic);
+
+  if (AshData.races.human_branches) {
+    html += '<h2 class="section-title">其他人类分支</h2><div class="scroll-x"><table class="data-table"><thead><tr><th>分支</th><th>文化原型</th><th>位置</th><th>特征</th></tr></thead><tbody>';
+    AshData.races.human_branches.forEach(h => {
+      html += '<tr><td>' + h.name + '</td><td>' + h.prototype + '</td><td>' + h.region + '</td><td>' + h.features + '</td></tr>';
+    });
+    html += '</tbody></table></div>';
+  }
+
+  // 新增：玩家种族区块
+  if (AshData.races.players && AshData.races.players.length) {
+    var attrNames = [
+      { key: 'strength', label: '躯魄' },
+      { key: 'agility', label: '敏韧' },
+      { key: 'constitution', label: '体质' },
+      { key: 'intelligence', label: '心智' },
+      { key: 'wisdom', label: '洞识' },
+      { key: 'charisma', label: '魅力' }
+    ];
+    html += '<h2 class="section-title">玩家种族（EW 规则书提取）</h2><div class="card-grid">';
+    AshData.races.players.forEach(function(player) {
+      var vsTag = '';
+      if (player.version_status) {
+        var vsClass = player.version_status === '新' ? 'tag-new' : 'tag-modified';
+        vsTag = ' <span class="' + vsClass + '" style="font-size:0.7rem;padding:1px 6px;border-radius:8px;vertical-align:middle;margin-left:6px">' + player.version_status + '</span>';
+      }
+      html += '<div class="card"><h3>' + player.name + vsTag + '</h3>';
+      // 属性修正条形图
+      html += '<div class="attr-bars">';
+      var mods = player.attribute_mods || {};
+      attrNames.forEach(function(a) {
+        var val = mods[a.key] || 0;
+        var barColor = val > 0 ? 'var(--ash-gold)' : val < 0 ? 'var(--ash-danger)' : '#555';
+        var barWidth = Math.abs(val) * 20;
+        html += '<div class="attr-bar-row">';
+        html += '<span class="attr-bar-label">' + a.label + '</span>';
+        html += '<span class="attr-bar-fill" style="width:' + barWidth + 'px;background:' + barColor + '"></span>';
+        html += '<span class="attr-bar-val" style="color:' + (val >= 0 ? 'var(--ash-gold)' : 'var(--ash-danger)') + '">' + (val >= 0 ? '+' : '') + val + '</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+      // 描述（仅取前2段）
+      if (player.desc && player.desc.length) {
+        html += '<p style="font-size:0.85rem;color:var(--ash-gold-dim)">' + player.desc.slice(0, 2).join(' ') + '</p>';
+      }
+      // 特质列表（前4个）
+      if (player.traits && player.traits.length) {
+        html += '<div class="player-traits"><strong style="font-size:0.8rem;color:var(--ash-gold)">种族特质：</strong><ul>';
+        var shownTraits = player.traits.slice(0, 4);
+        shownTraits.forEach(function(t) {
+          html += '<li><strong>' + t.name + '</strong>：' + t.desc.substring(0, 80) + (t.desc.length > 80 ? '...' : '') + '</li>';
+        });
+        if (player.traits.length > 4) {
+          html += '<li style="list-style:none;color:var(--ash-gold)">...还有 ' + (player.traits.length - 4) + ' 个特质</li>';
+        }
+        html += '</ul></div>';
+      }
+      // 玩法提示
+      if (player.gameplay_notes) {
+        html += '<div class="meta" style="margin-top:6px">' + player.gameplay_notes + '</div>';
+      }
+      // 关键词标签
+      if (player.related_keywords && player.related_keywords.length) {
+        html += '<div class="region-tags" style="margin-top:6px">';
+        player.related_keywords.forEach(function(kw) {
+          html += '<span class="tag">' + kw + '</span>';
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+  container.innerHTML = html;
+})();
+</script>
+
+<script>
+(function(){
+    var btn=document.getElementById('navToggle');
+    var panel=document.getElementById('navMobile');
+    if(btn&&panel){
+        btn.addEventListener('click',function(){
+            btn.classList.toggle('open');
+            panel.classList.toggle('open');
+        });
+        // Click a link closes the panel
+        panel.querySelectorAll('.mobile-link').forEach(function(l){
+            l.addEventListener('click',function(){btn.classList.remove('open');panel.classList.remove('open');});
+        });
+    }
+})();
+</script>
+</body>
+</html>

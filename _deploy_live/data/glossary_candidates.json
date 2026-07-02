@@ -1,0 +1,2516 @@
+{
+  "total_terms": 17436,
+  "filtered": 502,
+  "candidates": [
+    {
+      "term": "灰烬世界",
+      "count": 4,
+      "score": 13
+    },
+    {
+      "term": "生命值",
+      "count": 4,
+      "score": 13
+    },
+    {
+      "term": "专修",
+      "count": 18,
+      "score": 13
+    },
+    {
+      "term": "绝对专注",
+      "count": 4,
+      "score": 13
+    },
+    {
+      "term": "营养值",
+      "count": 4,
+      "score": 13
+    },
+    {
+      "term": "洞识",
+      "count": 19,
+      "score": 13
+    },
+    {
+      "term": "恢复",
+      "count": 6,
+      "score": 13
+    },
+    {
+      "term": "等级",
+      "count": 5,
+      "score": 13
+    },
+    {
+      "term": "伤害抗性",
+      "count": 5,
+      "score": 13
+    },
+    {
+      "term": "冰霜抗",
+      "count": 5,
+      "score": 13
+    },
+    {
+      "term": "火焰抗",
+      "count": 3,
+      "score": 13
+    },
+    {
+      "term": "虔信点",
+      "count": 5,
+      "score": 13
+    },
+    {
+      "term": "神职",
+      "count": 13,
+      "score": 13
+    },
+    {
+      "term": "精灵",
+      "count": 3,
+      "score": 13
+    },
+    {
+      "term": "矮人",
+      "count": 4,
+      "score": 13
+    },
+    {
+      "term": "兽人",
+      "count": 4,
+      "score": 13
+    },
+    {
+      "term": "哥布林",
+      "count": 5,
+      "score": 13
+    },
+    {
+      "term": "武技",
+      "count": 9,
+      "score": 13
+    },
+    {
+      "term": "闪避",
+      "count": 12,
+      "score": 13
+    },
+    {
+      "term": "鉴定",
+      "count": 5,
+      "score": 13
+    },
+    {
+      "term": "跳跃",
+      "count": 3,
+      "score": 13
+    },
+    {
+      "term": "德米乌尔格斯",
+      "count": 3,
+      "score": 13
+    },
+    {
+      "term": "施法行动",
+      "count": 3,
+      "score": 13
+    },
+    {
+      "term": "敏韧",
+      "count": 45,
+      "score": 11
+    },
+    {
+      "term": "躯魄",
+      "count": 39,
+      "score": 11
+    },
+    {
+      "term": "主属性",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "精神值",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "耐力值",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "专注值",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "暴击阈值",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "心智",
+      "count": 101,
+      "score": 10
+    },
+    {
+      "term": "亡灵",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "北地人",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "豺狼人",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "牛头人",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "木林精",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "奥法",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "远古精魄",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "猪人",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "有家之人",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "纳露安人类",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "侏儒",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "智慧研习",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "虔诚旗帜",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "奥术命体",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "灵活骑士",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "剑术大师",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "龙族",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "蛛灵",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "聚变",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "奔跑",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "攀爬",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "体术",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "顺流",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "未塑",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "弦动",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "聆听",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "纺锤法典",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "神矢",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "圣炎裁决",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "神术",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "速度属性",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "行动顺位",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "耐力行动",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "护甲",
+      "count": 2,
+      "score": 10
+    },
+    {
+      "term": "武器",
+      "count": 1,
+      "score": 10
+    },
+    {
+      "term": "规则",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "刺击",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "点耐力行动",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "特质",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "的行径",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "迁徙",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "一项",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "环境",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "聚落",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "的族人",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "击最低为",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "特性",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "落于格维恩大",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "之下",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "为主",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "此外",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "分钟",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "点肉体护甲",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "的专修",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "防御",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "加值",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "的距离",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "米距离",
+      "count": 14,
+      "score": 3
+    },
+    {
+      "term": "是木林精族群",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "疾病",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "分支",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "级种植专修",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "相得益彰",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "象征",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "建立起属于自",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "移动",
+      "count": 9,
+      "score": 3
+    },
+    {
+      "term": "辨识度极高",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "效应",
+      "count": 19,
+      "score": 3
+    },
+    {
+      "term": "族群",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "设定",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "钝击",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "素造成的伤害",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "骰额外",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "造成的伤害骰",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "额外",
+      "count": 15,
+      "score": 3
+    },
+    {
+      "term": "当你到达",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "决定",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "掩体",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "业专修",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "击攻击",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "绑定",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "深褐",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "或者你可以直",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "野兽驯服",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "级专修",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "模块专修",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "元素伤害骰额",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "且你满足携带",
+      "count": 9,
+      "score": 3
+    },
+    {
+      "term": "亮视觉与暗视",
+      "count": 9,
+      "score": 3
+    },
+    {
+      "term": "觉专修的前置",
+      "count": 9,
+      "score": 3
+    },
+    {
+      "term": "条件",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "的眼眸",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "钝击抗",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "天生覆有岩石",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "般的石灰肌理",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "厚实坚韧",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "承地底岁月淬",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "族群常见发色",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "以灰",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "墨黑与赤红为",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "粗犷硬朗",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "极具地底族群",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "风貌",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "矮人的居所散",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "落四方",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "既有隐秘无闻",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "深藏地下的古",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "老地底王国",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "也有坐落于群",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "山之间",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "连通矿脉的地",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "表洞窟聚落",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "更有不少矮人",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "远行入世",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "定居在人类城",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "邦之中",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "与异族混居共",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "矮人神术暂未",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "开放",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "以额外附赠",
+      "count": 9,
+      "score": 3
+    },
+    {
+      "term": "之道",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "造物",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "科技知识",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "且额外附赠",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "基尔斯罗班纳",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "发展",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "你的",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "术魔法",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "取而代之的是",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "砍击",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "药剂",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "雕塑",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "重铸骰",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "米莱欧公会的",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "米数",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "迈格玛卡拉龙",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "眼形态",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "全身骨骼构架",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "并具有",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "克尔纳皮亚龙",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "肉体护甲",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "器造诣",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "颗惩罚骰",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "艾舍林女王亲",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "艾舍林女王之",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "在现任领袖",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "立刻对自身",
+      "count": 10,
+      "score": 3
+    },
+    {
+      "term": "米范围内的单",
+      "count": 10,
+      "score": 3
+    },
+    {
+      "term": "一目标发动一",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "本次移动过程",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "不会触发敌方",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "米范围内",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "若目标防御失",
+      "count": 9,
+      "score": 3
+    },
+    {
+      "term": "武器攻击",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "一目标发动此",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "本次移动不会",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "触发敌方反击",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "立刻对",
+      "count": 18,
+      "score": 3
+    },
+    {
+      "term": "的伤害",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "沉睡",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "点穿甲伤害",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "用力",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "发动此武技",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "至少",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "承受",
+      "count": 10,
+      "score": 3
+    },
+    {
+      "term": "则承受",
+      "count": 15,
+      "score": 3
+    },
+    {
+      "term": "米范围内的目",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "标发动此武技",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "御检定",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "自身",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "米范围内任意",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "米锥形范围近",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "战攻击",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "维持",
+      "count": 10,
+      "score": 3
+    },
+    {
+      "term": "米范围内所有",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "随即对自身",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "于自身或比自",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "身低至少",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "级的目标",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "行为",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "视为多持武器",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "发动一次半径",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "若目标体型小",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "于自身",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "或最大仅比自",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "身高",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "器了",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "米锥形范围内",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "所有目标发动",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "近战武器攻击",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "成功后",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "若目标体型等",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "使用本武技后",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "立刻对直线",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "陷入击倒状态",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "立刻发动一次",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "可以使用学会",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "范围内目标防",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "半径",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "米范围攻击",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "触发",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "体型等于自身",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "或比自身低至",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "级的单个目标",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "可使用本武技",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "行防御检定",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "盾牌格挡",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "的攻击",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "立刻对单个目",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "标发动",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "次自身体术伤",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "米范围内单个",
+      "count": 9,
+      "score": 3
+    },
+    {
+      "term": "次远程武器射",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "目标发动",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "个目标发动",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "检定",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "发动",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "立刻对投掷距",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "离范围内的单",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "次远程投掷攻",
+      "count": 9,
+      "score": 3
+    },
+    {
+      "term": "击时",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "防御失败则承",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "攻击路径上所",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "有目标均需进",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "自身回合结束",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "武技生效期间",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "主手武器切换",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "为副手武器",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "每回合开始时",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "次该武器伤害",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "以使用蓄力武",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "本次攻击拥有",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "投掷",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "击倒",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "则承受该武器",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "额外附加",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "流血",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "层级",
+      "count": 12,
+      "score": 3
+    },
+    {
+      "term": "粉碎",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "窒息",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "冷冻",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "力压",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "击飞",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "灼烧",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "宿醉",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "腐蚀",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "熔化",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "风阻",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "沉默",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "定缚",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "失重",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "麻痹",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "石化",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "耳聋",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "目盲",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "震慑",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "恐惧",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "魅惑",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "支配",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "昏迷",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "狂乱",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "魔法",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "奥术源",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "奥法感应专修",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "法术的释放",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "满足前置需求",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "奥法模块",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "抹去法术伤害",
+      "count": 18,
+      "score": 3
+    },
+    {
+      "term": "效果或特性时",
+      "count": 18,
+      "score": 3
+    },
+    {
+      "term": "该变体下法术",
+      "count": 13,
+      "score": 3
+    },
+    {
+      "term": "魔力消耗固定",
+      "count": 13,
+      "score": 3
+    },
+    {
+      "term": "塑造",
+      "count": 12,
+      "score": 3
+    },
+    {
+      "term": "可构筑障碍或",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "形成困难地形",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "可单纯操控所",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "奥法呈现",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "反应",
+      "count": 19,
+      "score": 3
+    },
+    {
+      "term": "规避",
+      "count": 12,
+      "score": 3
+    },
+    {
+      "term": "掩体获取",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "塑造动作",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "近战攻击",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "远程攻击",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "数量",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "施法源",
+      "count": 17,
+      "score": 3
+    },
+    {
+      "term": "法术拦截",
+      "count": 20,
+      "score": 3
+    },
+    {
+      "term": "咒语",
+      "count": 13,
+      "score": 3
+    },
+    {
+      "term": "范围源",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "扩散攻击",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "环境攻击",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "接触源",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "奥法聚变",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "翻倍",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "获得等同于魔",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "法知识等级的",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "呈现专修",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "应答",
+      "count": 19,
+      "score": 3
+    },
+    {
+      "term": "区域形态变更",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "可将自然感应",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "掌控的半径区",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "替换为",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "米直线区域或",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "米锥形区域",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "该变体法术魔",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "力消耗固定为",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "感单纯掌控",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "维持回合结束",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "所有法术模块",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "自带的负面效",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "心灵",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "统合聚变",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "魔力消耗",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "选取其中",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "中毒",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "吟唱",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "进行鉴定",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "召唤物消耗召",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "御行为",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "精神攻击",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "战斗中",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "影响范围内具",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "有听觉的目标",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "的目标",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "色泽与动态效",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "法术",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "主体",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "奥法形式",
+      "count": 10,
+      "score": 3
+    },
+    {
+      "term": "的奥法",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "识的奥法",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "咒放形式",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "作为释放奥法",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "基础机制",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "反制形式",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "分支类型",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "的必要施法行",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "均设有",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "具备",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "效应但只能用",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "于对抗该次反",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "场景",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "手段",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "辨识",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "判定",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "察觉",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "理智",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "裁定",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "行判定",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "翻滚",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "专修能力",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "此类专修能力",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "需满足对应前",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "置条件",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "方可在角色创",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "建阶段选择携",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "每项额外专修",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "级等级上限",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "部分专修允许",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "以本能专修作",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "为下位替代进",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "文化知识",
+      "count": 16,
+      "score": 3
+    },
+    {
+      "term": "领导力规则模",
+      "count": 9,
+      "score": 3
+    },
+    {
+      "term": "式中的专属属",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "性点数",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "可用于提升角",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "色在管辖疆域",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "怪物知识",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "式专属属性点",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "自然知识",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "艺术知识",
+      "count": 13,
+      "score": 3
+    },
+    {
+      "term": "医学知识",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "绘图",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "艺学识",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "后天专修能力",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "异兽",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "骑乘",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "阶段",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "特殊条件",
+      "count": 7,
+      "score": 3
+    },
+    {
+      "term": "完成各类基础",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "将符文能量铭",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "符文",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "事务",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "属于短柄武器",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "于中柄武器体",
+      "count": 10,
+      "score": 3
+    },
+    {
+      "term": "距阵地缠斗技",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "于长柄武器体",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "于重柄武器体",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "唯有体魄魁梧",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "攻防",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "于远程武器体",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "属于远程武器",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "器体系",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "于特殊类武器",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "属于特殊类武",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "武器招架",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "造诣后",
+      "count": 13,
+      "score": 3
+    },
+    {
+      "term": "习得招架反击",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "每当你成功以",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "或武技",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "本次反击行为",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "不消耗耐力",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "不占用反击行",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "动次数",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "且该次反击获",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "本次近战攻击",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "仅标注",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "标识的专修",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "教条",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "限制",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "可用防御专修",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "规避类法术",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "不可用防御专",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "特殊可用防御",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "特定场景生效",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "次耐力行动",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "圣佑",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "法罩",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "最多开放",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "名招募同伴空",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "个回合",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "示例",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "层级状态",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "可通过多种专",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "的目标其每个",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "效应状态",
+      "count": 18,
+      "score": 3
+    },
+    {
+      "term": "其回合开始时",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "尝试摆脱",
+      "count": 8,
+      "score": 3
+    },
+    {
+      "term": "若无法摆脱则",
+      "count": 11,
+      "score": 3
+    },
+    {
+      "term": "状态的目标其",
+      "count": 5,
+      "score": 3
+    },
+    {
+      "term": "进行维生鉴定",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "耐力行动与施",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "且无法进行防",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "且以近战攻击",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "形式攻击要害",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "部位时该此近",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "战伤害会额外",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "其初次受到效",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "近战暴击必定",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "进行理智鉴定",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "特殊状态",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "殊的负面状态",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "且拥有数种不",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "同的效果",
+      "count": 4,
+      "score": 3
+    },
+    {
+      "term": "果包含的效应",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "点厄数",
+      "count": 3,
+      "score": 3
+    },
+    {
+      "term": "留存",
+      "count": 6,
+      "score": 3
+    },
+    {
+      "term": "圣数",
+      "count": 13,
+      "score": 3
+    },
+    {
+      "term": "厄数",
+      "count": 13,
+      "score": 3
+    },
+    {
+      "term": "平数",
+      "count": 13,
+      "score": 3
+    },
+    {
+      "term": "能量",
+      "count": 33,
+      "score": 1
+    },
+    {
+      "term": "上限",
+      "count": 28,
+      "score": 1
+    },
+    {
+      "term": "肤色",
+      "count": 40,
+      "score": 1
+    },
+    {
+      "term": "瞳色",
+      "count": 40,
+      "score": 1
+    },
+    {
+      "term": "发色",
+      "count": 40,
+      "score": 1
+    },
+    {
+      "term": "特征",
+      "count": 28,
+      "score": 1
+    },
+    {
+      "term": "根源属地",
+      "count": 40,
+      "score": 1
+    },
+    {
+      "term": "根源种族能力",
+      "count": 40,
+      "score": 1
+    },
+    {
+      "term": "该获取无需前",
+      "count": 49,
+      "score": 1
+    },
+    {
+      "term": "置需求",
+      "count": 49,
+      "score": 1
+    },
+    {
+      "term": "车卡阶段你可",
+      "count": 27,
+      "score": 1
+    },
+    {
+      "term": "颗重铸骰",
+      "count": 29,
+      "score": 1
+    },
+    {
+      "term": "体系",
+      "count": 25,
+      "score": 1
+    },
+    {
+      "term": "次所持武器伤",
+      "count": 24,
+      "score": 1
+    },
+    {
+      "term": "目标防御失败",
+      "count": 37,
+      "score": 1
+    },
+    {
+      "term": "次近战武器攻",
+      "count": 22,
+      "score": 1
+    },
+    {
+      "term": "掌握需求",
+      "count": 27,
+      "score": 1
+    },
+    {
+      "term": "魔法知识",
+      "count": 37,
+      "score": 1
+    },
+    {
+      "term": "最大等级",
+      "count": 27,
+      "score": 1
+    },
+    {
+      "term": "增幅",
+      "count": 33,
+      "score": 1
+    },
+    {
+      "term": "特殊的摆脱形",
+      "count": 26,
+      "score": 1
+    },
+    {
+      "term": "式指代可以以",
+      "count": 26,
+      "score": 1
+    },
+    {
+      "term": "多种方式解除",
+      "count": 26,
+      "score": 1
+    },
+    {
+      "term": "该状态效果",
+      "count": 26,
+      "score": 1
+    }
+  ]
+}

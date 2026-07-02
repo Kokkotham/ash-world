@@ -1,0 +1,93 @@
+{
+  "continent": {
+    "id": "gravion",
+    "name": "格维恩大陆",
+    "name_en": "Gravion"
+  },
+  "regions": [
+    {
+      "id": "naluan",
+      "name": "纳露安",
+      "position": "大陆中心",
+      "desc": "人类文明核心区域，拥有三大王国",
+      "kingdoms": [
+        {
+          "id": "ophidan",
+          "name": "奥弗丹",
+          "name_en": "Ophidan",
+          "type": "教权国家",
+          "ruler": "十二圣工与教皇（血色教皇罗德里格斯·卡尔蒂诺）",
+          "faith": "父神德米乌尔格斯（匠神之父）",
+          "capital": "安瑞蒂弗斯",
+          "landmark": "瓦蒂斯大教堂",
+          "founded": "BHC 250年",
+          "features": ["红心教廷", "教权制（BHC 65年废王权）"]
+        },
+        {
+          "id": "anventi",
+          "name": "安温提",
+          "name_en": "Anventi",
+          "type": "议会两党首相制",
+          "faith": "母神时序海妖（Chronoscylla）",
+          "capital": "耶塞温",
+          "founded": "BHC 354年结盟",
+          "features": ["金螺湾", "潜礁港", "海虾港", "叶岸区", "灯港区", "潮静区（母神教堂）", "昂柯瑞尔要塞（众议院）"],
+          "special": "海域栖息猎齿鳌（赶海伙伴）与海涯鼓虾（可驯服用于军事）"
+        },
+        {
+          "id": "fennlight",
+          "name": "芬恩莱特",
+          "name_en": "Fennlight",
+          "type": "王权国家（五大家族选举王制）",
+          "desc": "奥弗丹迁徙者后裔，因不愿归属教权而自立为王",
+          "features": ["军事传统浓厚", "骑士阶层享有崇高地位", "面临北地人劫掠和豺狼人袭扰"]
+        }
+      ]
+    },
+    {
+      "id": "aisarosa",
+      "name": "艾萨罗萨",
+      "position": "西部",
+      "desc": null
+    },
+    {
+      "id": "namilani",
+      "name": "纳米拉尼",
+      "position": "中部偏东",
+      "desc": "与兽人钢铁帝国接壤"
+    },
+    {
+      "id": "blanka",
+      "name": "布兰卡",
+      "position": "东北冻土",
+      "desc": "北地人与维拉斯人的家园"
+    },
+    {
+      "id": "arendale",
+      "name": "阿伦黛尔",
+      "position": "东南",
+      "desc": "温泉与间歇泉分布"
+    },
+    {
+      "id": "frozen_land",
+      "name": "冰封之地",
+      "position": "南部",
+      "desc": null
+    }
+  ],
+  "passes": [
+    {
+      "id": "purman_pass",
+      "name": "普尔曼隘口",
+      "desc": "隔离兽人与人类王国的险峻山道，以查德利家族姓氏命名，入口处矗立着巨大的查德利雕像",
+      "connects": ["奥弗丹", "纳米拉尼", "兽人帝国"]
+    }
+  ],
+  "seas": [
+    { "id": "giant_sea", "name": "巨人之海", "position": "北面", "desc": "终年冰封。传说泰坦一族最后的栖身之所就在这片冰海之下。" },
+    { "id": "dragon_sea", "name": "巨龙之海", "position": "西北", "desc": "海况复杂，暗礁密布。古龙曾经在此筑巢，如今仍有源生龙在沿岸出没。" },
+    { "id": "hope_sea", "name": "希望之海", "position": "西面", "desc": "通往阿西纳人城邦与古巴伦达的主要航道。" },
+    { "id": "scorch_sea", "name": "灼热之海", "position": "东面", "desc": "水温异常偏高，海面上常有蒸汽升腾。" },
+    { "id": "end_sea", "name": "彼岸之海（终结海）", "position": "南面", "desc": "被航海者视为世界的尽头。极少有船只敢穿越，归来者都失去了关于航程的记忆。" }
+  ]
+}
