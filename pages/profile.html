@@ -6,586 +6,498 @@
     <title>个人主页 — 灰烬世界</title>
     <link rel="stylesheet" href="common.css">
     <style>
-        :root {
-            --panel-bg: rgba(14,18,24,0.55);
-            --panel-border: rgba(201,168,76,0.12);
-        }
-        .profile-wrapper {
-            max-width: 780px; margin: 0 auto;
+        .profile-page {
+            max-width: 860px;
+            margin: 0 auto;
             padding: 100px 20px 60px;
-            display: flex; flex-direction: column; gap: 24px;
         }
-        /* ── 头像区 ── */
         .profile-header {
-            text-align: center; padding: 20px 0 8px;
+            text-align: center;
+            margin-bottom: 36px;
         }
-        .avatar-circle {
-            width: 88px; height: 88px; border-radius: 50%;
-            margin: 0 auto 16px;
-            background: rgba(201,168,76,0.08);
-            border: 2px solid rgba(201,168,76,0.25);
-            background-size: cover; background-position: center;
-            position: relative; cursor: pointer;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
+        .profile-header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: var(--ash-gold);
+            letter-spacing: 0.16em;
+            margin-bottom: 8px;
         }
-        .avatar-circle:hover {
-            border-color: var(--ash-gold);
-            box-shadow: 0 0 20px rgba(201,168,76,0.15);
-        }
-        .avatar-placeholder {
-            color: var(--ash-dim); font-size: 2rem;
-            pointer-events: none;
-        }
-        .avatar-upload-hint {
-            position: absolute; inset: 0;
-            display: flex; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.5); opacity: 0;
-            transition: opacity 0.3s; border-radius: 50%;
-            color: var(--ash-gold); font-size: 0.72rem;
+        .profile-header p {
+            color: var(--ash-dim);
+            font-size: 0.85rem;
             letter-spacing: 0.06em;
         }
-        .avatar-circle:hover .avatar-upload-hint { opacity: 1; }
-        #avatarInput { display: none; }
-        .profile-name {
-            font-family: 'Cinzel', serif;
-            font-size: 1.6rem; font-weight: 700;
-            color: var(--ash-gold);
-            letter-spacing: 0.1em;
-            margin-bottom: 4px;
-        }
-        .profile-phone {
-            font-size: 0.78rem; color: var(--ash-dim);
-            letter-spacing: 0.06em; margin-bottom: 6px;
-        }
-        .profile-bio {
-            font-size: 0.85rem; color: var(--ash-dim);
-            letter-spacing: 0.04em; opacity: 0.7;
-            max-width: 400px; margin: 0 auto;
-        }
-        .edit-link {
-            display: inline-block; margin-top: 12px;
-            padding: 6px 18px;
-            border: 1px solid rgba(201,168,76,0.2);
-            border-radius: 2px; color: var(--ash-gold);
-            font-size: 0.75rem; letter-spacing: 0.08em;
-            background: rgba(201,168,76,0.04);
-            cursor: pointer; transition: all 0.3s;
-            text-decoration: none;
-        }
-        .edit-link:hover {
-            background: rgba(201,168,76,0.12);
-            border-color: var(--ash-gold);
-        }
 
-        /* ── 面板通用 ── */
-        .panel {
-            background: var(--panel-bg);
+        .glass-panel {
+            background: rgba(20,24,30,0.55);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--panel-border);
-            border-radius: 8px; padding: 28px 24px;
+            border: 1px solid rgba(201,168,76,0.12);
+            border-radius: 8px;
+            padding: 28px 24px;
+            margin-bottom: 24px;
         }
-        .panel::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(201,168,76,0.15), transparent);
-            pointer-events: none;
-        }
-        .panel { position: relative; overflow: hidden; }
         .panel-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.1rem; font-weight: 700;
-            color: var(--ash-gold); letter-spacing: 0.08em;
-            margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+            font-size: 1.1rem;
+            color: var(--ash-gold);
+            letter-spacing: 0.1em;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .panel-title .icon { font-size: 1.1rem; }
 
-        /* ── 角色卡网格 ── */
-        .char-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 14px;
+        /* User info */
+        .user-info-grid {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 20px;
+            align-items: start;
         }
-        .char-card {
-            background: rgba(201,168,76,0.04);
-            border: 1px solid rgba(201,168,76,0.1);
-            border-radius: 6px; padding: 16px;
-            cursor: pointer; transition: all 0.3s;
-            text-decoration: none; display: block;
-        }
-        .char-card:hover {
-            background: rgba(201,168,76,0.08);
-            border-color: var(--ash-gold);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-        }
-        .char-card .char-name {
-            font-family: 'Cinzel', serif;
-            font-size: 0.95rem; font-weight: 700;
-            color: var(--ash-gold); letter-spacing: 0.06em;
-            margin-bottom: 6px;
-        }
-        .char-card .char-meta {
-            font-size: 0.72rem; color: var(--ash-dim);
-            letter-spacing: 0.04em; display: flex; gap: 12px;
-            flex-wrap: wrap;
-        }
-        .char-card .char-date {
-            font-size: 0.65rem; color: rgba(255,255,255,0.2);
-            margin-top: 8px; letter-spacing: 0.04em;
-        }
-        .new-char-btn {
+        .user-avatar {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(201,168,76,0.05));
+            border: 1px solid rgba(201,168,76,0.25);
             display: flex; align-items: center; justify-content: center;
-            gap: 8px; padding: 14px;
-            border: 1px dashed rgba(201,168,76,0.2);
-            border-radius: 6px; color: var(--ash-dim);
-            font-size: 0.82rem; letter-spacing: 0.06em;
-            cursor: pointer; transition: all 0.3s;
-            background: transparent;
+            font-size: 1.8rem;
+            color: var(--ash-gold);
         }
-        .new-char-btn:hover {
-            border-color: var(--ash-gold); color: var(--ash-gold);
-            background: rgba(201,168,76,0.04);
+        .user-meta .user-name {
+            font-size: 1.25rem;
+            color: var(--ash-text);
+            margin-bottom: 4px;
         }
-
-        /* ── 游戏记录 ── */
-        .session-list { display: flex; flex-direction: column; gap: 10px; }
-        .session-item {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px 16px;
-            background: rgba(201,168,76,0.03);
-            border-radius: 4px;
-        }
-        .session-item .session-name {
-            font-size: 0.85rem; color: var(--ash-text);
+        .user-meta .user-phone {
+            font-size: 0.78rem;
+            color: var(--ash-dim);
+            margin-bottom: 10px;
             letter-spacing: 0.04em;
         }
-        .session-item .session-date {
-            font-size: 0.7rem; color: var(--ash-dim);
-            white-space: nowrap;
+        .user-meta .user-bio {
+            font-size: 0.85rem;
+            color: var(--ash-dim);
+            line-height: 1.7;
+            min-height: 1.5em;
         }
-        .session-item .session-role {
-            font-size: 0.68rem; color: var(--ash-gold);
-            margin-left: auto; margin-right: 12px;
-            opacity: 0.7;
+        .user-meta .empty-bio {
+            color: rgba(138,138,138,0.5);
+            font-style: italic;
         }
-
-        /* ── 统计数字 ── */
-        .stat-row {
-            display: flex; gap: 24px; flex-wrap: wrap;
+        .user-actions {
+            margin-top: 18px;
+            display: flex; gap: 12px; flex-wrap: wrap;
         }
-        .stat-item { flex: 1; min-width: 100px; text-align: center; }
-        .stat-item .stat-num {
-            font-family: 'Cinzel', serif;
-            font-size: 1.8rem; font-weight: 700;
-            color: var(--ash-gold); letter-spacing: 0.06em;
-        }
-        .stat-item .stat-label {
-            font-size: 0.72rem; color: var(--ash-dim);
-            letter-spacing: 0.04em; margin-top: 4px;
-        }
-
-        /* ── 空状态 ── */
-        .empty-state {
-            text-align: center; padding: 32px 20px;
-            color: var(--ash-dim); font-size: 0.85rem;
-            letter-spacing: 0.04em; opacity: 0.6;
-        }
-        .empty-state .empty-icon { font-size: 2rem; margin-bottom: 8px; display: block; }
-
-        /* ── 编辑弹窗（复用 index 样式） ── */
-        .profile-overlay {
-            position: fixed; inset: 0; z-index: 500;
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.25s ease;
-        }
-        .profile-overlay.show { opacity: 1; pointer-events: auto; }
-        .login-backdrop {
-            position: absolute; inset: 0;
-            background: rgba(0,0,0,0.6);
-        }
-        .profile-card {
-            position: relative; width: 360px; max-width: 90vw;
-            background: linear-gradient(160deg, rgba(18,22,30,0.97) 0%, rgba(10,14,20,0.98) 100%);
-            border: 1px solid rgba(201,168,76,0.2);
+        .ash-btn {
+            padding: 9px 22px;
+            background: rgba(201,168,76,0.08);
+            border: 1px solid rgba(201,168,76,0.25);
             border-radius: 4px;
-            box-shadow: 0 16px 48px rgba(0,0,0,0.6);
-            padding: 32px 28px 24px;
-            backdrop-filter: blur(24px);
+            color: var(--ash-gold);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+            display: inline-flex; align-items: center; gap: 6px;
         }
-        .profile-card h2 {
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem; font-weight: 700;
-            color: var(--ash-gold); letter-spacing: 0.08em;
-            margin-bottom: 20px;
+        .ash-btn:hover {
+            background: rgba(201,168,76,0.16);
+            border-color: var(--ash-gold);
         }
-        .profile-card label {
-            display: block; font-size: 0.72rem;
-            color: var(--ash-dim); margin-bottom: 6px;
+        .ash-btn.secondary {
+            background: rgba(60,60,60,0.15);
+            border-color: rgba(138,138,138,0.25);
+            color: var(--ash-dim);
+        }
+        .ash-btn.secondary:hover {
+            border-color: var(--ash-light);
+            color: var(--ash-text);
+        }
+
+        /* Lists */
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .list-item {
+            background: rgba(10,14,20,0.4);
+            border: 1px solid rgba(201,168,76,0.08);
+            border-radius: 6px;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.25s;
+        }
+        .list-item:hover {
+            border-color: rgba(201,168,76,0.18);
+            background: rgba(201,168,76,0.04);
+        }
+        .list-item .item-main {
+            flex: 1;
+        }
+        .list-item .item-title {
+            font-size: 0.95rem;
+            color: var(--ash-text);
+            margin-bottom: 4px;
+        }
+        .list-item .item-sub {
+            font-size: 0.75rem;
+            color: var(--ash-dim);
+        }
+        .list-item .item-actions {
+            display: flex; gap: 8px;
+        }
+        .item-empty {
+            text-align: center;
+            padding: 28px 20px;
+            color: var(--ash-dim);
+            font-size: 0.85rem;
+        }
+
+        /* Forms */
+        .inline-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+            align-items: flex-end;
+        }
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .form-field label {
+            font-size: 0.72rem;
+            color: var(--ash-dim);
             letter-spacing: 0.06em;
         }
-        .profile-card input, .profile-card textarea {
-            width: 100%; margin-bottom: 14px;
-            border: 1px solid rgba(201,168,76,0.2);
-            border-radius: 2px;
+        .form-field input {
             background: rgba(0,0,0,0.3);
-            color: var(--ash-dim);
-            font-size: 0.82rem; padding: 10px 12px;
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 4px;
+            padding: 9px 12px;
+            color: var(--ash-text);
             font-family: 'Noto Serif SC', serif;
-            outline: none; transition: border-color 0.3s;
+            font-size: 0.85rem;
+            min-width: 160px;
         }
-        .profile-card input:focus, .profile-card textarea:focus {
-            border-color: var(--ash-gold);
+        .form-field input:focus {
+            outline: none;
+            border-color: rgba(201,168,76,0.5);
         }
-        .profile-card textarea {
-            resize: vertical; min-height: 60px;
+        .form-msg {
+            font-size: 0.75rem;
+            margin-top: 10px;
+            min-height: 1.2em;
         }
-        .profile-save-btn {
-            display: block; width: 100%; padding: 11px;
-            background: linear-gradient(135deg, rgba(201,168,76,0.2), rgba(180,140,50,0.15));
-            border: 1px solid rgba(201,168,76,0.35);
-            border-radius: 2px; color: var(--ash-gold);
-            font-size: 0.82rem; letter-spacing: 0.1em; cursor: pointer;
-            transition: all 0.25s ease;
+        .form-msg.error { color: #d47777; }
+        .form-msg.success { color: #8cd4b8; }
+
+        .login-tip {
+            text-align: center;
+            padding: 60px 20px;
         }
-        .profile-save-btn:hover {
-            background: linear-gradient(135deg, rgba(201,168,76,0.3), rgba(180,140,50,0.25));
-            border-color: var(--ash-gold);
+        .login-tip h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--ash-gold);
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            letter-spacing: 0.1em;
         }
-        .profile-save-btn:disabled { cursor: not-allowed; opacity: 0.4; }
-        .login-close {
-            position: absolute; top: 10px; right: 14px;
-            background: none; border: none;
-            color: var(--ash-dim); font-size: 1.3rem;
-            cursor: pointer; transition: color 0.2s;
+        .login-tip p {
+            color: var(--ash-dim);
+            font-size: 0.85rem;
+            margin-bottom: 24px;
         }
-        .login-close:hover { color: var(--ash-gold); }
-        .profile-success { color: #8cd4b8; font-size: 0.72rem; text-align: center; margin-top: 8px; opacity: 0; transition: opacity 0.3s ease; }
-        .profile-success.visible { opacity: 1; }
-        .login-error { color: #d44; font-size: 0.72rem; margin-top: 8px; text-align: center; min-height: 1.2em; }
+
+        @media (max-width: 640px) {
+            .profile-page { padding-top: 80px; }
+            .user-info-grid { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+            .user-actions { justify-content: center; }
+            .list-item { flex-direction: column; align-items: flex-start; }
+            .inline-form { flex-direction: column; align-items: stretch; }
+            .form-field input { width: 100%; }
+        }
     </style>
 </head>
 <body>
-    <nav class="top-nav" id="page-header">
-        <div class="nav-brand"><a href="../index.html" style="color:inherit;text-decoration:none;">灰烬世界</a></div>
+    <nav class="top-nav">
+        <a href="../index.html" class="nav-brand"><span>灰烬世界</span></a>
+        <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
         <div class="nav-links">
-            <div class="nav-item"><a href="worldview.html">世界设定</a></div>
-            <div class="nav-item"><a href="rules.html">规则书</a></div>
-            <div class="nav-item"><a href="character-sheet.html">角色卡</a></div>
+            <div class="nav-item"><a href="news.html">最新资讯</a></div>
             <div class="nav-item">
-                <a href="../index.html" style="color:var(--ash-gold);">首页</a>
+                <span>世界设定</span>
+                <div class="nav-dropdown">
+                    <a href="worldview.html">世界观</a>
+                    <a href="map.html">地图</a>
+                    <a href="pantheon.html">神系</a>
+                    <a href="races-ontology.html">种族</a>
+                </div>
             </div>
+            <div class="nav-item">
+                <span>规则&模组</span>
+                <div class="nav-dropdown">
+                    <a href="rules.html">规则书</a>
+                    <a href="character-sheet.html">角色卡</a>
+                    <a href="glossary.html">规则术语表</a>
+                    <a href="modules.html">模组</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <span>社区</span>
+                <div class="nav-dropdown">
+                    <a href="articles.html">文章</a>
+                    <a href="art.html">绘图</a>
+                    <a href="discussion.html">讨论</a>
+                    <a href="community.html">玩家共创</a>
+                    <a href="works.html">衍生作品</a>
+                </div>
+            </div>
+            <div class="nav-item"><a href="merch.html">商店</a></div>
         </div>
     </nav>
 
-    <div class="profile-wrapper">
-        <!-- 头像 + 基本信息 -->
-        <div class="profile-header">
-            <div class="avatar-circle" id="avatarCircle" title="点击上传头像">
-                <span class="avatar-placeholder" id="avatarPlaceholder">?</span>
-                <span class="avatar-upload-hint">更换头像</span>
-            </div>
-            <input type="file" id="avatarInput" accept="image/*">
-            <div class="profile-name" id="displayName">未设置</div>
-            <div class="profile-phone" id="phoneDisplay"></div>
-            <div class="profile-bio" id="bioDisplay"></div>
-            <a class="edit-link" id="editProfileBtn" href="javascript:void(0)">编辑资料</a>
+    <nav class="nav-mobile" id="navMobile">
+        <div class="mobile-group"><div class="mobile-group-title">最新</div>
+            <a class="mobile-link" href="news.html">最新资讯</a></div>
+        <div class="mobile-group"><div class="mobile-group-title">世界设定</div>
+            <a class="mobile-link" href="worldview.html">世界观</a>
+            <a class="mobile-link" href="map.html">地图</a>
+            <a class="mobile-link" href="pantheon.html">神系</a>
+            <a class="mobile-link" href="races-ontology.html">种族</a></div>
+        <div class="mobile-group"><div class="mobile-group-title">规则&模组</div>
+            <a class="mobile-link" href="rules.html">规则书</a>
+            <a class="mobile-link" href="character-sheet.html">角色卡</a>
+            <a class="mobile-link" href="glossary.html">规则术语表</a>
+            <a class="mobile-link" href="modules.html">模组</a></div>
+        <div class="mobile-group"><div class="mobile-group-title">社区</div>
+            <a class="mobile-link" href="articles.html">文章</a>
+            <a class="mobile-link" href="art.html">绘图</a>
+            <a class="mobile-link" href="discussion.html">讨论</a>
+            <a class="mobile-link" href="community.html">玩家共创</a>
+            <a class="mobile-link" href="works.html">衍生作品</a></div>
+        <div class="mobile-group"><a class="mobile-link" href="merch.html" style="color:var(--ash-gold)">商店</a></div>
+    </nav>
+
+    <main class="profile-page" id="profilePage">
+        <div class="login-tip" id="loginTip">
+            <h2>请先登录</h2>
+            <p>登录后即可查看个人资料、角色卡与游戏记录。</p>
+            <a class="ash-btn" href="../index.html">返回首页登录</a>
         </div>
 
-        <!-- 统计 -->
-        <div class="panel" id="statsPanel">
-            <div class="panel-title"><span class="icon">&#9733;</span>数据统计</div>
-            <div class="stat-row">
-                <div class="stat-item"><span class="stat-num" id="charCount">0</span><span class="stat-label">角色卡</span></div>
-                <div class="stat-item"><span class="stat-num" id="sessionCount">0</span><span class="stat-label">游戏记录</span></div>
-                <div class="stat-item"><span class="stat-num">-</span><span class="stat-label">成就点数</span></div>
+        <div id="profileContent" style="display:none;">
+            <div class="profile-header">
+                <h1>个人主页</h1>
+                <p>管理你的余烬身份与冒险记录</p>
             </div>
-        </div>
 
-        <!-- 我的角色卡 -->
-        <div class="panel" id="charsPanel">
-            <div class="panel-title"><span class="icon">&#9876;</span>我的角色卡</div>
-            <div class="char-grid" id="charGrid">
-                <div class="empty-state"><span class="empty-icon">&#9876;</span>还没有角色卡</div>
-            </div>
-            <a class="new-char-btn" href="character-sheet.html" style="margin-top:16px;display:flex;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                创建新角色
-            </a>
-        </div>
+            <section class="glass-panel">
+                <div class="panel-title">🧑‍🎤 身份信息</div>
+                <div class="user-info-grid">
+                    <div class="user-avatar" id="userAvatar">✦</div>
+                    <div class="user-meta">
+                        <div class="user-name" id="userName">旅人</div>
+                        <div class="user-phone" id="userPhone">--</div>
+                        <div class="user-bio" id="userBio"><span class="empty-bio">暂无简介</span></div>
+                        <div class="user-actions">
+                            <a class="ash-btn" href="character-sheet.html">+ 创建角色</a>
+                            <button class="ash-btn secondary" id="refreshBtn">刷新</button>
+                            <button class="ash-btn secondary" id="logoutBtn2">退出登录</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-        <!-- 游戏记录 -->
-        <div class="panel" id="sessionsPanel">
-            <div class="panel-title"><span class="icon">&#9733;</span>游戏记录</div>
-            <div class="session-list" id="sessionList">
-                <div class="empty-state"><span class="empty-icon">&#9783;</span>还没有游戏记录</div>
-            </div>
-            <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
-                <input type="text" id="sessionTitle" placeholder="团名（如：灰烬之海）" maxlength="30" style="flex:1;min-width:140px;border:1px solid rgba(201,168,76,0.2);border-radius:2px;background:rgba(0,0,0,0.3);color:var(--ash-dim);font-size:0.78rem;padding:8px 12px;outline:none;font-family:'Noto Serif SC',serif;">
-                <input type="text" id="sessionRole" placeholder="身份（DM/玩家）" maxlength="10" style="width:100px;border:1px solid rgba(201,168,76,0.2);border-radius:2px;background:rgba(0,0,0,0.3);color:var(--ash-dim);font-size:0.78rem;padding:8px 12px;outline:none;font-family:'Noto Serif SC',serif;">
-                <button id="logSessionBtn" style="padding:8px 16px;border:1px solid rgba(201,168,76,0.25);border-radius:2px;background:rgba(201,168,76,0.06);color:var(--ash-gold);font-size:0.78rem;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s;white-space:nowrap;">记录</button>
-            </div>
-            <div class="login-error" id="sessionMsg" style="min-height:1.2em;"></div>
-        </div>
-    </div>
+            <section class="glass-panel">
+                <div class="panel-title">🎭 角色卡</div>
+                <div class="item-list" id="charList">
+                    <div class="item-empty">暂无角色卡，点击上方按钮创建</div>
+                </div>
+            </section>
 
-    <!-- 编辑弹窗 -->
-    <div class="profile-overlay" id="editOverlay">
-        <div class="login-backdrop" id="editBackdrop"></div>
-        <div class="profile-card">
-            <button class="login-close" id="editClose">&times;</button>
-            <h2>编辑资料</h2>
-            <label>显示名称</label>
-            <input type="text" id="editName" placeholder="你在余烬中的名字" maxlength="20">
-            <label>个人简介</label>
-            <textarea id="editBio" placeholder="灰烬中的旅人..." maxlength="120"></textarea>
-            <button class="profile-save-btn" id="editSaveBtn">保存到云端</button>
-            <div class="profile-success" id="editSuccess">已保存</div>
-            <div class="login-error" id="editError"></div>
+            <section class="glass-panel">
+                <div class="panel-title">📜 游戏记录</div>
+                <div class="item-list" id="sessionList">
+                    <div class="item-empty">暂无游戏记录</div>
+                </div>
+                <div class="inline-form">
+                    <div class="form-field">
+                        <label>团名 / 记录名</label>
+                        <input type="text" id="sessionTitle" placeholder="例如：灰烬黎明第一章" maxlength="40">
+                    </div>
+                    <div class="form-field">
+                        <label>身份</label>
+                        <input type="text" id="sessionRole" placeholder="PL / DM / 观察者" maxlength="20">
+                    </div>
+                    <button class="ash-btn" id="addSessionBtn">添加记录</button>
+                </div>
+                <div class="form-msg" id="sessionMsg"></div>
+            </section>
         </div>
-    </div>
+    </main>
 
-    <script src="../js/tcb-sdk.js?v=2"></script>
-    <script src="../js/ash-init.js?v=2"></script>
-    <script src="../js/ash-db.js?v=2"></script>
+    <footer class="footer">
+        <p>灰烬世界 Ash World &copy; 2026 桌游工作室</p>
+    </footer>
+
+    <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.10.0/cloudbase.full.js"></script>
+    <script src="../js/ash-init.js?v=3"></script>
+    <script src="../js/ash-db.js?v=3"></script>
+    <script src="../transition.js"></script>
     <script>
-    (function() {
-        var auth = window.ashAuth;
-        if (!auth || typeof cloudbase === 'undefined') {
-            document.body.innerHTML = '<div style="text-align:center;padding:200px 20px;color:#d44;">系统初始化失败，请刷新页面</div>';
-            return;
+    (function(){
+        'use strict';
+        var auth = null, dbApi = null, uid = null;
+
+        var $ = function(id){ return document.getElementById(id); };
+
+        function maskPhone(phone){
+            if(!phone) return '';
+            var s = phone.replace(/^\+86\s*/, '');
+            if(s.length === 11) return s.slice(0,3)+'****'+s.slice(7);
+            return s;
         }
 
-        // DOM
-        var avatarCircle     = document.getElementById('avatarCircle');
-        var avatarPlaceholder= document.getElementById('avatarPlaceholder');
-        var avatarInput      = document.getElementById('avatarInput');
-        var displayNameEl    = document.getElementById('displayName');
-        var phoneDisplayEl   = document.getElementById('phoneDisplay');
-        var bioDisplayEl     = document.getElementById('bioDisplay');
-        var editProfileBtn   = document.getElementById('editProfileBtn');
-        var charGrid         = document.getElementById('charGrid');
-        var charCountEl      = document.getElementById('charCount');
-        var sessionCountEl   = document.getElementById('sessionCount');
-        var sessionList      = document.getElementById('sessionList');
-        var sessionTitleEl   = document.getElementById('sessionTitle');
-        var sessionRoleEl    = document.getElementById('sessionRole');
-        var logSessionBtn    = document.getElementById('logSessionBtn');
-        var sessionMsg       = document.getElementById('sessionMsg');
-
-        // 编辑弹窗
-        var editOverlay   = document.getElementById('editOverlay');
-        var editBackdrop  = document.getElementById('editBackdrop');
-        var editClose     = document.getElementById('editClose');
-        var editName      = document.getElementById('editName');
-        var editBio       = document.getElementById('editBio');
-        var editSaveBtn   = document.getElementById('editSaveBtn');
-        var editSuccess   = document.getElementById('editSuccess');
-        var editError     = document.getElementById('editError');
-
-        var cachedName = '';
-        var cachedBio = '';
-        var cachedAvatar = '';
-
-        function unwrap(r) {
-            if (r && r.data !== undefined) return r.data;
-            return r;
+        function showSessionMsg(msg, isError){
+            var el = $('sessionMsg');
+            if(!el) return;
+            el.textContent = msg || '';
+            el.className = 'form-msg ' + (isError ? 'error' : 'success');
         }
 
-        // 头像上传
-        if (avatarCircle && avatarInput) {
-            avatarCircle.addEventListener('click', function() { avatarInput.click(); });
-            avatarInput.addEventListener('change', function() {
-                var file = avatarInput.files[0];
-                if (!file) return;
-                if (file.size > 2 * 1024 * 1024) { alert('图片不能超过 2MB'); return; }
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var dataUrl = e.target.result;
-                    // CloudBase 不支持客户端直接传文件，先存为 localStorage base64 降级，后续可接云存储
-                    cachedAvatar = dataUrl;
-                    localStorage.setItem('ew_avatar', dataUrl);
-                    setAvatar(dataUrl);
-                    // 同步到数据库
-                    ASH_DB.ready().then(function() {
-                        return ASH_DB.user.update({ avatar: dataUrl });
-                    }).catch(function() {});
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function setAvatar(url) {
-            if (!avatarCircle) return;
-            if (url) {
-                avatarCircle.style.backgroundImage = 'url(' + url + ')';
-                if (avatarPlaceholder) avatarPlaceholder.style.display = 'none';
-            } else {
-                avatarCircle.style.backgroundImage = '';
-                if (avatarPlaceholder) avatarPlaceholder.style.display = '';
-            }
-        }
-
-        // 渲染角色卡列表
-        function renderCharacters(list) {
-            if (!charGrid) return;
-            if (!list || list.length === 0) {
-                charGrid.innerHTML = '<div class="empty-state"><span class="empty-icon">&#9876;</span>还没有角色卡</div>';
-                if (charCountEl) charCountEl.textContent = '0';
+        function renderChars(list){
+            var container = $('charList');
+            if(!container) return;
+            if(!list || list.length === 0){
+                container.innerHTML = '<div class="item-empty">暂无角色卡，点击上方按钮创建</div>';
                 return;
             }
-            if (charCountEl) charCountEl.textContent = String(list.length);
-            var html = '';
-            list.forEach(function(c) {
-                var race = c.race || '未知种族';
-                var prof = c.profession || '';
-                var lvl  = c.level || 1;
-                var date = c.updatedAt ? new Date(c.updatedAt).toLocaleDateString('zh-CN') : '';
-                html += '<a class="char-card" href="character-sheet.html?id=' + c._id + '">';
-                html += '<div class="char-name">' + (c.name || '未命名') + '</div>';
-                html += '<div class="char-meta"><span>' + race + '</span>';
-                if (prof) html += '<span>' + prof + '</span>';
-                html += '<span>Lv.' + lvl + '</span></div>';
-                if (date) html += '<div class="char-date">' + date + '</div>';
-                html += '</a>';
-            });
-            charGrid.innerHTML = html;
+            container.innerHTML = list.map(function(c){
+                var attrText = c.attributes ? ('躯'+(c.attributes.body||0)+' 敏'+(c.attributes.agility||0)+' 心'+(c.attributes.intellect||0)+' 洞'+(c.attributes.perception||0)) : '';
+                var coreText = c.core ? ' · 核心：' + ({body:'躯魄',agility:'敏韧',intellect:'心智',perception:'洞识'}[c.core]||c.core) : '';
+                return '<div class="list-item">'+
+                    '<div class="item-main">'+
+                        '<div class="item-title">'+(c.name||'未命名角色')+'</div>'+
+                        '<div class="item-sub">'+(c.race||'未知种族')+' / '+(c.profession||'无职业')+' / Lv.'+(c.level||1)+' · '+attrText+coreText+'</div>'+
+                    '</div>'+
+                    '<div class="item-actions">'+
+                        '<a class="ash-btn" href="character-sheet.html?char='+(c._id||'')+'">编辑</a>'+
+                    '</div>'+
+                '</div>';
+            }).join('');
         }
 
-        // 渲染游戏记录
-        function renderSessions(list) {
-            if (!sessionList) return;
-            if (sessionCountEl) sessionCountEl.textContent = String(list.length || 0);
-            if (!list || list.length === 0) {
-                sessionList.innerHTML = '<div class="empty-state"><span class="empty-icon">&#9783;</span>还没有游戏记录</div>';
+        function renderSessions(list){
+            var container = $('sessionList');
+            if(!container) return;
+            if(!list || list.length === 0){
+                container.innerHTML = '<div class="item-empty">暂无游戏记录</div>';
                 return;
             }
-            var html = '';
-            list.forEach(function(s) {
+            container.innerHTML = list.map(function(s){
                 var date = s.createdAt ? new Date(s.createdAt).toLocaleDateString('zh-CN') : '';
-                html += '<div class="session-item">';
-                html += '<span class="session-name">' + (s.title || '未命名团') + '</span>';
-                if (s.role) html += '<span class="session-role">' + s.role + '</span>';
-                if (date) html += '<span class="session-date">' + date + '</span>';
-                html += '</div>';
+                return '<div class="list-item">'+
+                    '<div class="item-main">'+
+                        '<div class="item-title">'+(s.title||'未命名记录')+'</div>'+
+                        '<div class="item-sub">身份：'+(s.role||'--')+' · '+date+'</div>'+
+                    '</div>'+
+                '</div>';
+            }).join('');
+        }
+
+        function loadAll(){
+            if(!uid || !dbApi) return;
+            dbApi.getUserProfile(uid).then(function(profile){
+                $('userName').textContent = (profile && profile.displayName) ? profile.displayName : '旅人';
+                $('userPhone').textContent = maskPhone(dbApi.getPhone()) || '--';
+                if(profile && profile.bio){
+                    $('userBio').textContent = profile.bio;
+                } else {
+                    $('userBio').innerHTML = '<span class="empty-bio">暂无简介，可在首页编辑</span>';
+                }
+            }).catch(function(err){
+                console.warn('[profile] 读取资料失败', err);
             });
-            sessionList.innerHTML = html;
-        }
 
-        // 加载数据
-        function loadAll() {
-            ASH_DB.ready().then(function() {
-                ASH_DB.user.getOrCreate().then(function(user) {
-                    if (user.displayName) {
-                        cachedName = user.displayName;
-                        if (displayNameEl) displayNameEl.textContent = user.displayName;
-                    }
-                    if (user.bio) {
-                        cachedBio = user.bio;
-                        if (bioDisplayEl) bioDisplayEl.textContent = user.bio;
-                    }
-                    if (user.avatar) {
-                        cachedAvatar = user.avatar;
-                        setAvatar(user.avatar);
-                    }
-                }).catch(function() {});
+            dbApi.listCharacters(uid).then(renderChars).catch(function(err){
+                console.warn('[profile] 读取角色卡失败', err);
+                $('charList').innerHTML = '<div class="item-empty">读取失败: '+err.message+'</div>';
+            });
 
-                ASH_DB.characters.list().then(function(list) {
-                    renderCharacters(list);
-                }).catch(function() {});
-
-                ASH_DB.sessions.list().then(function(list) {
-                    renderSessions(list);
-                }).catch(function() {});
-            }).catch(function() {});
-        }
-
-        // 记录游戏
-        if (logSessionBtn) {
-            logSessionBtn.addEventListener('click', function() {
-                var title = (sessionTitleEl.value || '').trim();
-                if (!title) { if (sessionMsg) sessionMsg.textContent = '请输入团名'; return; }
-                var role = (sessionRoleEl.value || '').trim() || '玩家';
-                logSessionBtn.disabled = true;
-                logSessionBtn.textContent = '...';
-
-                ASH_DB.sessions.log({ title: title, role: role }).then(function() {
-                    if (sessionMsg) sessionMsg.textContent = '';
-                    if (sessionTitleEl) sessionTitleEl.value = '';
-                    if (sessionRoleEl) sessionRoleEl.value = '';
-                    logSessionBtn.disabled = false;
-                    logSessionBtn.textContent = '记录';
-                    // 刷新列表
-                    ASH_DB.sessions.list().then(function(list) { renderSessions(list); });
-                }).catch(function(err) {
-                    if (sessionMsg) sessionMsg.textContent = '记录失败: ' + (err.message || '');
-                    logSessionBtn.disabled = false;
-                    logSessionBtn.textContent = '记录';
-                });
+            dbApi.listSessions(uid).then(renderSessions).catch(function(err){
+                console.warn('[profile] 读取记录失败', err);
+                $('sessionList').innerHTML = '<div class="item-empty">读取失败: '+err.message+'</div>';
             });
         }
 
-        // 编辑弹窗
-        if (editProfileBtn) {
-            editProfileBtn.addEventListener('click', function() {
-                if (editName) editName.value = cachedName || '';
-                if (editBio) editBio.value = cachedBio || '';
-                if (editSuccess) editSuccess.classList.remove('visible');
-                if (editError) editError.textContent = '';
-                if (editOverlay) editOverlay.classList.add('show');
-            });
-        }
-        if (editClose) editClose.addEventListener('click', function() { if (editOverlay) editOverlay.classList.remove('show'); });
-        if (editBackdrop) editBackdrop.addEventListener('click', function() { if (editOverlay) editOverlay.classList.remove('show'); });
-
-        if (editSaveBtn) {
-            editSaveBtn.addEventListener('click', function() {
-                var name = (editName.value || '').trim();
-                var bio  = (editBio.value || '').trim();
-                if (!name) { if (editError) editError.textContent = '请输入名称'; return; }
-                editSaveBtn.disabled = true;
-
-                ASH_DB.user.update({ displayName: name, bio: bio }).then(function() {
-                    cachedName = name; cachedBio = bio;
-                    if (displayNameEl) displayNameEl.textContent = name;
-                    if (bioDisplayEl) bioDisplayEl.textContent = bio;
-                    localStorage.setItem('ew_display_name', name);
-                    localStorage.setItem('ew_bio', bio);
-                    if (editSuccess) editSuccess.classList.add('visible');
-                    editSaveBtn.disabled = false;
-                    setTimeout(function() {
-                        if (editSuccess) editSuccess.classList.remove('visible');
-                        if (editOverlay) editOverlay.classList.remove('show');
-                    }, 1200);
-                }).catch(function(err) {
-                    if (editError) editError.textContent = '保存失败: ' + (err.message || '');
-                    editSaveBtn.disabled = false;
-                });
-            });
-        }
-
-        // 页面初始化
-        auth.getLoginState().then(function(result) {
-            var state = unwrap(result);
-            if (state && state.user) {
-                if (phoneDisplayEl) phoneDisplayEl.textContent = state.user.username || state.user.phone || '';
-                // 先读本地缓存降级
-                cachedName = localStorage.getItem('ew_display_name') || '';
-                cachedBio = localStorage.getItem('ew_bio') || '';
-                cachedAvatar = localStorage.getItem('ew_avatar') || '';
-                if (displayNameEl && cachedName) displayNameEl.textContent = cachedName;
-                if (bioDisplayEl && cachedBio) bioDisplayEl.textContent = cachedBio;
-                if (cachedAvatar) setAvatar(cachedAvatar);
-                // 从云端加载
-                loadAll();
-            } else {
-                document.querySelector('.profile-wrapper').innerHTML = '<div style="text-align:center;padding:80px 20px;color:var(--ash-dim);"><p style="font-size:1.2rem;margin-bottom:16px;">需要登录才能查看个人主页</p><a href="../index.html" style="color:var(--ash-gold);text-decoration:underline;">返回首页登录</a></div>';
+        function init(){
+            auth = window.ashAuth;
+            dbApi = window.ashDbApi;
+            if(!auth){
+                $('loginTip').innerHTML = '<h2>初始化失败</h2><p>CloudBase SDK 未加载，请刷新重试。</p>';
+                return;
             }
-        }).catch(function() {
-            document.querySelector('.profile-wrapper').innerHTML = '<div style="text-align:center;padding:80px 20px;color:var(--ash-dim);"><p style="font-size:1.2rem;margin-bottom:16px;">需要登录才能查看个人主页</p><a href="../index.html" style="color:var(--ash-gold);text-decoration:underline;">返回首页登录</a></div>';
+            auth.getLoginState().then(function(res){
+                var state = res && res.data ? res.data : res;
+                if(state && state.user){
+                    uid = state.user.uid;
+                    $('loginTip').style.display = 'none';
+                    $('profileContent').style.display = 'block';
+                    loadAll();
+                } else {
+                    $('loginTip').style.display = 'block';
+                    $('profileContent').style.display = 'none';
+                }
+            }).catch(function(){
+                $('loginTip').style.display = 'block';
+                $('profileContent').style.display = 'none';
+            });
+        }
+
+        $('refreshBtn').addEventListener('click', function(){ loadAll(); });
+        $('logoutBtn2').addEventListener('click', function(){
+            if(!auth) return;
+            auth.signOut().then(function(){ location.href = '../index.html'; });
         });
+
+        $('addSessionBtn').addEventListener('click', function(){
+            if(!uid || !dbApi){ showSessionMsg('未登录', true); return; }
+            var title = ($('sessionTitle').value || '').trim();
+            var role = ($('sessionRole').value || '').trim();
+            if(!title){ showSessionMsg('请输入记录名', true); return; }
+            $('addSessionBtn').disabled = true;
+            dbApi.addSession(uid, {title: title, role: role}).then(function(){
+                $('sessionTitle').value = '';
+                $('sessionRole').value = '';
+                showSessionMsg('已添加', false);
+                loadAll();
+            }).catch(function(err){
+                showSessionMsg('添加失败: ' + err.message, true);
+            }).finally(function(){
+                $('addSessionBtn').disabled = false;
+            });
+        });
+
+        // mobile nav
+        (function(){
+            var btn=document.getElementById('navToggle');
+            var panel=document.getElementById('navMobile');
+            if(btn&&panel){
+                btn.addEventListener('click',function(){btn.classList.toggle('open');panel.classList.toggle('open');});
+                panel.querySelectorAll('.mobile-link').forEach(function(l){l.addEventListener('click',function(){btn.classList.remove('open');panel.classList.remove('open');});});
+            }
+        })();
+
+        if(window.ashReady) window.ashReady(init);
+        else document.addEventListener('DOMContentLoaded', function(){ if(window.ashReady) window.ashReady(init); });
     })();
     </script>
 </body>

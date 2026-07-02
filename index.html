@@ -570,33 +570,7 @@
             letter-spacing: 0.04em; opacity: 0.7;
         }
         /* ── 用户下拉菜单 ── */
-        .user-btn-wrap {
-            display: flex; align-items: center; gap: 8px;
-            cursor: pointer; padding: 4px 8px;
-            border-radius: 4px; transition: background 0.2s;
-        }
-        .user-btn-wrap:hover { background: rgba(201,168,76,0.06); }
-        .user-avatar {
-            display: inline-block; width: 28px; height: 28px;
-            border-radius: 50%; background: rgba(201,168,76,0.15);
-            border: 1px solid rgba(201,168,76,0.2);
-            background-size: cover; background-position: center;
-            flex-shrink: 0;
-        }
-        .user-avatar.logged-in {
-            border-color: var(--ash-gold);
-            box-shadow: 0 0 8px rgba(201,168,76,0.15);
-        }
-        .user-name-text {
-            color: var(--ash-dim); font-size: 0.78rem;
-            letter-spacing: 0.06em; max-width: 100px;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-        }
-        .user-name-text.logged-in { color: var(--ash-gold); }
-        .user-caret {
-            color: var(--ash-dim); font-size: 0.5rem;
-            transition: transform 0.2s;
-        }
+        .user-menu-wrap { position: relative; display: inline-block; }
         .user-dropdown {
             position: absolute; top: calc(100% + 6px); right: 0;
             min-width: 140px; padding: 6px 0;
@@ -721,18 +695,10 @@
                 <a href="pages/merch.html">商店</a>
             </div>
             <div class="nav-item" id="loginArea">
-                <div class="user-btn-wrap" id="userBtnWrap">
-                    <span class="user-avatar" id="userAvatar"></span>
-                    <span class="user-name-text" id="userNameText">进入余烬</span>
-                    <span class="user-caret">&#9662;</span>
-                </div>
+                <span id="loginBtn" style="cursor:pointer;">进入余烬</span>
                 <div class="user-dropdown" id="userDropdown">
                     <div class="user-dropdown-phone" id="dropdownPhone"></div>
                     <hr class="user-dropdown-divider">
-                    <a class="user-dropdown-item" href="pages/profile.html">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        个人主页
-                    </a>
                     <button class="user-dropdown-item" id="profileEditBtn">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                         编辑资料
@@ -766,7 +732,6 @@
             <a class="mobile-link" href="pages/community.html">玩家共创</a>
             <a class="mobile-link" href="pages/works.html">衍生作品</a></div>
         <div class="mobile-group"><a class="mobile-link" href="pages/merch.html" style="color:var(--ash-gold)">商店</a></div>
-        <div class="mobile-group" style="border-top:1px solid rgba(201,168,76,0.1);margin-top:8px;padding-top:8px;"><a class="mobile-link" href="pages/profile.html" style="color:var(--ash-gold);">个人主页</a></div>
     </nav>
 
     <!-- 手机号登录弹窗 -->
@@ -799,8 +764,8 @@
             <input type="text" id="profilePhone" disabled style="width:100%;border:1px solid rgba(201,168,76,0.2);border-radius:2px;background:rgba(0,0,0,0.3);color:#666;font-size:0.82rem;padding:10px 12px;">
             <label class="login-label">显示名称</label>
             <input type="text" id="profileName" placeholder="你在余烬中的名字" maxlength="20" style="width:100%;border:1px solid rgba(201,168,76,0.2);border-radius:2px;background:rgba(0,0,0,0.3);color:var(--ash-dim);font-size:0.82rem;padding:10px 12px;">
-            <label class="login-label">个人简介</label>
-            <input type="text" id="profileBio" placeholder="灰烬中的旅人..." maxlength="60" style="width:100%;border:1px solid rgba(201,168,76,0.2);border-radius:2px;background:rgba(0,0,0,0.3);color:var(--ash-dim);font-size:0.82rem;padding:10px 12px;">
+            <label class="login-label">简介</label>
+            <textarea id="profileBio" placeholder="一句话介绍自己" maxlength="120" style="width:100%;min-height:72px;resize:none;border:1px solid rgba(201,168,76,0.2);border-radius:2px;background:rgba(0,0,0,0.3);color:var(--ash-dim);font-size:0.82rem;padding:10px 12px;font-family:inherit;line-height:1.6;"></textarea>
             <button class="profile-save-btn" id="profileSaveBtn">保存</button>
             <div class="profile-success" id="profileSuccess">已保存</div>
             <div class="login-error" id="profileError"></div>
@@ -1998,31 +1963,22 @@
     updateFaceInfo(0);
     animate(performance.now());
     </script>
-    <script src="js/tcb-sdk.js?v=2"></script>
-    <script src="js/ash-init.js?v=2"></script>
-    <script src="js/ash-db.js?v=2"></script>
+    <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.10.0/cloudbase.full.js"></script>
+    <script src="js/ash-init.js?v=3"></script>
+    <script src="js/ash-db.js?v=3"></script>
     <script src="transition.js"></script>
-    <!-- CloudBase 初始化 + 手机号登录 -->
+    <!-- 手机号登录 + 资料保存 -->
     <script>
     (function() {
-        // ───── 初始化：依赖 ash-init.js 提供的 ashApp / ashAuth ─────
-        if (typeof cloudbase === 'undefined') {
-            console.error('[CloudBase] ❌ SDK 未加载');
-            var btn = document.getElementById('userBtnWrap');
-            if (btn) { btn.style.opacity = '0.4'; }
-            return;
-        }
-        var auth = window.ashAuth;
-        if (!auth) {
-            console.error('[CloudBase] ❌ ashAuth 未初始化');
-            return;
-        }
-        console.log('[CloudBase] ✅ SDK/认证已就绪');
+        'use strict';
+
+        var auth = null;
+        var dbApi = null;
+        var currentUid = null;
+        var currentProfile = null;
 
         // ───── DOM 元素 ─────
-        var userBtnWrap    = document.getElementById('userBtnWrap');
-        var userAvatar     = document.getElementById('userAvatar');
-        var userNameText   = document.getElementById('userNameText');
+        var loginBtn       = document.getElementById('loginBtn');
         var loginOverlay   = document.getElementById('loginOverlay');
         var loginBackdrop  = document.getElementById('loginBackdrop');
         var loginClose     = document.getElementById('loginClose');
@@ -2031,12 +1987,10 @@
         var codeInput      = document.getElementById('codeInput');
         var confirmBtn     = document.getElementById('confirmLoginBtn');
         var loginError     = document.getElementById('loginError');
-        // 用户下拉
         var userDropdown   = document.getElementById('userDropdown');
         var dropdownPhone  = document.getElementById('dropdownPhone');
         var logoutBtn      = document.getElementById('logoutBtn');
         var profileEditBtn = document.getElementById('profileEditBtn');
-        // 资料弹窗
         var profileOverlay  = document.getElementById('profileOverlay');
         var profileBackdrop = document.getElementById('profileBackdrop');
         var profileClose    = document.getElementById('profileClose');
@@ -2046,61 +2000,44 @@
         var profileSaveBtn  = document.getElementById('profileSaveBtn');
         var profileSuccess  = document.getElementById('profileSuccess');
         var profileError    = document.getElementById('profileError');
-        // 本地缓存（用于降级显示，主数据在 CloudBase）
-        var cachedDisplayName = '';
-        var cachedPhone = '';
-        var cachedAvatar = '';
 
-        var verificationInfo = null; // 存验证信息
+        var verificationInfo = null;
         var countdownTimer   = null;
 
-        // ───── 辅助函数 ─────
-        function unwrap(result) {
-            if (result && result.data !== undefined) return result.data;
-            return result;
-        }
-        function showError(msg) { if (loginError) loginError.textContent = msg; }
+        function showError(msg) { if (loginError) loginError.textContent = msg || ''; }
         function clearError()   { if (loginError) loginError.textContent = ''; }
+        function unwrap(result) { return (result && result.data !== undefined) ? result.data : result; }
 
-        function updateUI(user) {
+        function maskPhone(phone) {
+            if (!phone) return '';
+            var s = phone.replace(/^\+86\s*/, '');
+            if (s.length === 11) return s.slice(0, 3) + '****' + s.slice(7);
+            return s;
+        }
+
+        function updateUI(user, profile) {
             if (user) {
                 var phone = user.username || user.phone || '';
-                var name  = cachedDisplayName || '';
-                cachedPhone = phone;
-
-                // 头像
-                if (userAvatar) {
-                    if (cachedAvatar) {
-                        userAvatar.style.backgroundImage = 'url(' + cachedAvatar + ')';
-                    } else {
-                        userAvatar.style.backgroundImage = '';
-                    }
-                    userAvatar.classList.add('logged-in');
+                var name = (profile && profile.displayName) ? profile.displayName : '余烬行者';
+                currentProfile = profile || { displayName: name, bio: '' };
+                if (loginBtn) {
+                    loginBtn.textContent = name;
+                    loginBtn.classList.add('logged-in');
+                    loginBtn.title = phone ? '已登录: ' + maskPhone(phone) : '已登录';
                 }
-                // 名字
-                if (userNameText) {
-                    userNameText.textContent = name || phone || '余烬行者';
-                    userNameText.classList.add('logged-in');
-                }
-                // 下拉
-                if (dropdownPhone) dropdownPhone.textContent = phone || '已登录';
+                if (dropdownPhone) dropdownPhone.textContent = maskPhone(phone) || '已登录';
             } else {
-                cachedPhone = '';
-                cachedDisplayName = '';
-                cachedAvatar = '';
-                if (userAvatar) {
-                    userAvatar.style.backgroundImage = '';
-                    userAvatar.classList.remove('logged-in');
-                }
-                if (userNameText) {
-                    userNameText.textContent = '进入余烬';
-                    userNameText.classList.remove('logged-in');
+                currentProfile = null;
+                currentUid = null;
+                if (loginBtn) {
+                    loginBtn.textContent = '进入余烬';
+                    loginBtn.classList.remove('logged-in');
+                    loginBtn.title = '';
                 }
                 if (dropdownPhone) dropdownPhone.textContent = '';
             }
         }
 
-        // ───── 弹窗控制 ─────
         function openModal() {
             if (!loginOverlay) return;
             loginOverlay.classList.add('show');
@@ -2116,7 +2053,6 @@
             clearCountdown();
         }
 
-        // ───── 60 秒倒计时 ─────
         function startCountdown() {
             var sec = 60;
             sendCodeBtn.disabled = true;
@@ -2125,8 +2061,6 @@
                 sec--;
                 if (sec <= 0) {
                     clearCountdown();
-                    sendCodeBtn.disabled = false;
-                    sendCodeBtn.textContent = '重新获取验证码';
                 } else {
                     sendCodeBtn.textContent = sec + ' 秒后重发';
                 }
@@ -2134,209 +2068,205 @@
         }
         function clearCountdown() {
             if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
-            sendCodeBtn.disabled = false;
-            sendCodeBtn.textContent = '获取验证码';
+            if (sendCodeBtn) {
+                sendCodeBtn.disabled = false;
+                sendCodeBtn.textContent = '获取验证码';
+            }
+        }
+
+        function loadProfile(uid) {
+            if (!dbApi || !uid) return;
+            dbApi.ensureUserProfile(uid).then(function(profile) {
+                updateUI({ uid: uid, phone: dbApi.getPhone() }, profile);
+            }).catch(function(err) {
+                console.warn('[ash] 读取资料失败:', err);
+                updateUI({ uid: uid, phone: dbApi.getPhone() }, null);
+            });
+        }
+
+        function refreshLoginState() {
+            if (!auth) return;
+            auth.getLoginState().then(function(result) {
+                var state = unwrap(result);
+                if (state && state.user) {
+                    currentUid = state.user.uid;
+                    loadProfile(currentUid);
+                } else {
+                    updateUI(null);
+                }
+            }).catch(function(err) {
+                console.warn('[ash] 获取登录态失败:', err);
+                updateUI(null);
+            });
         }
 
         // ───── 发送验证码 ─────
-        sendCodeBtn.addEventListener('click', function() {
-            clearError();
-            var phone = (phoneInput.value || '').trim();
-            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
-                showError('请输入正确的手机号');
-                return;
-            }
-            var fullPhone = '+86 ' + phone;
-            sendCodeBtn.disabled = true;
-            sendCodeBtn.textContent = '发送中...';
+        if (sendCodeBtn) {
+            sendCodeBtn.addEventListener('click', function() {
+                clearError();
+                if (!auth) { showError('SDK 未初始化'); return; }
+                var phone = (phoneInput.value || '').trim();
+                if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
+                    showError('请输入正确的手机号'); return;
+                }
+                var fullPhone = '+86 ' + phone;
+                sendCodeBtn.disabled = true;
+                sendCodeBtn.textContent = '发送中...';
 
-            auth.getVerification({ phone_number: fullPhone })
-                .then(function(res) {
-                    verificationInfo = unwrap(res);
-                    console.log('[CloudBase] 验证码已发送');
-                    showError(''); // 不显示错误，但清空
-                    startCountdown();
-                })
-                .catch(function(err) {
-                    console.error('[CloudBase] 发送验证码失败:', err);
-                    showError('发送失败: ' + (err.message || err.msg || '请检查手机号'));
-                    sendCodeBtn.disabled = false;
-                    sendCodeBtn.textContent = '获取验证码';
-                });
-        });
+                auth.getVerificationCode({ phone_number: fullPhone })
+                    .then(function(res) {
+                        verificationInfo = unwrap(res);
+                        console.log('[ash] 验证码已发送');
+                        startCountdown();
+                    })
+                    .catch(function(err) {
+                        console.error('[ash] 发送验证码失败:', err);
+                        showError('发送失败: ' + (err.message || err.errMsg || '请检查手机号'));
+                        clearCountdown();
+                    });
+            });
+        }
 
         // ───── 登录 ─────
-        confirmBtn.addEventListener('click', function() {
-            clearError();
-            if (!verificationInfo) {
-                showError('请先获取验证码');
-                return;
-            }
-            var code = (codeInput.value || '').trim();
-            if (!code || code.length < 4) {
-                showError('请输入验证码');
-                return;
-            }
-            var phone = (phoneInput.value || '').trim();
-            var fullPhone = '+86 ' + phone;
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', function() {
+                clearError();
+                if (!auth) { showError('SDK 未初始化'); return; }
+                if (!verificationInfo) { showError('请先获取验证码'); return; }
+                var code = (codeInput.value || '').trim();
+                if (!code || code.length < 4) { showError('请输入验证码'); return; }
+                var phone = (phoneInput.value || '').trim();
+                var fullPhone = '+86 ' + phone;
 
-            confirmBtn.disabled = true;
-            confirmBtn.textContent = '登录中...';
+                confirmBtn.disabled = true;
+                confirmBtn.textContent = '登录中...';
 
-            auth.signInWithSms({
-                verificationInfo: verificationInfo,
-                verificationCode: code,
-                phoneNum: fullPhone
-            })
-            .then(function(res) {
-                var user = unwrap(res);
-                console.log('[CloudBase] 登录成功:', user);
-                updateUI({ username: fullPhone });
-                closeModal();
-            })
-            .catch(function(err) {
-                console.error('[CloudBase] 登录失败:', err);
-                showError('登录失败: ' + (err.message || err.msg || '验证码错误'));
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = '登录';
-            });
-        });
-
-        // ───── 弹窗关闭按钮 ─────
-        loginClose.addEventListener('click', closeModal);
-        loginBackdrop.addEventListener('click', closeModal);
-
-        // ───── 点击导航栏用户区 → 打开弹窗或下拉 ─────
-        if (userBtnWrap) {
-            userBtnWrap.addEventListener('click', function(e) {
-                e.stopPropagation();
-                auth.getLoginState().then(function(result) {
-                    var loginState = unwrap(result);
-                    if (loginState && loginState.user) {
-                        if (userDropdown) userDropdown.classList.toggle('show');
-                        return;
-                    }
-                    openModal();
-                }).catch(function() {
-                    openModal();
+                auth.signInWithPhoneCode({
+                    verificationInfo: verificationInfo,
+                    verificationCode: code,
+                    phoneNum: fullPhone
+                })
+                .then(function(res) {
+                    var user = unwrap(res);
+                    console.log('[ash] 登录成功:', user);
+                    currentUid = user && user.uid ? user.uid : null;
+                    refreshLoginState();
+                    closeModal();
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = '登录';
+                })
+                .catch(function(err) {
+                    console.error('[ash] 登录失败:', err);
+                    showError('登录失败: ' + (err.message || err.errMsg || '验证码错误'));
+                    confirmBtn.disabled = false;
+                    confirmBtn.textContent = '登录';
                 });
             });
         }
 
-        // ───── 下拉菜单：编辑资料 ─────
+        if (loginClose) loginClose.addEventListener('click', closeModal);
+        if (loginBackdrop) loginBackdrop.addEventListener('click', closeModal);
+
+        if (loginBtn) {
+            loginBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (!auth) { openModal(); return; }
+                auth.getLoginState().then(function(result) {
+                    var state = unwrap(result);
+                    if (state && state.user) {
+                        if (userDropdown) userDropdown.classList.toggle('show');
+                    } else {
+                        openModal();
+                    }
+                }).catch(function() { openModal(); });
+            });
+        }
+
         if (profileEditBtn) {
             profileEditBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (userDropdown) userDropdown.classList.remove('show');
-                if (profilePhoneEl) profilePhoneEl.value = cachedPhone || '';
-                if (profileNameEl) profileNameEl.value = cachedDisplayName || '';
-                if (profileBioEl) profileBioEl.value = localStorage.getItem('ew_bio') || '';
+                if (profilePhoneEl) profilePhoneEl.value = dbApi ? maskPhone(dbApi.getPhone()) : '';
+                if (profileNameEl) profileNameEl.value = currentProfile ? (currentProfile.displayName || '') : '';
+                if (profileBioEl) profileBioEl.value = currentProfile ? (currentProfile.bio || '') : '';
                 if (profileSuccess) profileSuccess.classList.remove('visible');
                 if (profileError) profileError.textContent = '';
                 if (profileOverlay) profileOverlay.classList.add('show');
             });
         }
 
-        // ───── 下拉菜单：退出登录 ─────
         if (logoutBtn) {
             logoutBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 if (userDropdown) userDropdown.classList.remove('show');
+                if (!auth) return;
                 auth.signOut().then(function() {
                     updateUI(null);
                     localStorage.removeItem('ew_display_name');
-                    localStorage.removeItem('ew_bio');
-                    cachedDisplayName = '';
-                    cachedAvatar = '';
-                    console.log('[CloudBase] 已退出登录');
+                    console.log('[ash] 已退出登录');
                 }).catch(function(err) {
-                    console.error('[CloudBase] 退出失败:', err);
+                    console.error('[ash] 退出失败:', err);
                 });
             });
         }
 
-        // ───── 资料弹窗：关闭 ─────
-        if (profileClose)  profileClose.addEventListener('click',  function() { if (profileOverlay) profileOverlay.classList.remove('show'); });
+        if (profileClose) profileClose.addEventListener('click', function() { if (profileOverlay) profileOverlay.classList.remove('show'); });
         if (profileBackdrop) profileBackdrop.addEventListener('click', function() { if (profileOverlay) profileOverlay.classList.remove('show'); });
 
-        // ───── 资料弹窗：保存 → CloudBase 数据库 ─────
         if (profileSaveBtn) {
             profileSaveBtn.addEventListener('click', function() {
                 var name = (profileNameEl.value || '').trim();
-                var bio  = (profileBioEl ? (profileBioEl.value || '').trim() : '');
-                if (!name) {
-                    if (profileError) { profileError.textContent = '请输入显示名称'; }
-                    if (profileSuccess) profileSuccess.classList.remove('visible');
-                    return;
-                }
-                if (name.length < 2) {
-                    if (profileError) { profileError.textContent = '名称至少2个字符'; }
-                    return;
-                }
-                if (profileSaveBtn) profileSaveBtn.disabled = true;
+                var bio = (profileBioEl.value || '').trim();
+                if (!name) { if (profileError) profileError.textContent = '请输入显示名称'; return; }
+                if (name.length < 2) { if (profileError) profileError.textContent = '名称至少 2 个字符'; return; }
+                if (!currentUid || !dbApi) { if (profileError) profileError.textContent = '未登录或数据库未初始化'; return; }
+
+                profileSaveBtn.disabled = true;
+                profileSaveBtn.textContent = '保存中...';
                 if (profileError) profileError.textContent = '';
 
-                // 保存到 CloudBase 数据库
-                ASH_DB.user.update({ displayName: name, bio: bio })
-                .then(function(user) {
-                    cachedDisplayName = name;
-                    localStorage.setItem('ew_display_name', name);
-                    localStorage.setItem('ew_bio', bio);
-                    if (userNameText) { userNameText.textContent = name; userNameText.classList.add('logged-in'); }
-                    if (profileSuccess) { profileSuccess.classList.add('visible'); }
-                    if (profileSaveBtn) profileSaveBtn.disabled = false;
-                    setTimeout(function() {
-                        if (profileSuccess) profileSuccess.classList.remove('visible');
-                        if (profileOverlay) profileOverlay.classList.remove('show');
-                    }, 1200);
-                }).catch(function(err) {
-                    console.error('[CloudBase] 保存资料失败:', err);
-                    if (profileError) profileError.textContent = '保存失败，请重试';
-                    if (profileSaveBtn) profileSaveBtn.disabled = false;
-                });
+                dbApi.setUserProfile(currentUid, { displayName: name, bio: bio })
+                    .then(function() {
+                        currentProfile = { displayName: name, bio: bio };
+                        if (profileSuccess) profileSuccess.classList.add('visible');
+                        updateUI({ uid: currentUid, phone: dbApi.getPhone() }, currentProfile);
+                        setTimeout(function() {
+                            if (profileSuccess) profileSuccess.classList.remove('visible');
+                            if (profileOverlay) profileOverlay.classList.remove('show');
+                            profileSaveBtn.disabled = false;
+                            profileSaveBtn.textContent = '保存';
+                        }, 1000);
+                    })
+                    .catch(function(err) {
+                        if (profileError) profileError.textContent = '保存失败: ' + err.message;
+                        profileSaveBtn.disabled = false;
+                        profileSaveBtn.textContent = '保存';
+                    });
             });
         }
 
-        // ───── 点击空白关闭下拉 ─────
         document.addEventListener('click', function() {
-            if (userDropdown && userDropdown.classList.contains('show')) {
-                userDropdown.classList.remove('show');
-            }
+            if (userDropdown && userDropdown.classList.contains('show')) userDropdown.classList.remove('show');
         });
 
-        // ───── 页面加载时：先读本地缓存降级 → 从 CloudBase 数据库取得真数据 ─────
-        cachedDisplayName = localStorage.getItem('ew_display_name') || '';
-        cachedAvatar      = localStorage.getItem('ew_avatar') || '';
-
-        auth.getLoginState().then(function(result) {
-            var loginState = unwrap(result);
-            if (loginState && loginState.user) {
-                updateUI({ username: loginState.user.username || loginState.user.phone || loginState.user.uid });
-                console.log('[CloudBase] 已登录:', loginState.user.uid);
-
-                // 从数据库拉取完整用户资料
-                ASH_DB.ready().then(function() {
-                    return ASH_DB.user.getOrCreate();
-                }).then(function(userData) {
-                    if (userData.displayName) {
-                        cachedDisplayName = userData.displayName;
-                        localStorage.setItem('ew_display_name', userData.displayName);
-                        if (userNameText) { userNameText.textContent = userData.displayName; userNameText.classList.add('logged-in'); }
-                    }
-                    if (userData.avatar) {
-                        cachedAvatar = userData.avatar;
-                        localStorage.setItem('ew_avatar', userData.avatar);
-                        if (userAvatar) { userAvatar.style.backgroundImage = 'url(' + userData.avatar + ')'; }
-                    }
-                    if (userData.bio) localStorage.setItem('ew_bio', userData.bio);
-                }).catch(function(err) {
-                    console.warn('[CloudBase] 数据库同步失败，使用本地缓存:', err.message || err);
-                });
+        // ───── 等待 CloudBase 初始化 ─────
+        function start() {
+            auth = window.ashAuth;
+            dbApi = window.ashDbApi;
+            if (!auth) {
+                if (loginBtn) { loginBtn.textContent = 'SDK 加载失败'; loginBtn.style.color = '#e55'; }
+                return;
             }
-        }).catch(function(err) {
-            console.warn('[CloudBase] 获取登录态失败:', err.message || err);
-        });
+            refreshLoginState();
+        }
 
+        if (window.ashReady) {
+            window.ashReady(start);
+        } else {
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.ashReady) window.ashReady(start);
+            });
+        }
     })();
     </script>
     <script>
