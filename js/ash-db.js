@@ -32,6 +32,17 @@
     });
   }
 
+  function friendlyError(err) {
+    var msg = (err && (err.message || err.msg || err.errMsg || err.code)) || String(err);
+    if (/Db or Table not exist|not exist|collection not found/i.test(msg)) {
+      throw new Error('数据库集合未创建。请在 CloudBase 控制台建立 users、characters、sessions 三个集合。');
+    }
+    if (/permission denied|not authorized|auth/i.test(msg)) {
+      throw new Error('数据库权限不足。请检查 CloudBase 数据库安全规则是否允许登录用户读写。');
+    }
+    throw new Error('云端保存失败：' + msg);
+  }
+
   ASH_DB.ready = function() {
     if (_ready) return Promise.resolve(true);
     try {
@@ -62,7 +73,7 @@
             return db.collection('users').doc(addRes.id).get().then(function(r) { return r.data[0]; });
           });
         });
-      });
+      }).catch(friendlyError);
     },
 
     /* 更新用户资料 */
@@ -74,7 +85,7 @@
             return Object.assign({}, user, fields);
           });
         });
-      });
+      }).catch(friendlyError);
     }
   };
 
@@ -87,7 +98,7 @@
         return db.collection('characters').where({ uid: uid }).orderBy('updatedAt', 'desc').get().then(function(res) {
           return res.data || [];
         });
-      });
+      }).catch(friendlyError);
     },
 
     /* 保存角色卡（创建或更新） */
@@ -105,21 +116,21 @@
           characterData._id = res.id;
           return characterData;
         });
-      });
+      }).catch(friendlyError);
     },
 
     /* 删除角色卡 */
     remove: function(characterId) {
       return getUid().then(function() {
         return db.collection('characters').doc(characterId).remove();
-      });
+      }).catch(friendlyError);
     },
 
     /* 获取单张角色卡 */
     get: function(characterId) {
       return db.collection('characters').doc(characterId).get().then(function(res) {
         return res.data && res.data[0] || null;
-      });
+      }).catch(friendlyError);
     }
   };
 
@@ -135,7 +146,7 @@
           sessionData._id = res.id;
           return sessionData;
         });
-      });
+      }).catch(friendlyError);
     },
 
     /* 获取游戏记录列表 */
@@ -145,7 +156,7 @@
         return db.collection('sessions').where({ uid: uid }).orderBy('createdAt', 'desc').limit(limit).get().then(function(res) {
           return res.data || [];
         });
-      });
+      }).catch(friendlyError);
     },
 
     /* 获取游戏统计 */
@@ -154,7 +165,7 @@
         return db.collection('sessions').where({ uid: uid }).count().then(function(countRes) {
           return { totalSessions: countRes.total || 0 };
         });
-      });
+      }).catch(friendlyError);
     }
   };
 

@@ -93,3 +93,34 @@
 - 项目根: `C:/ProgramData/WorkBuddy/chromium-env/13613ht/WorkBuddy/2026-06-07-11-51-51`
 - docx 源文件: `E:/Desktop/跑团文件/规则/EW/`
 - Python 环境: `C:/ProgramData/WorkBuddy/chromium-env/13613ht/.workbuddy/binaries/python/envs/docx-extract/`
+
+## CloudBase 用户系统 (2026-07-02)
+
+### 架构
+- `js/tcb-sdk.js` — CloudBase JS SDK 浏览器版
+- `js/ash-init.js` — 共享初始化模块（导出 window.ashApp / window.ashAuth）
+- `js/ash-db.js` — 数据库操作模块（users / characters / sessions CRUD）
+- 所有页面（index.html / profile.html / character-sheet.html）统一引用以上三个脚本
+
+### 已完成功能
+1. **手机号验证码登录** — index.html 登录弹窗，CloudBase v2 Auth API
+2. **个人主页** (`pages/profile.html`) — 头像/昵称/简介编辑、角色卡列表、游戏记录
+3. **角色卡云存储** — character-sheet.html 角色名输入 + 保存/加载按钮，CloudBase `characters` 集合
+4. **游戏记录** — profile.html 团名+身份输入，CloudBase `sessions` 集合
+
+### CloudBase 集合
+- `users` — 用户资料（uid/displayName/avatar/bio）
+- `characters` — 角色卡（uid/name/race/profession/level/attributes/...）
+- `sessions` — 游戏记录（uid/title/role/createdAt）
+
+### 数据库权限与集合要求
+- CloudBase 不会自动创建集合，必须手动在控制台创建 `users`、`characters`、`sessions`
+- 安全规则建议：`auth != null` 允许所有登录用户读写，或更严格地按 `doc.uid == auth.uid` 隔离
+- 已在 `js/ash-db.js` 加入 `friendlyError()`，把 `Db or Table not exist` 和权限错误翻译成中文提示
+
+### UX 架构要点
+- 当前流程断点：登录成功 → 保存资料 → 数据库集合缺失 → 用户卡住
+- 优化目标：登录成功 → 系统预检 → 资料/角色卡/游戏记录形成闭环
+- 手机号登录本身就是固定账号：同一手机号对应固定 CloudBase UID，且已配置 `persistence: 'local'` 保持登录态
+- 所有 JS 引用已加 `?v=2` 版本号以破坏 CDN 缓存
+
