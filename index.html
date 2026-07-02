@@ -453,6 +453,122 @@
             .nav-mobile { padding: 14px 18px 32px; }
             .nav-mobile .mobile-link { padding: 14px 14px; font-size: 0.92rem; }
         }
+
+        /* ========== 手机号登录弹窗 ========== */
+        .login-overlay {
+            position: fixed; inset: 0; z-index: 500;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .login-overlay.show { opacity: 1; pointer-events: auto; }
+        .login-backdrop {
+            position: absolute; inset: 0;
+            background: rgba(3,5,8,0.82);
+            backdrop-filter: blur(4px);
+        }
+        .login-card {
+            position: relative; z-index: 1;
+            width: 360px; max-width: 92vw;
+            background: linear-gradient(180deg, rgba(12,16,24,0.97) 0%, rgba(8,10,16,0.98) 100%);
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 4px;
+            padding: 36px 32px 28px;
+            box-shadow:
+                0 0 40px rgba(0,0,0,0.5),
+                0 0 80px rgba(201,168,76,0.06);
+        }
+        .login-card .login-close {
+            position: absolute; top: 12px; right: 16px;
+            background: none; border: none;
+            color: var(--ash-dim); font-size: 1.5rem; cursor: pointer;
+            line-height: 1; padding: 4px;
+            transition: color 0.2s;
+        }
+        .login-card .login-close:hover { color: var(--ash-gold); }
+        .login-card .login-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem; color: var(--ash-gold);
+            letter-spacing: 0.12em; text-align: center;
+            margin-bottom: 28px;
+        }
+        .login-card .login-label {
+            display: block; color: var(--ash-dim);
+            font-size: 0.75rem; letter-spacing: 0.08em;
+            margin-bottom: 6px; margin-top: 14px;
+        }
+        .login-card .phone-input-row {
+            display: flex; align-items: center;
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 2px;
+            background: rgba(0,0,0,0.3);
+        }
+        .login-card .phone-input-row:focus-within {
+            border-color: rgba(201,168,76,0.5);
+        }
+        .login-card .phone-prefix {
+            padding: 10px 12px;
+            color: var(--ash-gold-dim);
+            font-size: 0.85rem;
+            border-right: 1px solid rgba(201,168,76,0.15);
+        }
+        .login-card .phone-input-row input,
+        .login-card input[type="text"],
+        .login-card input[type="tel"] {
+            flex: 1; min-width: 0;
+            background: transparent; border: none;
+            color: var(--ash-text); font-size: 0.95rem;
+            padding: 10px 14px;
+            font-family: 'Noto Serif SC', serif;
+            letter-spacing: 0.06em;
+            outline: none;
+        }
+        .login-card .send-code-btn {
+            display: block; width: 100%; margin-top: 12px;
+            padding: 10px; border-radius: 2px;
+            background: rgba(201,168,76,0.08);
+            border: 1px solid rgba(201,168,76,0.25);
+            color: var(--ash-gold);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.85rem; letter-spacing: 0.08em;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .login-card .send-code-btn:hover {
+            background: rgba(201,168,76,0.16);
+            border-color: var(--ash-gold);
+        }
+        .login-card .send-code-btn:disabled {
+            opacity: 0.45; cursor: not-allowed; pointer-events: none;
+        }
+        .login-card .confirm-login-btn {
+            display: block; width: 100%; margin-top: 20px;
+            padding: 12px; border-radius: 2px;
+            background: linear-gradient(180deg, rgba(201,168,76,0.18) 0%, rgba(201,168,76,0.08) 100%);
+            border: 1px solid rgba(201,168,76,0.35);
+            color: var(--ash-gold);
+            font-family: 'Cinzel', serif;
+            font-size: 0.95rem; letter-spacing: 0.12em;
+            cursor: pointer; transition: all 0.25s;
+        }
+        .login-card .confirm-login-btn:hover {
+            background: rgba(201,168,76,0.22);
+            border-color: var(--ash-gold);
+            box-shadow: 0 0 16px rgba(201,168,76,0.12);
+        }
+        .login-card .confirm-login-btn:disabled {
+            opacity: 0.4; cursor: not-allowed;
+        }
+        .login-card .login-error {
+            color: #d44; font-size: 0.72rem;
+            margin-top: 8px; text-align: center;
+            min-height: 1.2em;
+            letter-spacing: 0.04em;
+        }
+        .login-card .login-hint {
+            color: var(--ash-dim); font-size: 0.68rem;
+            text-align: center; margin-top: 12px;
+            letter-spacing: 0.04em; opacity: 0.7;
+        }
     </style>
 </head>
 <body>
@@ -531,6 +647,26 @@
             <a class="mobile-link" href="pages/works.html">衍生作品</a></div>
         <div class="mobile-group"><a class="mobile-link" href="pages/merch.html" style="color:var(--ash-gold)">商店</a></div>
     </nav>
+
+    <!-- 手机号登录弹窗 -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-backdrop" id="loginBackdrop"></div>
+        <div class="login-card">
+            <button class="login-close" id="loginClose">&times;</button>
+            <h2 class="login-title">手机号登录</h2>
+            <label class="login-label">手机号</label>
+            <div class="phone-input-row">
+                <span class="phone-prefix">+86</span>
+                <input type="tel" id="phoneInput" placeholder="请输入手机号" maxlength="11">
+            </div>
+            <button class="send-code-btn" id="sendCodeBtn">获取验证码</button>
+            <label class="login-label">验证码</label>
+            <input type="text" id="codeInput" placeholder="输入6位验证码" maxlength="6" style="width:100%;border:1px solid rgba(201,168,76,0.2);border-radius:2px;background:rgba(0,0,0,0.3);">
+            <button class="confirm-login-btn" id="confirmLoginBtn">登录</button>
+            <div class="login-error" id="loginError"></div>
+            <div class="login-hint">首次使用手机号即自动注册</div>
+        </div>
+    </div>
 
     <div class="main-container">
         <div class="dice-wrap" id="dice-wrap">
@@ -1723,41 +1859,63 @@
     updateFaceInfo(0);
     animate(performance.now());
     </script>
-    <script src="js/tcb-sdk.js"></script>
+    <script src="https://static.cloudbase.net/cloudbase-js-sdk/latest/cloudbase.full.js"></script>
     <script src="transition.js"></script>
-    <!-- CloudBase 初始化 + 登录状态管理 -->
+    <!-- CloudBase 初始化 + 手机号登录 -->
     <script>
     (function() {
-        // ① 检查 SDK 是否加载成功
+        // ① 检查 SDK
         if (typeof cloudbase === 'undefined') {
-            console.error('[CloudBase] ❌ SDK 未加载！cloudbase 不存在');
+            console.error('[CloudBase] ❌ SDK 未加载');
             var btn = document.getElementById('loginBtn');
             if (btn) { btn.textContent = 'SDK 加载失败'; btn.style.color = '#e55'; }
             return;
         }
         console.log('[CloudBase] ✅ SDK 已加载');
 
-        // ② 初始化 CloudBase
+        // ② 初始化
         var app;
+        var auth;
         try {
             app = cloudbase.init({
                 env: "ew-prod-d0gciqy00757cc7dc",
                 region: "ap-shanghai"
             });
-            console.log('[CloudBase] ✅ 已初始化，环境：ew-prod-d0gciqy00757cc7dc');
+            auth = app.auth({ persistence: "local" });
+            console.log('[CloudBase] ✅ 已初始化');
         } catch(e) {
             console.error('[CloudBase] ❌ 初始化失败:', e);
             return;
         }
 
-        var loginBtn = document.getElementById('loginBtn');
-        if (!loginBtn) { console.warn('[CloudBase] ⚠️ 找不到 loginBtn 元素'); return; }
+        // ───── DOM 元素 ─────
+        var loginBtn       = document.getElementById('loginBtn');
+        var loginOverlay   = document.getElementById('loginOverlay');
+        var loginBackdrop  = document.getElementById('loginBackdrop');
+        var loginClose     = document.getElementById('loginClose');
+        var phoneInput     = document.getElementById('phoneInput');
+        var sendCodeBtn    = document.getElementById('sendCodeBtn');
+        var codeInput      = document.getElementById('codeInput');
+        var confirmBtn     = document.getElementById('confirmLoginBtn');
+        var loginError     = document.getElementById('loginError');
+
+        var verificationInfo = null; // 存验证信息
+        var countdownTimer   = null;
+
+        // ───── 辅助函数 ─────
+        function unwrap(result) {
+            if (result && result.data !== undefined) return result.data;
+            return result;
+        }
+        function showError(msg) { if (loginError) loginError.textContent = msg; }
+        function clearError()   { if (loginError) loginError.textContent = ''; }
 
         function updateUI(user) {
             if (user) {
+                var phone = user.username || user.phone || '';
                 loginBtn.textContent = '余烬行者';
                 loginBtn.classList.add('logged-in');
-                loginBtn.title = 'UID: ' + (user.uid || user.uuid || user._id || '匿名');
+                loginBtn.title = phone ? '已登录: ' + phone : '已登录';
             } else {
                 loginBtn.textContent = '进入余烬';
                 loginBtn.classList.remove('logged-in');
@@ -1765,42 +1923,138 @@
             }
         }
 
-        function unwrap(result) {
-            if (result && result.data !== undefined) return result.data;
-            return result;
+        // ───── 弹窗控制 ─────
+        function openModal() {
+            if (!loginOverlay) return;
+            loginOverlay.classList.add('show');
+            if (phoneInput) phoneInput.value = '';
+            if (codeInput) codeInput.value = '';
+            clearError();
+            verificationInfo = null;
+            if (phoneInput) phoneInput.focus();
+        }
+        function closeModal() {
+            if (!loginOverlay) return;
+            loginOverlay.classList.remove('show');
+            clearCountdown();
         }
 
-        // ③ 页面加载时检查登录态
-        app.auth.getLoginState().then(function(result) {
+        // ───── 60 秒倒计时 ─────
+        function startCountdown() {
+            var sec = 60;
+            sendCodeBtn.disabled = true;
+            sendCodeBtn.textContent = sec + ' 秒后重发';
+            countdownTimer = setInterval(function() {
+                sec--;
+                if (sec <= 0) {
+                    clearCountdown();
+                    sendCodeBtn.disabled = false;
+                    sendCodeBtn.textContent = '重新获取验证码';
+                } else {
+                    sendCodeBtn.textContent = sec + ' 秒后重发';
+                }
+            }, 1000);
+        }
+        function clearCountdown() {
+            if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+            sendCodeBtn.disabled = false;
+            sendCodeBtn.textContent = '获取验证码';
+        }
+
+        // ───── 发送验证码 ─────
+        sendCodeBtn.addEventListener('click', function() {
+            clearError();
+            var phone = (phoneInput.value || '').trim();
+            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
+                showError('请输入正确的手机号');
+                return;
+            }
+            var fullPhone = '+86 ' + phone;
+            sendCodeBtn.disabled = true;
+            sendCodeBtn.textContent = '发送中...';
+
+            auth.getVerification({ phone_number: fullPhone })
+                .then(function(res) {
+                    verificationInfo = unwrap(res);
+                    console.log('[CloudBase] 验证码已发送');
+                    showError(''); // 不显示错误，但清空
+                    startCountdown();
+                })
+                .catch(function(err) {
+                    console.error('[CloudBase] 发送验证码失败:', err);
+                    showError('发送失败: ' + (err.message || err.msg || '请检查手机号'));
+                    sendCodeBtn.disabled = false;
+                    sendCodeBtn.textContent = '获取验证码';
+                });
+        });
+
+        // ───── 登录 ─────
+        confirmBtn.addEventListener('click', function() {
+            clearError();
+            if (!verificationInfo) {
+                showError('请先获取验证码');
+                return;
+            }
+            var code = (codeInput.value || '').trim();
+            if (!code || code.length < 4) {
+                showError('请输入验证码');
+                return;
+            }
+            var phone = (phoneInput.value || '').trim();
+            var fullPhone = '+86 ' + phone;
+
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '登录中...';
+
+            auth.signInWithSms({
+                verificationInfo: verificationInfo,
+                verificationCode: code,
+                phoneNum: fullPhone
+            })
+            .then(function(res) {
+                var user = unwrap(res);
+                console.log('[CloudBase] 登录成功:', user);
+                updateUI({ username: fullPhone });
+                closeModal();
+            })
+            .catch(function(err) {
+                console.error('[CloudBase] 登录失败:', err);
+                showError('登录失败: ' + (err.message || err.msg || '验证码错误'));
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = '登录';
+            });
+        });
+
+        // ───── 弹窗关闭按钮 ─────
+        loginClose.addEventListener('click', closeModal);
+        loginBackdrop.addEventListener('click', closeModal);
+
+        // ───── 点击导航栏「进入余烬」→ 打开弹窗 ─────
+        loginBtn.addEventListener('click', function() {
+            // 检查是否已登录
+            auth.getLoginState().then(function(result) {
+                var loginState = unwrap(result);
+                if (loginState && loginState.user) {
+                    console.log('[CloudBase] 已登录，无需重复');
+                    return;
+                }
+                openModal();
+            }).catch(function() {
+                openModal();
+            });
+        });
+
+        // ───── 页面加载时检查登录态 ─────
+        auth.getLoginState().then(function(result) {
             var loginState = unwrap(result);
             if (loginState && loginState.user) {
-                updateUI(loginState.user);
+                updateUI({ username: loginState.user.username || loginState.user.phone || loginState.user.uid });
                 console.log('[CloudBase] 已登录:', loginState.user.uid);
             }
         }).catch(function(err) {
             console.warn('[CloudBase] 获取登录态失败:', err.message || err);
         });
 
-        // ④ 点击登录：匿名用户不支持登出，登录成功后按钮仅作为状态展示
-        loginBtn.addEventListener('click', function() {
-            app.auth.getLoginState().then(function(result) {
-                var loginState = unwrap(result);
-                if (loginState && loginState.user) {
-                    // 已登录 → 不再执行 signOut，只提示已处于余烬之中
-                    console.log('[CloudBase] 当前已是余烬行者，无需重复登录');
-                    return;
-                }
-                // 未登录 → 匿名登录
-                return app.auth.signInAnonymously().then(function(result) {
-                    var user = unwrap(result);
-                    updateUI(user);
-                    console.log('[CloudBase] 匿名登录成功:', user.uid || user.uuid || user._id);
-                });
-            }).catch(function(err) {
-                console.error('[CloudBase] 操作失败:', err);
-                alert('操作失败：' + (err.message || err.msg || '未知错误'));
-            });
-        });
     })();
     </script>
     <script>
