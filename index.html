@@ -232,6 +232,26 @@
             background: linear-gradient(180deg, rgba(201,168,76,0.04) 0%, transparent 100%);
             border-bottom-color: rgba(201,168,76,0.45);
         }
+        /* 登录按钮 / 用户状态 */
+        #loginBtn {
+            color: var(--ash-gold) !important;
+            font-size: 0.88rem;
+            letter-spacing: 0.08em;
+            padding: 4px 14px !important;
+            border: 1px solid rgba(201,168,76,0.3);
+            border-radius: 20px;
+            transition: all 0.25s ease;
+        }
+        #loginBtn:hover {
+            color: #fff !important;
+            background: rgba(201,168,76,0.15);
+            border-color: var(--ash-gold);
+            box-shadow: 0 0 12px rgba(201,168,76,0.2);
+        }
+        #loginBtn.logged-in {
+            border-color: rgba(92,180,140,0.35);
+            color: #8cd4b8 !important;
+        }
         /* hover 桥接 — 填充触发项与下拉间的空隙，防止 hover 断连 */
         .top-nav .nav-item::after {
             content: '';
@@ -483,6 +503,9 @@
             </div>
             <div class="nav-item">
                 <a href="pages/merch.html">商店</a>
+            </div>
+            <div class="nav-item" id="loginArea">
+                <span id="loginBtn" style="cursor:pointer;">进入余烬</span>
             </div>
         </div>
     </nav>
@@ -1700,7 +1723,86 @@
     updateFaceInfo(0);
     animate(performance.now());
     </script>
+    <script src="js/tcb-sdk.js"></script>
     <script src="transition.js"></script>
+    <!-- CloudBase 初始化 + 登录状态管理 -->
+    <script>
+    (function() {
+        // ① 检查 SDK 是否加载成功
+        if (typeof cloudbase === 'undefined') {
+            console.error('[CloudBase] ❌ SDK 未加载！cloudbase 不存在');
+            var btn = document.getElementById('loginBtn');
+            if (btn) { btn.textContent = 'SDK 加载失败'; btn.style.color = '#e55'; }
+            return;
+        }
+        console.log('[CloudBase] ✅ SDK 已加载');
+
+        // ② 初始化 CloudBase
+        var app;
+        try {
+            app = cloudbase.init({
+                env: "ew-prod-d0gciqy00757cc7dc",
+                region: "ap-shanghai"
+            });
+            console.log('[CloudBase] ✅ 已初始化，环境：ew-prod-d0gciqy00757cc7dc');
+        } catch(e) {
+            console.error('[CloudBase] ❌ 初始化失败:', e);
+            return;
+        }
+
+        var loginBtn = document.getElementById('loginBtn');
+        if (!loginBtn) { console.warn('[CloudBase] ⚠️ 找不到 loginBtn 元素'); return; }
+
+        function updateUI(user) {
+            if (user) {
+                loginBtn.textContent = '余烬行者';
+                loginBtn.classList.add('logged-in');
+                loginBtn.title = 'UID: ' + (user.uid || user.uuid || user._id || '匿名');
+            } else {
+                loginBtn.textContent = '进入余烬';
+                loginBtn.classList.remove('logged-in');
+                loginBtn.title = '';
+            }
+        }
+
+        function unwrap(result) {
+            if (result && result.data !== undefined) return result.data;
+            return result;
+        }
+
+        // ③ 页面加载时检查登录态
+        app.auth.getLoginState().then(function(result) {
+            var loginState = unwrap(result);
+            if (loginState && loginState.user) {
+                updateUI(loginState.user);
+                console.log('[CloudBase] 已登录:', loginState.user.uid);
+            }
+        }).catch(function(err) {
+            console.warn('[CloudBase] 获取登录态失败:', err.message || err);
+        });
+
+        // ④ 点击登录：匿名用户不支持登出，登录成功后按钮仅作为状态展示
+        loginBtn.addEventListener('click', function() {
+            app.auth.getLoginState().then(function(result) {
+                var loginState = unwrap(result);
+                if (loginState && loginState.user) {
+                    // 已登录 → 不再执行 signOut，只提示已处于余烬之中
+                    console.log('[CloudBase] 当前已是余烬行者，无需重复登录');
+                    return;
+                }
+                // 未登录 → 匿名登录
+                return app.auth.signInAnonymously().then(function(result) {
+                    var user = unwrap(result);
+                    updateUI(user);
+                    console.log('[CloudBase] 匿名登录成功:', user.uid || user.uuid || user._id);
+                });
+            }).catch(function(err) {
+                console.error('[CloudBase] 操作失败:', err);
+                alert('操作失败：' + (err.message || err.msg || '未知错误'));
+            });
+        });
+    })();
+    </script>
     <script>
     (function(){
         var btn=document.getElementById('navToggle');
