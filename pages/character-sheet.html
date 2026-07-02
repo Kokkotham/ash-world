@@ -758,6 +758,15 @@
                 </div>
             </div>
             <div class="nav-item"><a href="merch.html">商店</a></div>
+            <div class="nav-item" id="loginArea">
+                <span id="loginBtn" style="cursor:pointer;color:var(--ash-gold);">进入余烬</span>
+                <div class="user-dropdown" id="userDropdown" style="position:absolute;top:calc(100% + 6px);right:0;min-width:140px;padding:6px 0;background:linear-gradient(180deg,rgba(8,10,16,0.98),rgba(12,15,22,0.96));border:1px solid rgba(201,168,76,0.25);border-radius:2px;box-shadow:0 8px 32px rgba(0,0,0,0.5);opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity 0.2s,transform 0.2s;z-index:200;">
+                    <div class="user-dropdown-phone" id="dropdownPhone" style="padding:5px 18px 10px;font-size:0.68rem;color:rgba(255,255,255,0.25);"></div>
+                    <hr style="margin:4px 14px;border:none;border-top:1px solid rgba(201,168,76,0.1);">
+                    <a class="user-dropdown-item" href="profile.html" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 18px;font-size:0.8rem;color:var(--ash-dim);background:none;border:none;cursor:pointer;text-decoration:none;">个人主页</a>
+                    <button class="user-dropdown-item logout-item" id="logoutBtn" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 18px;font-size:0.8rem;color:var(--ash-dim);background:none;border:none;cursor:pointer;">退出登录</button>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -792,6 +801,22 @@
             <span class="hero-emoji">🎲</span>
             <h1>创建角色</h1>
             <p class="hero-sub">在 EW 世界中塑造你的冒险者</p>
+        </section>
+
+        <!-- Cloud Save Panel -->
+        <section class="glass-panel" id="panel-cloud" style="display:none;">
+            <span class="panel-icon">☁️</span>
+            <div class="panel-title">云存储</div>
+            <div class="panel-desc">已登录，角色卡可保存到云端并在个人主页查看。</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:flex-end;">
+                <div style="display:flex;flex-direction:column;gap:6px;text-align:left;min-width:180px;">
+                    <label style="font-size:0.72rem;color:var(--ash-dim);letter-spacing:0.06em;">角色名</label>
+                    <input type="text" id="charName" placeholder="输入角色名" maxlength="24" style="background:rgba(0,0,0,0.3);border:1px solid rgba(201,168,76,0.2);border-radius:4px;padding:10px 12px;color:var(--ash-text);font-family:inherit;font-size:0.88rem;">
+                </div>
+                <button class="race-link" id="saveCharBtn" style="margin-top:0;">保存到云端</button>
+                <a class="race-link" href="profile.html" style="margin-top:0;">查看角色卡</a>
+            </div>
+            <div id="charSaveMsg" style="margin-top:12px;font-size:0.78rem;min-height:1.2em;"></div>
         </section>
 
         <!-- Race Panel -->
@@ -1043,6 +1068,9 @@
     </footer>
 
     <!-- ===== External Scripts ===== -->
+    <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.10.0/cloudbase.full.js"></script>
+    <script src="../js/ash-init.js?v=3"></script>
+    <script src="../js/ash-db.js?v=3"></script>
     <script src="../transition.js"></script>
     <script src="../ash-bg.js"></script>
     <script src="../mouse-trail.js"></script>
@@ -1459,6 +1487,148 @@
 
         // ==================== Init ====================
         updateAllUI();
+
+        // 暴露给云存储脚本
+        window.ewSheetState = state;
+    })();
+    </script>
+
+    <!-- CloudBase login + save -->
+    <script>
+    (function(){
+        'use strict';
+        var auth = null, dbApi = null, uid = null;
+
+        var loginBtn = document.getElementById('loginBtn');
+        var userDropdown = document.getElementById('userDropdown');
+        var dropdownPhone = document.getElementById('dropdownPhone');
+        var logoutBtn = document.getElementById('logoutBtn');
+        var cloudPanel = document.getElementById('panel-cloud');
+        var saveBtn = document.getElementById('saveCharBtn');
+        var nameInput = document.getElementById('charName');
+        var msgEl = document.getElementById('charSaveMsg');
+
+        function maskPhone(phone){
+            if(!phone) return '';
+            var s = phone.replace(/^\+86\s*/, '');
+            if(s.length === 11) return s.slice(0,3)+'****'+s.slice(7);
+            return s;
+        }
+
+        function updateUI(user){
+            if(user){
+                if(loginBtn){
+                    loginBtn.textContent = '余烬行者';
+                    loginBtn.classList.add('logged-in');
+                }
+                if(dropdownPhone) dropdownPhone.textContent = maskPhone(user.phone || user.username || '');
+                if(cloudPanel) cloudPanel.style.display = 'block';
+            } else {
+                if(loginBtn){
+                    loginBtn.textContent = '进入余烬';
+                    loginBtn.classList.remove('logged-in');
+                }
+                if(dropdownPhone) dropdownPhone.textContent = '';
+                if(cloudPanel) cloudPanel.style.display = 'none';
+            }
+        }
+
+        function showMsg(msg, isError){
+            if(!msgEl) return;
+            msgEl.textContent = msg || '';
+            msgEl.style.color = isError ? '#d47777' : '#8cd4b8';
+        }
+
+        function collectCharacter(){
+            var sheetState = window.ewSheetState;
+            if(!sheetState){ showMsg('页面状态未就绪', true); return null; }
+            var name = (nameInput.value || '').trim();
+            if(!name){ showMsg('请输入角色名', true); return null; }
+            return {
+                name: name,
+                attributes: {
+                    body: sheetState.attributes.body,
+                    agility: sheetState.attributes.agility,
+                    intellect: sheetState.attributes.intellect,
+                    perception: sheetState.attributes.perception
+                },
+                core: sheetState.core,
+                method: sheetState.method,
+                race: '',
+                profession: '',
+                level: 1,
+                derived: {
+                    hp: parseInt(document.getElementById('dvHP').textContent, 10) || 0,
+                    ep: parseInt(document.getElementById('dvEP').textContent, 10) || 0,
+                    mp: parseInt(document.getElementById('dvMP').textContent, 10) || 0,
+                    vp: parseInt(document.getElementById('dvVP').textContent, 10) || 0
+                }
+            };
+        }
+
+        function init(){
+            auth = window.ashAuth;
+            dbApi = window.ashDbApi;
+            if(!auth) return;
+            auth.getLoginState().then(function(res){
+                var state = res && res.data ? res.data : res;
+                if(state && state.user){
+                    uid = state.user.uid;
+                    updateUI({phone: dbApi.getPhone(), username: state.user.username});
+                }
+            }).catch(function(){
+                updateUI(null);
+            });
+        }
+
+        if(loginBtn){
+            loginBtn.addEventListener('click', function(e){
+                e.stopPropagation();
+                if(!auth) return;
+                auth.getLoginState().then(function(res){
+                    var s = res && res.data ? res.data : res;
+                    if(s && s.user){
+                        userDropdown.classList.toggle('show');
+                    } else {
+                        location.href = '../index.html';
+                    }
+                }).catch(function(){ location.href = '../index.html'; });
+            });
+        }
+
+        if(logoutBtn){
+            logoutBtn.addEventListener('click', function(e){
+                e.stopPropagation();
+                if(userDropdown) userDropdown.classList.remove('show');
+                if(auth) auth.signOut().then(function(){ updateUI(null); uid = null; });
+            });
+        }
+
+        document.addEventListener('click', function(){
+            if(userDropdown && userDropdown.classList.contains('show')) userDropdown.classList.remove('show');
+        });
+
+        if(saveBtn){
+            saveBtn.addEventListener('click', function(){
+                if(!uid || !dbApi){ showMsg('请先登录', true); return; }
+                var character = collectCharacter();
+                if(!character) return;
+                saveBtn.disabled = true;
+                saveBtn.textContent = '保存中...';
+                dbApi.saveCharacter(uid, character).then(function(){
+                    showMsg('已保存到云端', false);
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = '保存到云端';
+                }).catch(function(err){
+                    showMsg('保存失败: ' + err.message, true);
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = '保存到云端';
+                });
+            });
+        }
+
+        if(window.ashReady) window.ashReady(init);
+        else document.addEventListener('DOMContentLoaded', function(){ if(window.ashReady) window.ashReady(init); });
     })();
     </script>
 </body>

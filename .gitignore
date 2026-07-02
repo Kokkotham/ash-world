@@ -12,3 +12,6 @@ node_modules/
 # Python
 __pycache__/
 *.pyc
+
+# Source docs
+规则/
