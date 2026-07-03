@@ -9,9 +9,31 @@ Thumbs.db
 # Dependencies
 node_modules/
 
+# Environment and logs
+.env
+.env.*
+*.log
+
+# Build output
+dist/
+build/
+
+# Local workspace state
+.workbuddy/
+
+# Generated deploy/export artifacts
+_deploy_live/
+export/
+*.zip
+
+# Temporary notes
+overview.md
+
 # Python
 __pycache__/
 *.pyc
 
 # Source docs
 规则/
+~$*.docx
+**/~$*.docx

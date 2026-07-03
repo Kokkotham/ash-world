@@ -2836,36 +2836,8 @@
         if (loginClose) loginClose.addEventListener('click', closeModal);
         // 用户反馈：点击弹窗外会误关，禁用背景点击关闭
 
-        if (loginBtn) {
-            loginBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                openModal();
-            });
-        }
-
-        if (userMenuBtn) {
-            userMenuBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (userDropdown) userDropdown.classList.toggle('show');
-            });
-        }
-
         // ───── 个人资料（首页弹窗，已改为链接到 profile.html，保留弹窗代码作为备用） ─────
         // profileEditBtn 已改为 <a href="pages/profile.html">个人信息</a>，无需 JS 处理
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (userDropdown) userDropdown.classList.remove('show');
-                if (!auth) return;
-                auth.signOut().then(function() {
-                    updateUI(null);
-                    localStorage.removeItem('ew_display_name');
-                    localStorage.removeItem('ew_remember_account');
-                    console.log('[ash] 已退出登录');
-                }).catch(function(err) { console.error('[ash] 退出失败:', err); });
-            });
-        }
 
         if (profileClose) profileClose.addEventListener('click', function() { if (profileOverlay) profileOverlay.classList.remove('show'); });
         // 禁用背景点击关闭，避免误触
@@ -2899,33 +2871,6 @@
                         profileSaveBtn.disabled = false;
                         profileSaveBtn.textContent = '保存';
                     });
-            });
-        }
-
-        document.addEventListener('click', function(e) {
-            if (!userDropdown || !userDropdown.classList.contains('show')) return;
-            var target = e.target;
-            if (userMenu && userMenu.contains(target)) return;
-            userDropdown.classList.remove('show');
-        });
-
-        if (mobileLoginBtn) {
-            mobileLoginBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (navMobile && navToggle) { navMobile.classList.remove('open'); navToggle.classList.remove('open'); }
-                openModal();
-            });
-        }
-        if (mobileLogoutBtn) {
-            mobileLogoutBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (navMobile && navToggle) { navMobile.classList.remove('open'); navToggle.classList.remove('open'); }
-                if (!auth) return;
-                auth.signOut().then(function() {
-                    updateUI(null);
-                    localStorage.removeItem('ew_display_name');
-                    localStorage.removeItem('ew_remember_account');
-                }).catch(function(err) { console.error('[ash] 退出失败:', err); });
             });
         }
 

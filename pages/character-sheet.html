@@ -758,15 +758,6 @@
                 </div>
             </div>
             <div class="nav-item"><a href="merch.html">商店</a></div>
-            <div class="nav-item" id="loginArea">
-                <span id="loginBtn" style="cursor:pointer;color:var(--ash-gold);">进入余烬</span>
-                <div class="user-dropdown" id="userDropdown" style="position:absolute;top:calc(100% + 6px);right:0;min-width:140px;padding:6px 0;background:linear-gradient(180deg,rgba(8,10,16,0.98),rgba(12,15,22,0.96));border:1px solid rgba(201,168,76,0.25);border-radius:2px;box-shadow:0 8px 32px rgba(0,0,0,0.5);opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity 0.2s,transform 0.2s;z-index:200;">
-                    <div class="user-dropdown-phone" id="dropdownPhone" style="padding:5px 18px 10px;font-size:0.68rem;color:rgba(255,255,255,0.25);"></div>
-                    <hr style="margin:4px 14px;border:none;border-top:1px solid rgba(201,168,76,0.1);">
-                    <a class="user-dropdown-item" href="profile.html" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 18px;font-size:0.8rem;color:var(--ash-dim);background:none;border:none;cursor:pointer;text-decoration:none;">个人主页</a>
-                    <button class="user-dropdown-item logout-item" id="logoutBtn" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 18px;font-size:0.8rem;color:var(--ash-dim);background:none;border:none;cursor:pointer;">退出登录</button>
-                </div>
-            </div>
         </div>
     </nav>
 
@@ -1069,8 +1060,9 @@
 
     <!-- ===== External Scripts ===== -->
     <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.10.0/cloudbase.full.js"></script>
-    <script src="../js/ash-init.js?v=6"></script>
-    <script src="../js/ash-db.js?v=6"></script>
+    <script src="../js/ash-init.js?v=9"></script>
+    <script src="../js/ash-db.js?v=9"></script>
+    <script src="../js/ash-nav.js?v=9"></script>
     <script src="../transition.js"></script>
     <script src="../ash-bg.js"></script>
     <script src="../mouse-trail.js"></script>
@@ -1470,6 +1462,66 @@
             }
         }
 
+        function setMethodUI(method) {
+            state.method = method === 'pointbuy' ? 'pointbuy' : 'dice';
+            var diceUI = $('methodDiceUI');
+            var pbUI = $('methodPointBuyUI');
+            var toggles = document.querySelectorAll('#methodToggle .method-opt');
+            toggles.forEach(function(t) {
+                t.classList.toggle('active', t.getAttribute('data-method') === state.method);
+            });
+            if (diceUI) diceUI.style.display = state.method === 'dice' ? 'block' : 'none';
+            if (pbUI) pbUI.style.display = state.method === 'pointbuy' ? 'block' : 'none';
+        }
+
+        function setCoreUI(core) {
+            state.core = attrKeys.indexOf(core) >= 0 ? core : null;
+            var btns = document.querySelectorAll('#coreSelectGrid .core-btn');
+            btns.forEach(function(b) {
+                b.classList.toggle('core-selected', b.getAttribute('data-core') === state.core);
+            });
+            if (state.core) {
+                var coreNames = {
+                    body: '躯魄',
+                    agility: '敏韧',
+                    intellect: '心智',
+                    perception: '洞识'
+                };
+                $('coreHint').textContent = '⭐ 已选择「' + coreNames[state.core] + '」作为核心属性';
+            } else {
+                $('coreHint').textContent = '⬆ 点击选择一项作为核心属性';
+            }
+        }
+
+        window.ewApplyCharacter = function(character) {
+            if (!character) return;
+            var nameInput = $('charName');
+            if (nameInput) nameInput.value = character.name || '';
+
+            var attrs = character.attributes || {};
+            attrKeys.forEach(function(k) {
+                var value = parseInt(attrs[k], 10);
+                state.attributes[k] = isNaN(value) ? 0 : value;
+            });
+
+            setMethodUI(character.method);
+            if (state.method === 'pointbuy') {
+                var spent = 0;
+                attrKeys.forEach(function(k) {
+                    state.pointBuyValues[k] = state.attributes[k];
+                    spent += state.pointBuyValues[k];
+                });
+                state.pointBuyRemaining = Math.max(0, 10 - spent);
+                resetDice();
+            } else {
+                resetPointBuy();
+                resetDice();
+            }
+
+            setCoreUI(character.core);
+            updateAllUI();
+        };
+
         // ==================== Accordion ====================
         window.toggleAccordion = function(accId) {
             var item = document.getElementById(accId);
@@ -1498,39 +1550,30 @@
     (function(){
         'use strict';
         var auth = null, dbApi = null, uid = null;
+        var editCharId = '';
+        var loadedCharacter = null;
+        try {
+            editCharId = new URLSearchParams(location.search).get('char') || '';
+        } catch(e) {
+            editCharId = '';
+        }
 
-        var loginBtn = document.getElementById('loginBtn');
-        var userDropdown = document.getElementById('userDropdown');
-        var dropdownPhone = document.getElementById('dropdownPhone');
-        var logoutBtn = document.getElementById('logoutBtn');
         var cloudPanel = document.getElementById('panel-cloud');
         var saveBtn = document.getElementById('saveCharBtn');
         var nameInput = document.getElementById('charName');
         var msgEl = document.getElementById('charSaveMsg');
 
-        function maskPhone(phone){
-            if(!phone) return '';
-            var s = phone.replace(/^\+86\s*/, '');
-            if(s.length === 11) return s.slice(0,3)+'****'+s.slice(7);
-            return s;
-        }
-
         function updateUI(user){
             if(user){
-                if(loginBtn){
-                    loginBtn.textContent = '余烬行者';
-                    loginBtn.classList.add('logged-in');
-                }
-                if(dropdownPhone) dropdownPhone.textContent = maskPhone(user.phone || user.username || '');
+                localStorage.setItem('ew_logged_in', '1');
+                if(uid) localStorage.setItem('ew_uid', uid);
                 if(cloudPanel) cloudPanel.style.display = 'block';
             } else {
-                if(loginBtn){
-                    loginBtn.textContent = '进入余烬';
-                    loginBtn.classList.remove('logged-in');
-                }
-                if(dropdownPhone) dropdownPhone.textContent = '';
+                localStorage.removeItem('ew_logged_in');
+                localStorage.removeItem('ew_uid');
                 if(cloudPanel) cloudPanel.style.display = 'none';
             }
+            if(typeof window.ashNavUpdate === 'function') window.ashNavUpdate();
         }
 
         function showMsg(msg, isError){
@@ -1544,7 +1587,7 @@
             if(!sheetState){ showMsg('页面状态未就绪', true); return null; }
             var name = (nameInput.value || '').trim();
             if(!name){ showMsg('请输入角色名', true); return null; }
-            return {
+            var character = {
                 name: name,
                 attributes: {
                     body: sheetState.attributes.body,
@@ -1564,6 +1607,30 @@
                     vp: parseInt(document.getElementById('dvVP').textContent, 10) || 0
                 }
             };
+            if(loadedCharacter && loadedCharacter._id) character._id = loadedCharacter._id;
+            else if(editCharId) character._id = editCharId;
+            if(loadedCharacter && loadedCharacter.createdAt) character.createdAt = loadedCharacter.createdAt;
+            return character;
+        }
+
+        function loadCharacterForEdit(){
+            if(!editCharId || !uid || !dbApi || !dbApi.getCharacter) return;
+            showMsg('正在加载角色卡...', false);
+            dbApi.getCharacter(uid, editCharId).then(function(character){
+                if(!character){
+                    showMsg('未找到要编辑的角色卡，将按新角色保存', true);
+                    editCharId = '';
+                    return;
+                }
+                loadedCharacter = character;
+                if(typeof window.ewApplyCharacter === 'function') {
+                    window.ewApplyCharacter(character);
+                }
+                if(saveBtn) saveBtn.textContent = '保存修改';
+                showMsg('已加载角色卡：' + (character.name || '未命名角色'), false);
+            }).catch(function(err){
+                showMsg('读取角色卡失败: ' + err.message, true);
+            });
         }
 
         function init(){
@@ -1575,38 +1642,14 @@
                 if(state && state.user){
                     uid = state.user.uid;
                     updateUI({phone: dbApi.getPhone(), username: state.user.username});
+                    loadCharacterForEdit();
+                } else {
+                    updateUI(null);
                 }
             }).catch(function(){
                 updateUI(null);
             });
         }
-
-        if(loginBtn){
-            loginBtn.addEventListener('click', function(e){
-                e.stopPropagation();
-                if(!auth) return;
-                auth.getLoginState().then(function(res){
-                    var s = res && res.data ? res.data : res;
-                    if(s && s.user){
-                        userDropdown.classList.toggle('show');
-                    } else {
-                        location.href = '../index.html';
-                    }
-                }).catch(function(){ location.href = '../index.html'; });
-            });
-        }
-
-        if(logoutBtn){
-            logoutBtn.addEventListener('click', function(e){
-                e.stopPropagation();
-                if(userDropdown) userDropdown.classList.remove('show');
-                if(auth) auth.signOut().then(function(){ updateUI(null); uid = null; });
-            });
-        }
-
-        document.addEventListener('click', function(){
-            if(userDropdown && userDropdown.classList.contains('show')) userDropdown.classList.remove('show');
-        });
 
         if(saveBtn){
             saveBtn.addEventListener('click', function(){
@@ -1615,14 +1658,18 @@
                 if(!character) return;
                 saveBtn.disabled = true;
                 saveBtn.textContent = '保存中...';
-                dbApi.saveCharacter(uid, character).then(function(){
-                    showMsg('已保存到云端', false);
+                dbApi.saveCharacter(uid, character).then(function(saved){
+                    if(saved && saved._id) {
+                        loadedCharacter = saved;
+                        editCharId = saved._id;
+                    }
+                    showMsg(character._id ? '修改已保存' : '已保存到云端', false);
                     saveBtn.disabled = false;
-                    saveBtn.textContent = '保存到云端';
+                    saveBtn.textContent = editCharId ? '保存修改' : '保存到云端';
                 }).catch(function(err){
                     showMsg('保存失败: ' + err.message, true);
                     saveBtn.disabled = false;
-                    saveBtn.textContent = '保存到云端';
+                    saveBtn.textContent = editCharId ? '保存修改' : '保存到云端';
                 });
             });
         }

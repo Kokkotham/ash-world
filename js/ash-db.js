@@ -141,6 +141,29 @@
         });
     }
 
+    function getCharacter(uid, _id) {
+        return new Promise(function (resolve, reject) {
+            if (!window.ashDb) return reject(new Error('数据库未初始化'));
+            if (!_id) return resolve(null);
+            window.ashDb.collection(COLLECTIONS.CHARACTERS).doc(_id).get()
+                .then(function (res) {
+                    var data = res && res.data;
+                    var character = Array.isArray(data) ? data[0] : data;
+                    if (!character) {
+                        resolve(null);
+                        return;
+                    }
+                    character._id = character._id || _id;
+                    if (uid && character.uid && character.uid !== uid) {
+                        reject(new Error('无权读取该角色卡'));
+                        return;
+                    }
+                    resolve(character);
+                })
+                .catch(function (err) { reject(new Error(friendlyError(err))); });
+        });
+    }
+
     function saveCharacter(uid, character) {
         return new Promise(function (resolve, reject) {
             if (!window.ashDb) return reject(new Error('数据库未初始化'));
@@ -160,7 +183,8 @@
             };
             if (character._id) {
                 window.ashDb.collection(COLLECTIONS.CHARACTERS).doc(character._id).update(payload)
-                    .then(resolve).catch(function (err) { reject(new Error(friendlyError(err))); });
+                    .then(function (res) { resolve({ _id: character._id, ...payload, _res: res }); })
+                    .catch(function (err) { reject(new Error(friendlyError(err))); });
             } else {
                 payload.createdAt = now;
                 window.ashDb.collection(COLLECTIONS.CHARACTERS).add(payload)
@@ -217,6 +241,7 @@
         setUserProfile: setUserProfile,
         ensureUserProfile: ensureUserProfile,
         listCharacters: listCharacters,
+        getCharacter: getCharacter,
         saveCharacter: saveCharacter,
         deleteCharacter: deleteCharacter,
         listSessions: listSessions,

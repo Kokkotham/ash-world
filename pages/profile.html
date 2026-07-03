@@ -199,6 +199,80 @@
         .form-msg.error { color: #d47777; }
         .form-msg.success { color: #8cd4b8; }
 
+        /* Avatar upload */
+        .avatar-upload-wrap {
+            display: flex; gap: 24px; align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .avatar-preview-large {
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(201,168,76,0.25), rgba(201,168,76,0.08));
+            border: 2px solid rgba(201,168,76,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; color: var(--ash-gold);
+            overflow: hidden; flex-shrink: 0;
+        }
+        .avatar-preview-large img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-upload-right { flex: 1; min-width: 220px; }
+        .avatar-dropzone {
+            border: 1px dashed rgba(201,168,76,0.3);
+            border-radius: 6px;
+            padding: 24px;
+            text-align: center;
+            color: var(--ash-dim);
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(0,0,0,0.15);
+        }
+        .avatar-dropzone:hover, .avatar-dropzone.dragover {
+            border-color: var(--ash-gold);
+            background: rgba(201,168,76,0.06);
+            color: var(--ash-gold);
+        }
+        .avatar-dropzone svg { margin-bottom: 8px; color: var(--ash-gold-dim); }
+        .avatar-dropzone p { font-size: 0.85rem; margin-bottom: 4px; }
+        .avatar-dropzone .avatar-hint { font-size: 0.7rem; color: var(--ash-dim); }
+        .avatar-actions { margin-top: 14px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* Form grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px 24px;
+        }
+        .form-grid .full-width { grid-column: 1 / -1; }
+        .form-grid textarea {
+            width: 100%; min-height: 80px; resize: vertical;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(201,168,76,0.2);
+            border-radius: 4px;
+            padding: 10px 12px;
+            color: var(--ash-text);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+        .form-grid textarea:focus { outline: none; border-color: rgba(201,168,76,0.5); }
+        .char-count { text-align: right; font-size: 0.7rem; color: var(--ash-dim); margin-top: 4px; }
+        .radio-group { display: flex; gap: 18px; padding: 9px 0; }
+        .radio-label { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--ash-text); cursor: pointer; }
+        .radio-label input { width: auto; min-width: auto; accent-color: var(--ash-gold); }
+        .form-actions { margin-top: 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+        /* Security list */
+        .security-list { display: flex; flex-direction: column; gap: 14px; }
+        .security-item {
+            display: flex; justify-content: space-between; align-items: center;
+            gap: 12px; padding: 14px 16px;
+            background: rgba(0,0,0,0.15);
+            border: 1px solid rgba(201,168,76,0.08);
+            border-radius: 6px;
+        }
+        .security-item:hover { border-color: rgba(201,168,76,0.18); }
+        .security-title { font-size: 0.92rem; color: var(--ash-text); margin-bottom: 4px; }
+        .security-sub { font-size: 0.72rem; color: var(--ash-dim); }
+
         .login-tip {
             text-align: center;
             padding: 60px 20px;
@@ -223,6 +297,10 @@
             .list-item { flex-direction: column; align-items: flex-start; }
             .inline-form { flex-direction: column; align-items: stretch; }
             .form-field input { width: 100%; }
+            .form-grid { grid-template-columns: 1fr; }
+            .avatar-upload-wrap { flex-direction: column; align-items: center; }
+            .avatar-upload-right { width: 100%; }
+            .security-item { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -262,6 +340,38 @@
             </div>
             <div class="nav-item"><a href="merch.html">商店</a></div>
         </div>
+        <div class="nav-right" id="loginArea">
+            <button class="nav-login-btn" id="loginBtn">登录</button>
+            <div class="user-menu" id="userMenu" style="display:none;">
+                <button class="user-menu-btn" id="userMenuBtn">
+                    <span class="user-avatar-small" id="userAvatarSmall">✦</span>
+                    <span id="userMenuName">旅人</span>
+                </button>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-dropdown-header">
+                        <span class="user-avatar-small" id="dropdownAvatar">✦</span>
+                        <div class="user-dropdown-meta">
+                            <div class="name" id="dropdownName">旅人</div>
+                            <div class="phone" id="dropdownPhone">--</div>
+                        </div>
+                    </div>
+                    <hr class="user-dropdown-divider">
+                    <a class="user-dropdown-item" href="profile.html">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+                        个人信息
+                    </a>
+                    <a class="user-dropdown-item" href="character-sheet.html">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        我的角色卡
+                    </a>
+                    <hr class="user-dropdown-divider">
+                    <button class="user-dropdown-item logout-item" id="logoutBtn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        退出登录
+                    </button>
+                </div>
+            </div>
+        </div>
     </nav>
 
     <nav class="nav-mobile" id="navMobile">
@@ -284,13 +394,20 @@
             <a class="mobile-link" href="community.html">玩家共创</a>
             <a class="mobile-link" href="works.html">衍生作品</a></div>
         <div class="mobile-group"><a class="mobile-link" href="merch.html" style="color:var(--ash-gold)">商店</a></div>
+        <div class="mobile-group" id="mobileUserGroup">
+            <div class="mobile-group-title">我的</div>
+            <a class="mobile-link" href="profile.html">个人信息</a>
+            <a class="mobile-link" href="character-sheet.html">我的角色卡</a>
+            <button class="mobile-link" id="mobileLogoutBtn" style="display:none;background:none;border:none;width:100%;text-align:left;color:#e05555">退出登录</button>
+            <button class="mobile-link" id="mobileLoginBtn" style="background:none;border:none;width:100%;text-align:left;color:var(--ash-gold)">登录</button>
+        </div>
     </nav>
 
     <main class="profile-page" id="profilePage">
         <div class="login-tip" id="loginTip">
             <h2>请先登录</h2>
             <p>登录后即可查看个人资料、角色卡与游戏记录。</p>
-            <a class="ash-btn" href="../index.html">返回首页登录</a>
+            <button class="ash-btn" id="goLoginBtn">去登录</button>
         </div>
 
         <div id="profileContent" style="display:none;">
@@ -299,21 +416,78 @@
                 <p>管理你的余烬身份与冒险记录</p>
             </div>
 
-            <section class="glass-panel">
-                <div class="panel-title">🧑‍🎤 身份信息</div>
-                <div class="user-info-grid">
-                    <div class="user-avatar" id="userAvatar">✦</div>
-                    <div class="user-meta">
-                        <div class="user-name" id="userName">旅人</div>
-                        <div class="user-phone" id="userPhone">--</div>
-                        <div class="user-bio" id="userBio"><span class="empty-bio">暂无简介</span></div>
-                        <div class="user-actions">
-                            <a class="ash-btn" href="character-sheet.html">+ 创建角色</a>
-                            <button class="ash-btn secondary" id="refreshBtn">刷新</button>
-                            <button class="ash-btn secondary" id="logoutBtn2">退出登录</button>
+            <section class="glass-panel" id="avatarPanel">
+                <div class="panel-title">🎭 编辑头像</div>
+                <div class="avatar-upload-wrap">
+                    <div class="avatar-preview-large" id="avatarPreview">✦</div>
+                    <div class="avatar-upload-right">
+                        <div class="avatar-dropzone" id="avatarDropzone">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            <p>点击或拖拽文件上传</p>
+                            <p class="avatar-hint">支持 jpg / jpeg / png 格式，建议 200×200 像素</p>
+                            <input type="file" id="avatarInput" accept="image/jpeg,image/jpg,image/png" style="display:none;">
+                        </div>
+                        <div class="avatar-actions">
+                            <button class="ash-btn" id="saveAvatarBtn">保存头像</button>
+                            <span class="form-msg" id="avatarMsg"></span>
                         </div>
                     </div>
                 </div>
+            </section>
+
+            <section class="glass-panel" id="infoPanel">
+                <div class="panel-title">📝 编辑个人信息</div>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>显示名称 / 昵称</label>
+                        <input type="text" id="editName" placeholder="你在余烬中的名字" maxlength="20">
+                    </div>
+                    <div class="form-field">
+                        <label>性别</label>
+                        <div class="radio-group" id="editGender">
+                            <label class="radio-label"><input type="radio" name="gender" value="male"> 男</label>
+                            <label class="radio-label"><input type="radio" name="gender" value="female"> 女</label>
+                            <label class="radio-label"><input type="radio" name="gender" value="other" checked> 其他/未知</label>
+                        </div>
+                    </div>
+                    <div class="form-field full-width">
+                        <label>个性签名 / 简介</label>
+                        <textarea id="editBio" placeholder="一句话介绍自己" maxlength="120"></textarea>
+                        <div class="char-count"><span id="bioCount">0</span> / 120</div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="ash-btn" id="saveInfoBtn">保存资料</button>
+                    <span class="form-msg" id="infoMsg"></span>
+                </div>
+            </section>
+
+            <section class="glass-panel" id="securityPanel">
+                <div class="panel-title">🔒 账号安全</div>
+                <div class="security-list">
+                    <div class="security-item">
+                        <div class="security-main">
+                            <div class="security-title">修改密码</div>
+                            <div class="security-sub">建议定期更换密码以保护账号安全</div>
+                        </div>
+                        <button class="ash-btn secondary" id="changePasswordBtn">修改</button>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-main">
+                            <div class="security-title">绑定邮箱</div>
+                            <div class="security-sub" id="emailStatus">未绑定</div>
+                        </div>
+                        <button class="ash-btn secondary" id="bindEmailBtn">绑定</button>
+                    </div>
+                    <div class="security-item">
+                        <div class="security-main">
+                            <div class="security-title">绑定手机</div>
+                            <div class="security-sub" id="phoneStatus">未绑定</div>
+                        </div>
+                        <button class="ash-btn secondary" id="bindPhoneBtn">绑定</button>
+                    </div>
+                </div>
+                <div class="form-msg" id="securityMsg"></div>
             </section>
 
             <section class="glass-panel">
@@ -349,13 +523,17 @@
     </footer>
 
     <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.10.0/cloudbase.full.js"></script>
-    <script src="../js/ash-init.js?v=6"></script>
-    <script src="../js/ash-db.js?v=6"></script>
+    <script src="../js/ash-init.js?v=9"></script>
+    <script src="../js/ash-db.js?v=9"></script>
+    <script src="../js/ash-nav.js?v=9"></script>
     <script src="../transition.js"></script>
     <script>
     (function(){
         'use strict';
         var auth = null, dbApi = null, uid = null;
+        var currentProfile = null;
+        var pendingAvatar = null;
+        var PROFILE_CACHE_KEY = 'ew_profile_cache';
 
         var $ = function(id){ return document.getElementById(id); };
 
@@ -365,14 +543,240 @@
             if(s.length === 11) return s.slice(0,3)+'****'+s.slice(7);
             return s;
         }
-
-        function showSessionMsg(msg, isError){
-            var el = $('sessionMsg');
+        function maskEmail(email){
+            if(!email || email.indexOf('@') === -1) return email;
+            var parts = email.split('@');
+            var name = parts[0];
+            var domain = parts[1];
+            var masked = name.length > 2 ? name.slice(0,2)+'***'+name.slice(-1) : name;
+            return masked + '@' + domain;
+        }
+        function setMsg(el, msg, isError){
             if(!el) return;
             el.textContent = msg || '';
             el.className = 'form-msg ' + (isError ? 'error' : 'success');
         }
+        function renderAvatar(el, name, avatar){
+            if(!el) return;
+            if(avatar){
+                el.innerHTML = '<img src="'+avatar.replace(/"/g,'&quot;')+'" alt="">';
+            } else {
+                el.textContent = (name || '旅').charAt(0).toUpperCase();
+            }
+        }
+        function readProfileCache(){
+            try {
+                var raw = localStorage.getItem(PROFILE_CACHE_KEY);
+                if(raw) return JSON.parse(raw);
+            } catch(e) {}
+            return null;
+        }
+        function writeProfileCache(profile){
+            try {
+                localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile));
+            } catch(e) {}
+        }
+        function mergeProfile(base, updates){
+            var p = {};
+            for(var k in base){ if(base.hasOwnProperty(k)) p[k] = base[k]; }
+            for(var k in updates){ if(updates.hasOwnProperty(k)) p[k] = updates[k]; }
+            return p;
+        }
 
+        function syncLoggedOutNav(){
+            localStorage.removeItem('ew_logged_in');
+            localStorage.removeItem('ew_uid');
+            localStorage.removeItem(PROFILE_CACHE_KEY);
+            if(typeof window.ashNavUpdate === 'function') window.ashNavUpdate();
+        }
+
+        function applyProfileToUI(profile){
+            var name = profile.displayName || '旅人';
+            if($('editName')) $('editName').value = name;
+            if($('editBio')) $('editBio').value = profile.bio || '';
+            if($('bioCount')) $('bioCount').textContent = (profile.bio || '').length;
+            var radios = document.querySelectorAll('input[name="gender"]');
+            for(var i=0; i<radios.length; i++){ radios[i].checked = (radios[i].value === (profile.gender || 'other')); }
+            renderAvatar($('avatarPreview'), name, profile.avatar || '');
+            var phone = dbApi ? dbApi.getPhone() : '';
+            var email = dbApi ? dbApi.getEmail() : '';
+            if($('phoneStatus')) $('phoneStatus').textContent = phone ? maskPhone(phone) : '未绑定';
+            if($('emailStatus')) $('emailStatus').textContent = email ? maskEmail(email) : '未绑定';
+            // 同步 profile cache + 通知 ash-nav
+            writeProfileCache(profile);
+            if(typeof window.ashNavUpdate === 'function') window.ashNavUpdate();
+        }
+
+        function loadProfile(){
+            if(!uid || !dbApi) return;
+            // 先显示本地缓存，避免空白/默认值闪烁
+            var cached = readProfileCache();
+            if(cached){
+                currentProfile = cached;
+                applyProfileToUI(currentProfile);
+            }
+            dbApi.getUserProfile(uid).then(function(profile){
+                if(profile){
+                    currentProfile = profile;
+                    writeProfileCache(profile);
+                    applyProfileToUI(currentProfile);
+                } else if(!cached){
+                    currentProfile = { displayName: '旅人', bio: '', avatar: '', gender: '' };
+                    applyProfileToUI(currentProfile);
+                }
+            }).catch(function(err){
+                console.warn('[profile] 读取资料失败', err);
+                if(!cached){
+                    currentProfile = { displayName: '旅人', bio: '', avatar: '', gender: '' };
+                    applyProfileToUI(currentProfile);
+                }
+                setMsg($('infoMsg'), '云端读取失败，已加载本地缓存: ' + err.message, true);
+            });
+        }
+
+        function saveProfile(){
+            var name = ($('editName').value || '').trim();
+            var bio = ($('editBio').value || '').trim();
+            var gender = '';
+            var radios = document.querySelectorAll('input[name="gender"]');
+            for(var i=0; i<radios.length; i++){ if(radios[i].checked){ gender = radios[i].value; break; } }
+            if(!name){ setMsg($('infoMsg'), '请输入显示名称', true); return; }
+            if(name.length < 2){ setMsg($('infoMsg'), '名称至少 2 个字符', true); return; }
+            if(!uid || !dbApi){ setMsg($('infoMsg'), '未登录', true); return; }
+            var btn = $('saveInfoBtn');
+            btn.disabled = true; btn.textContent = '保存中...';
+            setMsg($('infoMsg'), '', false);
+            var payload = { displayName: name, bio: bio, gender: gender };
+            if(pendingAvatar) payload.avatar = pendingAvatar;
+
+            // 先更新本地缓存与 UI，即使云端失败也不重置
+            currentProfile = mergeProfile(currentProfile || {}, payload);
+            writeProfileCache(currentProfile);
+            applyProfileToUI(currentProfile);
+
+            dbApi.setUserProfile(uid, payload).then(function(){
+                pendingAvatar = null;
+                setMsg($('infoMsg'), '资料已保存', false);
+                if(typeof window.ashNavUpdate === 'function') window.ashNavUpdate();
+                // 3 秒后静默校验云端是否真正写入
+                setTimeout(function(){ verifyProfileSaved(payload); }, 3000);
+            }).catch(function(err){
+                setMsg($('infoMsg'), '保存失败: ' + err.message, true);
+            }).finally(function(){ btn.disabled = false; btn.textContent = '保存资料'; });
+        }
+
+        function verifyProfileSaved(expected){
+            if(!uid || !dbApi) return;
+            dbApi.getUserProfile(uid).then(function(profile){
+                if(!profile){
+                    setMsg($('infoMsg'), '校验失败：云端未找到资料，请检查 users 集合是否存在', true);
+                    return;
+                }
+                var mismatches = [];
+                if(expected.displayName && profile.displayName !== expected.displayName) mismatches.push('昵称');
+                if(expected.bio !== undefined && profile.bio !== expected.bio) mismatches.push('签名');
+                if(expected.gender && profile.gender !== expected.gender) mismatches.push('性别');
+                if(expected.avatar && profile.avatar !== expected.avatar) mismatches.push('头像');
+                if(mismatches.length > 0){
+                    setMsg($('infoMsg'), '校验异常：' + mismatches.join('、') + ' 未同步到云端', true);
+                }
+            }).catch(function(err){
+                console.warn('[profile] 校验云端资料失败', err);
+            });
+        }
+
+        function handleAvatarFile(file){
+            if(!file.type.match(/image\/(jpeg|jpg|png)/)){
+                setMsg($('avatarMsg'), '仅支持 jpg/png 格式', true); return;
+            }
+            if(file.size > 2 * 1024 * 1024){
+                setMsg($('avatarMsg'), '图片大小不能超过 2MB', true); return;
+            }
+            var reader = new FileReader();
+            reader.onload = function(e){
+                var img = new Image();
+                img.onload = function(){
+                    var canvas = document.createElement('canvas');
+                    var size = Math.min(200, img.width, img.height);
+                    canvas.width = size; canvas.height = size;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, (img.width-size)/2, (img.height-size)/2, size, size, 0, 0, size, size);
+                    pendingAvatar = canvas.toDataURL('image/jpeg', 0.85);
+                    renderAvatar($('avatarPreview'), null, pendingAvatar);
+                    setMsg($('avatarMsg'), '图片已加载，点击保存', false);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function bindAvatar(){
+            var dropzone = $('avatarDropzone'), input = $('avatarInput'), saveBtn = $('saveAvatarBtn');
+            if(dropzone) dropzone.addEventListener('click', function(){ if(input) input.click(); });
+            if(input){
+                input.addEventListener('change', function(e){
+                    var file = e.target.files && e.target.files[0];
+                    if(file) handleAvatarFile(file);
+                });
+            }
+            ['dragenter','dragover'].forEach(function(evt){
+                if(dropzone) dropzone.addEventListener(evt, function(e){ e.preventDefault(); dropzone.classList.add('dragover'); });
+            });
+            ['dragleave','drop'].forEach(function(evt){
+                if(dropzone) dropzone.addEventListener(evt, function(e){ e.preventDefault(); dropzone.classList.remove('dragover'); });
+            });
+            if(dropzone){
+                dropzone.addEventListener('drop', function(e){
+                    e.preventDefault();
+                    var file = e.dataTransfer.files && e.dataTransfer.files[0];
+                    if(file) handleAvatarFile(file);
+                });
+            }
+            if(saveBtn){
+                saveBtn.addEventListener('click', function(){
+                    if(!pendingAvatar){ setMsg($('avatarMsg'), '请先选择图片', true); return; }
+                    if(!uid || !dbApi){ setMsg($('avatarMsg'), '未登录', true); return; }
+                    var btn = $('saveAvatarBtn');
+                    btn.disabled = true; btn.textContent = '保存中...';
+                    setMsg($('avatarMsg'), '', false);
+                    dbApi.setUserProfile(uid, { avatar: pendingAvatar }).then(function(){
+                        currentProfile = mergeProfile(currentProfile || {}, { avatar: pendingAvatar });
+                        writeProfileCache(currentProfile);
+                        pendingAvatar = null;
+                        setMsg($('avatarMsg'), '头像已保存', false);
+                        if(typeof window.ashNavUpdate === 'function') window.ashNavUpdate();
+                    }).catch(function(err){
+                        setMsg($('avatarMsg'), '保存失败: ' + err.message, true);
+                    }).finally(function(){ btn.disabled = false; btn.textContent = '保存头像'; });
+                });
+            }
+        }
+
+        function bindSecurity(){
+            var changePwdBtn = $('changePasswordBtn'), bindEmailBtn = $('bindEmailBtn'), bindPhoneBtn = $('bindPhoneBtn');
+            if(changePwdBtn){
+                changePwdBtn.addEventListener('click', function(){
+                    var newPwd = prompt('请输入新密码（至少 8 位，需包含字母和数字）：');
+                    if(!newPwd) return;
+                    if(newPwd.length < 8){ setMsg($('securityMsg'), '密码至少 8 位', true); return; }
+                    if(!/[a-zA-Z]/.test(newPwd) || !/[0-9]/.test(newPwd)){ setMsg($('securityMsg'), '密码需同时包含字母和数字', true); return; }
+                    setMsg($('securityMsg'), '当前 CloudBase 配置暂不支持直接修改密码，请通过邮箱验证码重置。', true);
+                });
+            }
+            if(bindEmailBtn) bindEmailBtn.addEventListener('click', function(){ setMsg($('securityMsg'), '邮箱绑定功能需要在 CloudBase 控制台开启邮箱登录并配置 SMTP，请联系管理员。', true); });
+            if(bindPhoneBtn) bindPhoneBtn.addEventListener('click', function(){ setMsg($('securityMsg'), '手机绑定功能需要在 CloudBase 控制台开启短信登录并配置签名，请联系管理员。', true); });
+        }
+
+        function exportCharacter(c){
+            var data = JSON.stringify(c, null, 2);
+            var blob = new Blob([data], {type: 'application/json'});
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = (c.name || '角色') + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
         function renderChars(list){
             var container = $('charList');
             if(!container) return;
@@ -381,18 +785,29 @@
                 return;
             }
             container.innerHTML = list.map(function(c){
+                var charId = c._id || '';
                 var attrText = c.attributes ? ('躯'+(c.attributes.body||0)+' 敏'+(c.attributes.agility||0)+' 心'+(c.attributes.intellect||0)+' 洞'+(c.attributes.perception||0)) : '';
                 var coreText = c.core ? ' · 核心：' + ({body:'躯魄',agility:'敏韧',intellect:'心智',perception:'洞识'}[c.core]||c.core) : '';
-                return '<div class="list-item">'+
+                return '<div class="list-item" data-id="'+charId+'">'+
                     '<div class="item-main">'+
                         '<div class="item-title">'+(c.name||'未命名角色')+'</div>'+
                         '<div class="item-sub">'+(c.race||'未知种族')+' / '+(c.profession||'无职业')+' / Lv.'+(c.level||1)+' · '+attrText+coreText+'</div>'+
                     '</div>'+
                     '<div class="item-actions">'+
-                        '<a class="ash-btn" href="character-sheet.html?char='+(c._id||'')+'">编辑</a>'+
+                        '<button class="ash-btn secondary export-char-btn" type="button">导出</button>'+
+                        '<a class="ash-btn" href="character-sheet.html?char='+encodeURIComponent(charId)+'">编辑</a>'+
                     '</div>'+
                 '</div>';
             }).join('');
+            var btns = container.querySelectorAll('.export-char-btn');
+            for(var i=0; i<btns.length; i++){
+                btns[i].addEventListener('click', function(){
+                    var id = this.closest('.list-item').getAttribute('data-id');
+                    var c = null;
+                    for(var j=0; j<list.length; j++){ if(list[j]._id === id){ c = list[j]; break; } }
+                    if(c) exportCharacter(c);
+                });
+            }
         }
 
         function renderSessions(list){
@@ -412,29 +827,16 @@
                 '</div>';
             }).join('');
         }
+        function showSessionMsg(msg, isError){ setMsg($('sessionMsg'), msg, isError); }
 
         function loadAll(){
             if(!uid || !dbApi) return;
-            dbApi.getUserProfile(uid).then(function(profile){
-                $('userName').textContent = (profile && profile.displayName) ? profile.displayName : '旅人';
-                $('userPhone').textContent = maskPhone(dbApi.getPhone()) || '--';
-                if(profile && profile.bio){
-                    $('userBio').textContent = profile.bio;
-                } else {
-                    $('userBio').innerHTML = '<span class="empty-bio">暂无简介，可在首页编辑</span>';
-                }
-            }).catch(function(err){
-                console.warn('[profile] 读取资料失败', err);
-            });
-
+            loadProfile();
             dbApi.listCharacters(uid).then(renderChars).catch(function(err){
-                console.warn('[profile] 读取角色卡失败', err);
-                $('charList').innerHTML = '<div class="item-empty">读取失败: '+err.message+'</div>';
+                if($('charList')) $('charList').innerHTML = '<div class="item-empty">读取失败: '+err.message+'</div>';
             });
-
             dbApi.listSessions(uid).then(renderSessions).catch(function(err){
-                console.warn('[profile] 读取记录失败', err);
-                $('sessionList').innerHTML = '<div class="item-empty">读取失败: '+err.message+'</div>';
+                if($('sessionList')) $('sessionList').innerHTML = '<div class="item-empty">读取失败: '+err.message+'</div>';
             });
         }
 
@@ -442,57 +844,62 @@
             auth = window.ashAuth;
             dbApi = window.ashDbApi;
             if(!auth){
-                $('loginTip').innerHTML = '<h2>初始化失败</h2><p>CloudBase SDK 未加载，请刷新重试。</p>';
+                if($('loginTip')) $('loginTip').innerHTML = '<h2>初始化失败</h2><p>CloudBase SDK 未加载，请刷新重试。</p>';
                 return;
             }
             auth.getLoginState().then(function(res){
                 var state = res && res.data ? res.data : res;
                 if(state && state.user){
                     uid = state.user.uid;
-                    $('loginTip').style.display = 'none';
-                    $('profileContent').style.display = 'block';
+                    // 同步登录标记供 ash-nav.js 使用
+                    localStorage.setItem('ew_logged_in', '1');
+                    localStorage.setItem('ew_uid', uid);
+                    if(typeof window.ashNavUpdate === 'function') window.ashNavUpdate();
+                    if($('loginTip')) $('loginTip').style.display = 'none';
+                    if($('profileContent')) $('profileContent').style.display = 'block';
+                    bindAvatar();
+                    bindSecurity();
+                    if($('saveInfoBtn')) $('saveInfoBtn').addEventListener('click', saveProfile);
+                    if($('editBio')) $('editBio').addEventListener('input', function(){ if($('bioCount')) $('bioCount').textContent = ($('editBio').value || '').length; });
+                    if($('addSessionBtn')){
+                        $('addSessionBtn').addEventListener('click', function(){
+                            if(!uid || !dbApi){ showSessionMsg('未登录', true); return; }
+                            var title = ($('sessionTitle').value || '').trim();
+                            var role = ($('sessionRole').value || '').trim();
+                            if(!title){ showSessionMsg('请输入记录名', true); return; }
+                            $('addSessionBtn').disabled = true;
+                            dbApi.addSession(uid, {title: title, role: role}).then(function(){
+                                if($('sessionTitle')) $('sessionTitle').value = '';
+                                if($('sessionRole')) $('sessionRole').value = '';
+                                showSessionMsg('已添加', false);
+                                loadAll();
+                            }).catch(function(err){
+                                showSessionMsg('添加失败: ' + err.message, true);
+                            }).finally(function(){ if($('addSessionBtn')) $('addSessionBtn').disabled = false; });
+                        });
+                    }
                     loadAll();
                 } else {
-                    $('loginTip').style.display = 'block';
-                    $('profileContent').style.display = 'none';
+                    syncLoggedOutNav();
+                    if($('loginTip')) $('loginTip').style.display = 'block';
+                    if($('profileContent')) $('profileContent').style.display = 'none';
                 }
             }).catch(function(){
-                $('loginTip').style.display = 'block';
-                $('profileContent').style.display = 'none';
+                syncLoggedOutNav();
+                if($('loginTip')) $('loginTip').style.display = 'block';
+                if($('profileContent')) $('profileContent').style.display = 'none';
             });
         }
 
-        $('refreshBtn').addEventListener('click', function(){ loadAll(); });
-        $('logoutBtn2').addEventListener('click', function(){
-            if(!auth) return;
-            auth.signOut().then(function(){ location.href = '../index.html'; });
-        });
-
-        $('addSessionBtn').addEventListener('click', function(){
-            if(!uid || !dbApi){ showSessionMsg('未登录', true); return; }
-            var title = ($('sessionTitle').value || '').trim();
-            var role = ($('sessionRole').value || '').trim();
-            if(!title){ showSessionMsg('请输入记录名', true); return; }
-            $('addSessionBtn').disabled = true;
-            dbApi.addSession(uid, {title: title, role: role}).then(function(){
-                $('sessionTitle').value = '';
-                $('sessionRole').value = '';
-                showSessionMsg('已添加', false);
-                loadAll();
-            }).catch(function(err){
-                showSessionMsg('添加失败: ' + err.message, true);
-            }).finally(function(){
-                $('addSessionBtn').disabled = false;
-            });
-        });
-
-        // mobile nav
         (function(){
             var btn=document.getElementById('navToggle');
             var panel=document.getElementById('navMobile');
             if(btn&&panel){
                 btn.addEventListener('click',function(){btn.classList.toggle('open');panel.classList.toggle('open');});
-                panel.querySelectorAll('.mobile-link').forEach(function(l){l.addEventListener('click',function(){btn.classList.remove('open');panel.classList.remove('open');});});
+                var links = panel.querySelectorAll('.mobile-link');
+                for(var i=0;i<links.length;i++){
+                    links[i].addEventListener('click',function(){btn.classList.remove('open');panel.classList.remove('open');});
+                }
             }
         })();
 
