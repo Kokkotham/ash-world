@@ -76,16 +76,29 @@
     function setUserProfile(uid, profile) {
         return new Promise(function (resolve, reject) {
             if (!window.ashDb) return reject(new Error('数据库未初始化'));
-            var data = {
-                uid: uid,
-                displayName: profile.displayName || '',
-                bio: profile.bio || '',
-                avatar: profile.avatar || '',
-                phone: profile.phone || getPhone(),
-                updatedAt: new Date()
-            };
-            window.ashDb.collection(COLLECTIONS.USERS).doc(uid).set(data)
-                .then(function (res) { resolve(res); })
+            getUserProfile(uid)
+                .then(function (existing) {
+                    existing = existing || {};
+                    var data = {
+                        uid: uid,
+                        displayName: Object.prototype.hasOwnProperty.call(profile, 'displayName') ? profile.displayName : (existing.displayName || ''),
+                        bio: Object.prototype.hasOwnProperty.call(profile, 'bio') ? profile.bio : (existing.bio || ''),
+                        avatar: Object.prototype.hasOwnProperty.call(profile, 'avatar') ? profile.avatar : (existing.avatar || ''),
+                        gender: Object.prototype.hasOwnProperty.call(profile, 'gender') ? profile.gender : (existing.gender || ''),
+                        phone: Object.prototype.hasOwnProperty.call(profile, 'phone') ? profile.phone : (existing.phone || getPhone()),
+                        updatedAt: new Date()
+                    };
+                    window.ashDb.collection(COLLECTIONS.USERS).doc(uid).set(data)
+                        .then(function (res) {
+                            // CloudBase v2 部分错误不会 reject，而是以 { code, message } 形式返回
+                            if (res && (res.code || res.errorCode) && !(res.code === '' || res.code === 'SUCCESS' || res.code === '0')) {
+                                reject(new Error(friendlyError(res)));
+                                return;
+                            }
+                            resolve(res);
+                        })
+                        .catch(function (err) { reject(new Error(friendlyError(err))); });
+                })
                 .catch(function (err) { reject(new Error(friendlyError(err))); });
         });
     }
@@ -101,6 +114,7 @@
                             displayName: '旅人',
                             bio: '',
                             avatar: '',
+                            gender: '',
                             phone: getPhone()
                         };
                         setUserProfile(uid, defaultProfile)
