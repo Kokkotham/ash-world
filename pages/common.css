@@ -264,6 +264,135 @@ body::before {
     background: rgba(201,168,76,0.05);
 }
 
+/* ===== 右上角用户区域 ===== */
+.top-nav .nav-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 12px;
+}
+.nav-login-btn {
+    padding: 6px 18px;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 20px;
+    color: var(--ash-gold);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.nav-login-btn:hover {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--ash-gold);
+}
+.user-menu {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.user-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 4px 4px;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 24px;
+    color: var(--ash-gold);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.user-menu-btn:hover {
+    background: rgba(201,168,76,0.15);
+    border-color: var(--ash-gold);
+}
+.user-avatar-small {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(201,168,76,0.3), rgba(201,168,76,0.1));
+    border: 1px solid rgba(201,168,76,0.25);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    font-size: 0.85rem;
+    color: var(--ash-gold);
+}
+.user-avatar-small img {
+    width: 100%; height: 100%; object-fit: cover;
+}
+.user-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    padding: 8px 0;
+    background: linear-gradient(180deg, rgba(8,10,16,0.98) 0%, rgba(12,15,22,0.96) 100%);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 6px;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 200;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.user-dropdown.show {
+    opacity: 1; pointer-events: auto;
+    transform: translateY(0);
+}
+.user-dropdown::before {
+    content: '';
+    position: absolute; top: -5px; right: 16px;
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid rgba(201,168,76,0.25);
+}
+.user-dropdown-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+}
+.user-dropdown-header .user-avatar-small {
+    width: 36px; height: 36px;
+    font-size: 1rem;
+}
+.user-dropdown-meta {
+    display: flex; flex-direction: column;
+    min-width: 0;
+}
+.user-dropdown-meta .name {
+    color: var(--ash-text);
+    font-size: 0.85rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-dropdown-meta .phone {
+    color: var(--ash-dim);
+    font-size: 0.68rem;
+}
+.user-dropdown-item {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 10px 18px;
+    font-size: 0.8rem; color: var(--ash-dim);
+    background: none; border: none;
+    cursor: pointer; transition: all 0.2s;
+    letter-spacing: 0.04em; text-align: left;
+    text-decoration: none;
+    font-family: 'Noto Serif SC', serif;
+}
+.user-dropdown-item:hover {
+    color: var(--ash-gold); background: rgba(201,168,76,0.08);
+}
+.user-dropdown-item.logout-item:hover { color: #e05555; }
+.user-dropdown-divider {
+    margin: 6px 14px; border: none;
+    border-top: 1px solid rgba(201,168,76,0.1);
+}
+
 /* 页面头部 */
 .page-header {
     position: relative;
@@ -610,7 +739,14 @@ body::before {
     }
     .top-nav .nav-links { display: none; }
     .top-nav .nav-toggle { display: flex; }
+    .top-nav .nav-right { display: none; }
 }
+
+/* 手机端补充：让 user-menu 在窄屏仍可点击（如果需要显示时） */
+@media (max-width: 900px) and (min-width: 1px) {
+    .top-nav .nav-right.mobile-visible { display: flex; }
+}
+
 
 /* ── 中屏 (≤768px) ── */
 @media (max-width: 768px) {
