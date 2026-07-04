@@ -79,7 +79,7 @@
     // ───── HTML 模板 ─────
     function buildNavRightHtml() {
         return '<div class="nav-right" id="ewLoginArea">' +
-            '<button class="nav-login-btn" id="ewLoginBtn">\u767B\u5F55</button>' +
+            '<button class="nav-login-btn" id="ewLoginBtn" type="button">\u767B\u5F55</button>' +
             '<div class="user-menu" id="ewUserMenu" style="display:none;">' +
                 '<button class="user-menu-btn" id="ewUserMenuBtn">' +
                     '<span class="user-avatar-small" id="ewNavAvatar">\u2726</span>' +
@@ -115,7 +115,7 @@
             '<a class="mobile-link" href="' + getProfileUrl() + '">\u4E2A\u4EBA\u4FE1\u606F</a>' +
             '<a class="mobile-link" href="' + getCharacterSheetUrl() + '">\u6211\u7684\u89D2\u8272\u5361</a>' +
             '<button class="mobile-link" id="ewMobileLogoutBtn" style="display:none;background:none;border:none;width:100%;text-align:left;color:#e05555">\u9000\u51FA\u767B\u5F55</button>' +
-            '<button class="mobile-link" id="ewMobileLoginBtn" style="background:none;border:none;width:100%;text-align:left;color:var(--ash-gold)">\u767B\u5F55</button>' +
+            '<button class="mobile-link" id="ewMobileLoginBtn" type="button" style="background:none;border:none;width:100%;text-align:left;color:var(--ash-gold)">\u767B\u5F55</button>' +
         '</div>';
     }
 
@@ -204,11 +204,20 @@
     // ───── 事件绑定 ─────
     function goLogin() {
         localStorage.setItem('ew_after_login', location.href);
-        if (isRootPage() && typeof window.openLoginModal === 'function') {
-            window.openLoginModal();
-        } else {
-            location.href = getLoginUrl();
+        if (isRootPage()) {
+            if (typeof window.openLoginModal === 'function') {
+                window.openLoginModal();
+                return;
+            }
+            var overlay = document.getElementById('loginOverlay');
+            if (overlay) {
+                overlay.classList.add('show');
+                return;
+            }
+            console.warn('[ash-nav] 首页登录弹窗未初始化');
+            return;
         }
+        location.href = getLoginUrl();
     }
 
     function doLogout() {
@@ -233,6 +242,7 @@
         var loginBtn = document.getElementById('ewLoginBtn');
         if (loginBtn) {
             loginBtn.addEventListener('click', function (e) {
+                e.preventDefault();
                 e.stopPropagation();
                 goLogin();
             });
@@ -243,6 +253,7 @@
         if (existingLoginBtn && !existingLoginBtn._ewNavBound) {
             existingLoginBtn._ewNavBound = true;
             existingLoginBtn.addEventListener('click', function (e) {
+                e.preventDefault();
                 e.stopPropagation();
                 goLogin();
             });
@@ -252,6 +263,7 @@
         if (goLoginBtn && !goLoginBtn._ewNavBound) {
             goLoginBtn._ewNavBound = true;
             goLoginBtn.addEventListener('click', function (e) {
+                e.preventDefault();
                 e.stopPropagation();
                 goLogin();
             });
@@ -302,6 +314,7 @@
         var mobileLoginBtn = document.getElementById('ewMobileLoginBtn');
         if (mobileLoginBtn) {
             mobileLoginBtn.addEventListener('click', function (e) {
+                e.preventDefault();
                 e.stopPropagation();
                 goLogin();
             });
@@ -311,6 +324,7 @@
         if (existingMobileLoginBtn && !existingMobileLoginBtn._ewNavBound) {
             existingMobileLoginBtn._ewNavBound = true;
             existingMobileLoginBtn.addEventListener('click', function (e) {
+                e.preventDefault();
                 e.stopPropagation();
                 goLogin();
             });
