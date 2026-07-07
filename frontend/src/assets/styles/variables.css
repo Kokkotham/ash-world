@@ -1,0 +1,13 @@
+:root {
+  --bg-darkest: #050505;
+  --bg-dark: #0a0a0a;
+  --bg-card: #141414;
+  --bg-elevated: #1a1a1a;
+  --gold: #c9a84c;
+  --gold-bright: #e0c460;
+  --text-primary: #e0d8c8;
+  --text-secondary: #9a9080;
+  --border-gold: rgba(201, 168, 76, 0.2);
+  --font-heading: 'Cinzel', 'Noto Serif SC', 'Songti SC', serif;
+  --font-body: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+}
