@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "generated": "2026-07-07",
+  "attributes": {
+    "躯魄": {
+      "name": "躯魄",
+      "abbr": "BOD",
+      "core_hp": 2,
+      "core_ep": 0,
+      "core_mp": 0,
+      "core_vp": 0,
+      "derived": {
+        "HP": {"formula": "躯魄 × 10 + 成长加成", "note": "核心躯魄：每点躯魄+4HP上限"},
+        "PA": {"formula": "躯魄护甲加成", "note": "肉身护甲"},
+        "速度": null,
+        "反击": null,
+        "暴击阈值": {"formula": "50/80/100 − 躯魄×2", "note": "三级暴击阈值"},
+        "营养值": {"formula": "躯魄 × 10"}
+      }
+    },
+    "敏韧": {
+      "name": "敏韧",
+      "abbr": "AGI",
+      "core_hp": 0,
+      "core_ep": 2,
+      "core_mp": 0,
+      "core_vp": 0,
+      "derived": {
+        "EP": {"formula": "敏韧 × 10 + 成长加成", "note": "核心敏韧：每点敏韧+4EP上限"},
+        "速度": {"formula": "⌊敏韧÷2⌋ + 额外加成", "note": "最低1"},
+        "反击": {"formula": "⌊敏韧÷2⌋ + 额外加成", "note": "最低1"},
+        "暴击减免": {"formula": "敏韧值", "note": "基础暴击判定数值减免"},
+        "EP恢复": {"note": "核心敏韧：每回合自然EP恢复+2"}
+      }
+    },
+    "心智": {
+      "name": "心智",
+      "abbr": "MND",
+      "core_hp": 0,
+      "core_ep": 0,
+      "core_mp": 2,
+      "core_vp": 0,
+      "derived": {
+        "MP": {"formula": "心智 × 10 + 成长加成", "note": "核心心智：每点心智+4MP上限"},
+        "MS": {"formula": "心智奥法加成", "note": "防护法罩，仅奥法攻击生效"},
+        "进修": {"formula": "⌊心智÷2⌋ + 额外加成", "note": "最低1"},
+        "法术模块": {"note": "核心心智：每回合可额外消耗一次耐力行动释放1级法术"}
+      }
+    },
+    "洞识": {
+      "name": "洞识",
+      "abbr": "INS",
+      "core_hp": 0,
+      "core_ep": 0,
+      "core_mp": 0,
+      "core_vp": 2,
+      "derived": {
+        "VP": {"formula": "洞识 × 4 + 成长加成", "note": "核心洞识：每点洞识+4VP上限"},
+        "绝对专注": {"formula": "⌊洞识÷2⌋ + 额外加成", "note": "最低1"},
+        "神术": {"note": "核心洞识：可用VP代替MP释放神术"},
+        "VP换MP": {"note": "消耗1点VP恢复4点MP"}
+      }
+    }
+  },
+  "core_focus": {
+    "核心躯魄": {
+      "benefits": ["HP上限+2/点", "额外3点抗性点(挥砍/刺击/钝击)", "无视3点护甲限制"],
+      "limitations": ["不可主修奥法专修", "每回合施法额外消耗1点EP"]
+    },
+    "核心敏韧": {
+      "benefits": ["EP上限+2/点", "每回合自然EP恢复+2", "暴击阈值-敏韧值"],
+      "limitations": ["护甲躯魄需求+2", "每回合施法额外消耗1点EP"]
+    },
+    "核心心智": {
+      "benefits": ["MP上限+2/点", "每回合可额外施放1级模块+1级呈现法术"],
+      "limitations": ["不可主修武器/武器造诣专修", "武器速率永久-1", "护甲限制+3"]
+    },
+    "核心洞识": {
+      "benefits": ["VP上限+2/点", "可用VP代替MP施放神术", "1VP换4MP"],
+      "limitations": ["不可主修武器/武器造诣专修", "每回合自然EP恢复-1(最低1)"]
+    }
+  },
+  "derived_formulas": {
+    "速度": "⌊敏韧÷2⌋ + 装备加成 + 成长加成",
+    "绝对专注": "⌊洞识÷2⌋ + 成长加成",
+    "华丽值": "1d8 + 服饰加成 + 成长加成",
+    "营养值": "躯魄 × 10 + 成长加成",
+    "暴击阈值1级": "50 − 躯魄×2",
+    "暴击阈值2级": "80 − 躯魄×2",
+    "暴击阈值3级": "100 − 躯魄×2",
+    "反击次数": "⌊敏韧÷2⌋ + 成长加成",
+    "进修上限": "⌊心智÷2⌋ + 成长加成",
+    "濒死阈值": "躯魄点数",
+    "绝对专注上限": "⌊洞识÷2⌋ + 成长加成"
+  },
+  "character_creation": {
+    "attribute_point_buy": {
+      "total_points": 10,
+      "max_single_attribute": 4,
+      "method": "自由分配10点，单项不超过4"
+    },
+    "dice_roll": {
+      "method": "投掷5次1d4，取4项最大值"
+    },
+    "initial_specializations": {
+      "free_count": 6,
+      "growth_points": 10,
+      "point_costs": {
+        "本能专修": "1点升3级",
+        "本职专修": "1点升2级",
+        "非本职专修": "1点升1级"
+      },
+      "level_cap_create": 8
+    },
+    "growth_value": {
+      "per_10_growth": "+3点主属性自由分配",
+      "per_1_growth": "+1点专修升级点",
+      "per_20_growth": "选2项: 速度+1/进修+2/反击+1/暴击阈值-5/绝对专注+1/营养值+10",
+      "max": 100
+    }
+  },
+  "specializations": {
+    "本能专修": {
+      "description": "与生俱来，即刻通晓，无需选择",
+      "count": "固定"
+    },
+    "后天专修_九大门类": [
+      {"id": "knowledge", "name": "知识类", "has_career_effect": false},
+      {"id": "交流", "name": "交流类", "has_career_effect": false},
+      {"id": "art", "name": "艺术类", "has_career_effect": false},
+      {"id": "survival", "name": "生存类", "has_career_effect": false},
+      {"id": "weapon", "name": "武器类", "has_career_effect": false, "note": "有心智劣势限制"},
+      {"id": "combat_mastery", "name": "战斗造诣类", "has_career_effect": true, "note": "部分为被动天赋型"},
+      {"id": "craft", "name": "专业制造类", "has_career_effect": true, "note": "独立运作规则"},
+      {"id": "arcane", "name": "奥术魔法类", "has_career_effect": true, "note": "独立运作规则"},
+      {"id": "special", "name": "特殊类", "has_career_effect": false}
+    ]
+  },
+  "soul_traits": {
+    "description": "灵涅特质：唯灵涅可拥有的专属被动天赋，终生唯一不可更替"
+  }
+}
