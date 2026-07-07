@@ -4,6 +4,7 @@ from apps.importer.management.commands.import_rule_sources import (
     build_core_attribute_rules,
     build_race_rules,
 )
+from apps.importer.management.commands.import_rulebook import stable_slug
 from apps.rules.models import RuleCategory
 
 
@@ -53,3 +54,16 @@ class ImportRuleSourcesBuilderTests(SimpleTestCase):
         self.assertEqual(rules[0]['slug'], 'race-human')
         self.assertEqual(rules[0]['title'], '种族：纳露安人类')
         self.assertEqual(rules[0]['content_blocks'][0]['type'], 'profile')
+
+
+class ImportRuleBookBuilderTests(SimpleTestCase):
+    def test_stable_slug_keeps_chinese_source_keys_unique(self):
+        human_slug = stable_slug('ch2_纳露安人类', 'human')
+        elf_slug = stable_slug('ch2_精灵', 'elf')
+
+        self.assertNotEqual(human_slug, elf_slug)
+        self.assertTrue(human_slug.startswith('ch2-'))
+        self.assertTrue(elf_slug.startswith('ch2-'))
+
+    def test_stable_slug_preserves_ascii_source_keys(self):
+        self.assertEqual(stable_slug('ch1_main_attr', 'main attr'), 'ch1-main-attr')
