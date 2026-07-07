@@ -8,3 +8,7 @@ export function listRuleCategories(params = {}) {
 export function listRules(params = {}) {
   return api.get('/rules/', { params })
 }
+
+export function getRule(slug) {
+  return api.get(`/rules/${slug}/`)
+}

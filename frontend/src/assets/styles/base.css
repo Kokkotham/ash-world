@@ -107,6 +107,150 @@ a {
   color: var(--text-secondary);
 }
 
+.rulebook-page {
+  display: grid;
+  gap: 24px;
+}
+
+.rulebook-heading {
+  border-bottom: 1px solid var(--border-gold);
+  padding-bottom: 20px;
+}
+
+.rulebook-heading h1,
+.category-panel h2,
+.panel-heading h2,
+.rule-detail-panel h2 {
+  margin: 0;
+  color: var(--gold);
+  font-family: var(--font-heading);
+}
+
+.rulebook-heading p {
+  color: var(--text-secondary);
+}
+
+.rulebook-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(260px, 360px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.category-panel,
+.rule-list-panel,
+.rule-detail-panel {
+  border: 1px solid var(--border-gold);
+  background: var(--bg-card);
+  padding: 18px;
+}
+
+.category-panel,
+.rule-list-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.category-button,
+.rule-card-button {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.category-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgba(201, 168, 76, 0.14);
+  padding: 10px 12px;
+  color: var(--text-secondary);
+}
+
+.category-button.active,
+.category-button:hover {
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.panel-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--text-secondary);
+}
+
+.rule-card {
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.rule-card.active,
+.rule-card-button:hover .rule-card {
+  border-color: var(--gold);
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.rule-detail-panel {
+  min-height: 360px;
+}
+
+.rule-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.rule-meta span {
+  border: 1px solid rgba(201, 168, 76, 0.22);
+  color: var(--text-secondary);
+  padding: 4px 8px;
+  font-size: 0.82rem;
+}
+
+.rule-summary {
+  color: var(--gold-bright);
+}
+
+.rule-content {
+  display: grid;
+  gap: 12px;
+  color: var(--text-primary);
+  line-height: 1.75;
+}
+
+.rule-content pre {
+  overflow: auto;
+  border: 1px solid rgba(201, 168, 76, 0.14);
+  background: var(--bg-dark);
+  color: var(--text-secondary);
+  padding: 12px;
+}
+
+.error-state {
+  border: 1px solid rgba(190, 72, 72, 0.55);
+  background: rgba(120, 32, 32, 0.18);
+  color: #f0b4a8;
+  padding: 16px;
+}
+
+.error-state.compact {
+  margin: 16px 0;
+}
+
+@media (max-width: 900px) {
+  .rulebook-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 .loading-spinner {
   display: inline-block;
   width: 24px;
