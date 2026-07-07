@@ -60,8 +60,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    'default': {
+if env('USE_MYSQL', '0') == '1':
+    default_database = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': env('MYSQL_DATABASE', 'embers_world'),
         'USER': env('MYSQL_USER', 'embers_user'),
@@ -70,6 +70,14 @@ DATABASES = {
         'PORT': env('MYSQL_PORT', '3306'),
         'OPTIONS': {'charset': 'utf8mb4'},
     }
+else:
+    default_database = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+
+DATABASES = {
+    'default': default_database
 }
 
 AUTH_PASSWORD_VALIDATORS = [

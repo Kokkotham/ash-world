@@ -12,7 +12,10 @@ node_modules/
 # Environment and logs
 .env
 .env.*
+!.env.example
+!backend/.env.example
 *.log
+backend/db.sqlite3
 
 # Build output
 dist/
